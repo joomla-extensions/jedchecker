@@ -1,0 +1,11 @@
+build.version=dev
+component.name=jedchecker
+component.upperName=JEDCHECKER
+
+; FTP Options
+ftp.host=ftp.example.com
+ftp.port=21
+ftp.username=username
+ftp.password=password
+ftp.dir=/path/to/directory
+ftp.mode=binary

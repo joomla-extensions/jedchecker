@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Generic build module
+    ${module} should be mod_something...
+-->
+
+<project name="mod" default="buildModule">
+
+    <property name="admin_folder" value=""/>
+    <if>
+        <isset property="module_admin"/>
+        <then>
+            <property name="admin_folder" value="/administrator" override="true"/>
+            <property name="module" value="${module_admin}" override="true" />
+        </then>
+    </if>
+
+    <target name="buildModule">
+        <!--do we have a media folder?-->
+        <available file="${dirs.source}\media\${module}"
+                   type="dir" property="mod.media.exist" value="yes"/>
+
+        <if>
+            <equals arg1="${adminLang.exist}" arg2="1"/>
+            <then>
+                <copy todir="${destination.dir}/administrator/modules/${module}/administrator/language/">
+                    <fileset dir="${dirs.source}/administrator/language/">
+                        <include name="**/*.${module}.**"/>
+                    </fileset>
+                </copy>
+            </then>
+        </if>
+
+        <if>
+            <equals arg1="${frontendLang.exist}" arg2="1"/>
+            <then>
+
+                <copy todir="${destination.dir}/modules/${module}/language/">
+                    <fileset dir="${dirs.source}/language/">
+                        <include name="**/*.${module}.**"/>
+                    </fileset>
+                </copy>
+            </then>
+        </if>
+
+        <copy todir="${destination.dir}${admin_folder}/modules/${module}">
+            <fileset dir="${dirs.source}${admin_folder}/modules/${module}" includes="**/*.*"/>
+        </copy>
+
+        <if>
+            <equals arg1="${mod.media.exist}" arg2="1"/>
+            <then>
+                <copy todir="${destination.dir}${admin_folder}/modules/${module}/media/${module}">
+                    <fileset dir="${dirs.source}/media/${module}">
+                        <include name="**/*.*"/>
+                        <exclude name="kml/*.*"/>
+                    </fileset>
+                </copy>
+            </then>
+        </if>
+
+        <copy file="${dirs.source}${admin_folder}/modules/${module}/${module}.xml"
+              tofile="${destination.dir}${admin_folder}/modules/${module}/${module}.xml" overwrite="true">
+
+            <filterchain>
+
+                <replacetokens begintoken="@@" endtoken="@@">
+                    <token key="DATE" value="${build.date}"/>
+                    <token key="VERSION" value="${build.version}"/>
+                    <token key="MODULENAME" value="${module}"/>
+                </replacetokens>
+            </filterchain>
+        </copy>
+
+        <extfile file="${destination.dir}${admin_folder}/modules/${module}/${module}.xml"
+                 sourceDir="${dirs.source}${admin_folder}/modules/${module}/"
+                 component="${module}"
+                 type="module"
+                />
+
+    </target>
+
+</project>
