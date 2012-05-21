@@ -80,16 +80,26 @@
             </fileset>
         </copy>
 
-        <copy todir="${destination.dir}/components/com_${component.name}">
-            <fileset dir="${dirs.source}/components/com_${component.name}" includes="**/*.*"/>
-        </copy>
+        <if>
+            <equals arg1="${frontend.exist}" arg2="yes"/>
+            <then>
+                <copy todir="${destination.dir}/components/com_${component.name}">
+                    <fileset dir="${dirs.source}/components/com_${component.name}" includes="**/*.*"/>
+                </copy>
+            </then>
+        </if>
 
 
-        <copy todir="${destination.dir}/language/">
-            <fileset dir="${dirs.source}/language/">
-                <include name="**/*.${component.name}.ini"/>
-            </fileset>
-        </copy>
+        <if>
+            <equals arg1="${frontendLang.exist}" arg2="yes"/>
+            <then>
+                <copy todir="${destination.dir}/language/">
+                    <fileset dir="${dirs.source}/language/">
+                        <include name="**/*.${component.name}.ini"/>
+                    </fileset>
+                </copy>
+            </then>
+        </if>
 
         <if>
             <equals arg1="${media.exist}" arg2="1"/>

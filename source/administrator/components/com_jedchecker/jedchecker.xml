@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<install method="upgrade" type="component" version="1.5.0">
+	<name>COM_@@COMPONENTNAMEUPPERCASE@@</name>
+	<author>Compojoom.com</author>
+	<creationDate>@@DATE@@</creationDate>
+	<copyright>(C) 2012 compojoom.com</copyright>
+	<authorEmail>daniel@compojoom.com</authorEmail>
+	<authorUrl>www.compojoom.com</authorUrl>
+	<version>@@VERSION@@</version>
+	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+	<description><![CDATA[Jedchecker will check your extension files and will let you know in advance if there are any possible problems with your extension for submitting to the JED]]>
+	</description>
+	<administration>
+		<menu>COM_@@COMPONENTNAMEUPPERCASE@@</menu>
+		<files folder="administrator/components/com_@@COMPONENTNAME@@">
+            ##ADMINCOMPONENTPACKAGEFILES##
+		</files>
+		<languages folder="administrator/language">
+            ##ADMINLANGUAGEFILES##
+        </languages>
+	</administration>
+	<media destination="com_@@COMPONENTNAME@@" folder="media/com_@@COMPONENTNAME@@">
+        ##MEDIAPACKAGEFILES##
+	</media>
+</install>
