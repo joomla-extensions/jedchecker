@@ -20,5 +20,6 @@ class jedcheckerViewUploads extends JView {
 
     public function setToolbar() {
         JToolBarHelper::custom('uploads.unzip', 'unzip', 'unzip', 'unzip', false);
+        JToolBarHelper::custom('police.check', 'police-check', 'police-check', 'check', false);
     }
 }
