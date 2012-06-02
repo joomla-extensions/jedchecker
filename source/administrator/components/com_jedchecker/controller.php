@@ -7,9 +7,9 @@
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
-defined('_JEXEC') or die('Restricted access');
-jimport('joomla.application.component.controller');
+defined( '_JEXEC' ) or die ( 'Restricted access' );
 
-$controller = JController::getInstance('jedchecker');
-$controller->execute(JRequest::getCmd('task'));
-$controller->redirect();
+class jedcheckerController extends JController
+{
+
+}
