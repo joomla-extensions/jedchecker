@@ -5,3 +5,30 @@
  * @copyright  Copyright (C) 2008 - 2012 compojoom.com . All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
+
+var police = new Class({
+    Implements:[Options],
+    options:{},
+    initialize:function (options) {
+        var self = this;
+        this.setOptions(options);
+
+        this.options.rules.each(function(rule){
+           self.check(rule);
+        });
+    },
+
+    check: function(rule) {
+        var self = this;
+        new Request({
+            url: self.options.url + '/index.php?option=com_jedchecker&task=police.check&format=raw&rule='+rule,
+            async: false,
+            onComplete: function(result) {
+                var div = new Element('div', {
+                    html: result
+                });
+                div.inject(document.id('police-check-result'));
+            }
+        }).send();
+    }
+});

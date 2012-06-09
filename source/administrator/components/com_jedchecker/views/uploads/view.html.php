@@ -11,14 +11,29 @@ defined('_JEXEC') or die('Restricted access');
 
 jimport('joomla.application.component.view');
 
-class jedcheckerViewUploads extends JView {
+class jedcheckerViewUploads extends JView
+{
 
-    public function display($tpl = null) {
+    public function display($tpl = null)
+    {
         $this->setToolbar();
+        $this->jsOptions['url'] = JURI::base();
+        $this->jsOptions['rules'] = $this->getRules();
         parent::display($tpl);
     }
 
-    public function setToolbar() {
+    public function getRules()
+    {
+        $exclude = array('.svn', 'CVS', '.DS_Store', '__MACOSX', 'index.html');
+        $files = JFolder::files(JPATH_COMPONENT_ADMINISTRATOR . '/libraries/rules', '.', false, false, $exclude);
+        foreach ($files as $file) {
+            $rules[] = str_replace('.php', '', $file);
+        }
+        return $rules;
+    }
+
+    public function setToolbar()
+    {
         JToolBarHelper::custom('uploads.unzip', 'unzip', 'unzip', 'unzip', false);
         JToolBarHelper::custom('police.check', 'police-check', 'police-check', 'check', false);
     }
