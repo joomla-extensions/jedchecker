@@ -17,11 +17,11 @@ jimport('joomla.filesystem.archive');
 class jedcheckerControllerPolice extends JController {
     public function check() {
         require_once JPATH_COMPONENT_ADMINISTRATOR . '/libraries/rules/htmlindexes.php';
-        $path = JPATH_COMPONENT_ADMINISTRATOR . '/tmp/unzipped/';
+        $path = JFactory::getConfig()->get('tmp_path') . '/jed_checker/unzipped';
         $police = new jedcheckerRulesHtmlindexes;
         $folders = JFolder::folders($path);
 
-        $police->check($path.$folders[0]);
+        $police->check($path.'/'.$folders[0]);
 
     }
 }

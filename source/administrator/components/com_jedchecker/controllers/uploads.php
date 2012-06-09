@@ -16,9 +16,9 @@ class jedcheckerControllerUploads extends JController
 {
     public function __construct()
     {
-        $this->path = JPATH_COMPONENT_ADMINISTRATOR . '/tmp/';
-        $this->pathArchive = $this->path . 'arhives/';
-        $this->pathUnzipped = $this->path . 'unzipped/';
+        $this->path = JFactory::getConfig()->get('tmp_path') . '/jed_checker';
+        $this->pathArchive = $this->path . '/arhives';
+        $this->pathUnzipped = $this->path . '/unzipped';
         parent::__construct();
     }
 
@@ -28,18 +28,25 @@ class jedcheckerControllerUploads extends JController
      */
     public function upload()
     {
+        $appl = JFactory::getApplication();
         $file = JRequest::getVar('extension', '', 'files', 'array');
         if ($file['tmp_name']) {
             $path = $this->pathArchive;
-            $filepath = $path . strtolower($file['name']);
-//          let us remove all previous uploads
-            $archiveFiles = JFolder::files($path);
+            // if the archive folder doesn't exist - create it!
+            if(!JFolder::exists($path)) {
+                JFolder::create($path);
+            } else {
+            // let us remove all previous uploads
+                $archiveFiles = JFolder::files($path);
 
-            foreach ($archiveFiles as $archive) {
-                if (!JFile::delete($this->pathArchive . $archive)) {
-                    echo 'could not delete' . $archive;
+                foreach ($archiveFiles as $archive) {
+                    if (!JFile::delete($this->pathArchive . '/'.$archive)) {
+                        echo 'could not delete' . $archive;
+                    }
                 }
             }
+            $filepath = $path .'/'. strtolower($file['name']);
+
 
             $object_file = new JObject($file);
             $object_file->filepath = $filepath;
@@ -51,7 +58,7 @@ class jedcheckerControllerUploads extends JController
                 JError::raiseWarning(100, JText::_('COM_JEDCHECKER_ERROR_UNABLE_TO_UPLOAD_FILE'));
                 return false;
             }
-
+            $appl->redirect('index.php?option=com_jedchecker&view=uploads', JText::_('COM_JEDCHECKER_UPLOAD_WAS_SUCCESSFUL'));
             return true;
         }
 
@@ -64,21 +71,30 @@ class jedcheckerControllerUploads extends JController
      */
     public function unzip()
     {
-
-        // let us remove all previous unzipped files
-        $folders = JFolder::folders($this->pathUnzipped);
-        foreach ($folders as $folder) {
-            JFolder::delete($this->pathUnzipped . $folder);
+        $appl = JFactory::getApplication();
+        // if folder doesn't exist - create it!
+        if(!JFolder::exists($this->pathUnzipped)) {
+            JFolder::create($this->pathUnzipped);
+        } else {
+            // let us remove all previous unzipped files
+            $folders = JFolder::folders($this->pathUnzipped);
+            foreach ($folders as $folder) {
+                JFolder::delete($this->pathUnzipped .'/'. $folder);
+            }
         }
 
-
         $file = JFolder::files($this->pathArchive);
-        $result = JArchive::extract($this->pathArchive . $file[0], $this->pathUnzipped . $file[0]);
+        $result = JArchive::extract($this->pathArchive .'/'. $file[0], $this->pathUnzipped .'/'. $file[0]);
 
         if ($result) {
             // scan unzipped folders if we find zip file -> unzip them as well
-            $this->unzipAll($this->pathUnzipped . $file[0]);
+            $this->unzipAll($this->pathUnzipped .'/'. $file[0]);
+            $message = 'COM_JEDCHECKER_UNZIP_SUCCESS';
+        } else {
+            $message = 'COM_JEDCHECKER_UNZIP_FAILED';
         }
+
+        $appl->redirect('index.php?option=com_jedchecker&view=uploads', JText::_($message));
 
         return $result;
     }
