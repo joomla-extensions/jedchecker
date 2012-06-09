@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<install method="upgrade" type="component" version="1.5.0">
+<extension method="upgrade" type="component" version="2.5.0">
 	<name>COM_@@COMPONENTNAMEUPPERCASE@@</name>
 	<author>Compojoom.com</author>
 	<creationDate>@@DATE@@</creationDate>
@@ -22,4 +22,4 @@
 	<media destination="com_@@COMPONENTNAME@@" folder="media/com_@@COMPONENTNAME@@">
         ##MEDIAPACKAGEFILES##
 	</media>
-</install>
+</extension>

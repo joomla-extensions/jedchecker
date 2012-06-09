@@ -64,6 +64,7 @@
         <copy todir="${destination.dir}/administrator/components/com_${component.name}">
             <fileset dir="${dirs.source}/administrator/components/com_${component.name}">
                 <include name="**/*.*"/>
+                <!--<exclude name="${component.name}.xml"/>-->
             </fileset>
         </copy>
 
