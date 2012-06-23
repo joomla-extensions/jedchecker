@@ -1,0 +1,13 @@
+JEDchecker
+
+This extension is able to check your components, modules or plugins for common errors that will prevent you
+from publishing your extension on the JED.
+
+If you want to write a rule have a look a the library/rules folder.
+
+You just need to add a new file with your rule. Example:
+yourrule.php
+
+"yourrule.php" needs to have a class jedcheckerRulesYourrule and that class needs to have a
+function that accepts the basedir as parameter. This is all - the component will automatically call
+your rule check function.
