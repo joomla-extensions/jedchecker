@@ -16,6 +16,7 @@ var police = new Class({
         this.options.rules.each(function(rule){
            self.check(rule);
         });
+        new Fx.Scroll(window).toElement(document.id('police-check-result'));
     },
 
     check: function(rule) {
@@ -28,6 +29,7 @@ var police = new Class({
                     html: result
                 });
                 div.inject(document.id('police-check-result'));
+                document.id('prison').setStyle('display', 'block');
             }
         }).send();
     }

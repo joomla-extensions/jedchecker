@@ -22,12 +22,17 @@ class jedcheckerRulesHtmlindexes {
          */
         $indexes = array_replace($this->folders, $this->indexes);
 
-        echo 'those directories does not have an index file: <br />';
-        foreach($indexes as $key => $index) {
-            if(!$index) {
-                echo $key . '<br />';
+        echo '<span class="rule">'.JText::_('COM_JEDCHECKER_RULE_SE1') . '</span><br />';
+        if(count($indexes)) {
+            foreach($indexes as $key => $index) {
+                if(!$index) {
+                    echo $key . '<br />';
+                }
             }
+        } else {
+            echo '<span class="success">'.JText::_('COM_JEDCHECKER_EVERYTHING_SEEMS_TO_BE_FINE_WITH_THAT_RULE').'</span>';
         }
+
 
     }
 

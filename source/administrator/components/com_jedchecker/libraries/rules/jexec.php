@@ -44,12 +44,17 @@ class jedcheckerRulesJexec
         }
 
 
-        echo 'The following files dont have the _JEXEC check:<br/>';
-        // Echo all files which don't have the _JEXEC check
-        foreach($this->missing AS $file)
-        {
-            echo $file.'<br/>';
+        echo '<span class="rule">'.JText::_('COM_JEDCHECKER_RULE_PH2') .'</span><br/>';
+        if(count($this->missing)) {
+            // Echo all files which don't have the _JEXEC check
+            foreach($this->missing AS $file)
+            {
+                echo $file.'<br/>';
+            }
+        } else {
+            echo '<span class="success">'.JText::_('COM_JEDCHECKER_EVERYTHING_SEEMS_TO_BE_FINE_WITH_THAT_RULE').'</span>';
         }
+
     }
 
 

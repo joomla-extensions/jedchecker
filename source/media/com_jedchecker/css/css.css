@@ -4,3 +4,40 @@
 .icon-32-police-check {
     background-image: url(../icons/inspect.png);
 }
+
+#adminForm {
+    background: #FFF;
+}
+#police-check-result {
+    background: #F6F6F6;
+    border: 1px solid #CCC;
+}
+
+#police-check-result div:nth-child(odd){
+    border-bottom: 1px solid #CCCCCC;
+}
+
+#police-check-result div:nth-child(even){
+    background: #EBF1F2;
+}
+
+#police-check-result div {
+    padding: 5px 10px 5px;
+}
+
+.help {
+    padding: 5px;
+    border: 1px solid #CCCCCC;
+    background: #FFF;
+    margin-left: 10px;
+}
+
+.copyright {
+    line-height: 160%;
+    margin: 10px;
+    text-align: center;
+}
+
+.rule {
+    font-weight: bold;
+}
