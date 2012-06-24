@@ -34,8 +34,28 @@ class jedcheckerViewUploads extends JView
 
     public function setToolbar()
     {
-        JToolBarHelper::custom('uploads.unzip', 'unzip', 'unzip', 'unzip', false);
-        JToolBarHelper::custom('police.check', 'police-check', 'police-check', 'check', false);
+        if($this->filesExist('archives')) {
+            JToolBarHelper::custom('uploads.unzip', 'unzip', 'unzip', 'unzip', false);
+        }
+        if($this->filesExist('unzipped')) {
+            JToolBarHelper::custom('police.check', 'police-check', 'police-check', 'check', false);
+        }
+
         JToolBarHelper::title('JED checker');
+    }
+
+    /**
+     * Checks if folder + files exist in the jed_checker tmp path
+     * @param $type
+     * @return bool
+     */
+    private function filesExist($type) {
+        $path = JFactory::getConfig()->get('tmp_path') . '/jed_checker/'.$type;
+        if(JFolder::exists($path)) {
+            if(JFolder::folders($path, '.', false) || JFolder::files($path, '.', false)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

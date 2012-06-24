@@ -17,7 +17,7 @@ class jedcheckerControllerUploads extends JController
     public function __construct()
     {
         $this->path = JFactory::getConfig()->get('tmp_path') . '/jed_checker';
-        $this->pathArchive = $this->path . '/arhives';
+        $this->pathArchive = $this->path . '/archives';
         $this->pathUnzipped = $this->path . '/unzipped';
         parent::__construct();
     }
