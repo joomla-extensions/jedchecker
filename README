@@ -11,3 +11,6 @@ yourrule.php
 "yourrule.php" needs to have a class jedcheckerRulesYourrule and that class needs to have a
 function that accepts the basedir as parameter. This is all - the component will automatically call
 your rule check function.
+
+ZIP packages for installation in joomla can be found here:
+https://compojoom.com/downloads/official-releases-stable/jedchecker
