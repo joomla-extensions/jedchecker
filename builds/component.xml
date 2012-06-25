@@ -77,7 +77,7 @@
 
         <copy todir="${destination.dir}/administrator/language/">
             <fileset dir="${dirs.source}/administrator/language/">
-                <include name="**/*.${component.name}.**"/>
+                <include name="**/*.com_${component.name}.**"/>
             </fileset>
         </copy>
 
@@ -96,7 +96,7 @@
             <then>
                 <copy todir="${destination.dir}/language/">
                     <fileset dir="${dirs.source}/language/">
-                        <include name="**/*.${component.name}.ini"/>
+                        <include name="**/*.com_${component.name}.ini"/>
                     </fileset>
                 </copy>
             </then>
