@@ -73,7 +73,13 @@ class jedcheckerRulesJexec
             $pos_2 = strpos($line, '_JEXEC');
 
             // Skip the line if _JEXEC is not found
-            if($pos_2 === false) continue;
+            if($pos_2 === false) {
+                // Alternatively search for JPATH_PLATFORM
+                $pos_2 = strpos($line, 'JPATH_PLATFORM');
+
+                // Nothing found, skip the line
+                if($pos_2 === false) continue;
+            }
 
             // Search for "defined" and "die". "or" may not be present
             // depending on syntax
