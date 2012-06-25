@@ -60,7 +60,7 @@ JHtml::script('media/com_jedchecker/js/police.js');
             <h2><?php echo JText::_('COM_JEDCHECKER_WALL_OF_HONOR'); ?></h2>
             <p><?php echo JText::_('COM_JEDCHECKER_PEOPLE_THAT_HAVE_HELPED_WITH_THE_DEVELOPMENT'); ?></p>
             <ul>
-                <li>Tobias Kuhn (<a href="http://projectfork.com" target="_blank">projectfork</a>)</li>
+                <li>Tobias Kuhn (<a href="http://projectfork.net" target="_blank">projectfork</a>)</li>
             </ul>
         </div>
     </div>
