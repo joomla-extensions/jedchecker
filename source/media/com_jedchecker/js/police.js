@@ -13,6 +13,12 @@ var police = new Class({
         var self = this;
         this.setOptions(options);
 
+        // Clear result from any previous check
+        if(document.id('police-check-result').getChildren('div').length > 0) {
+            document.id('police-check-result').empty();
+        }
+        
+
         this.options.rules.each(function(rule){
            self.check(rule);
         });
