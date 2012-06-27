@@ -109,6 +109,12 @@ JHtml::script('media/com_jedchecker/js/police.js');
 
                     </p>
                 </li>
+                <li>
+                    <p>
+                        <span class="rule"><?php echo JText::_('COM_JEDCHECKER_RULE_PH3'); ?></span><br />
+                        <?php echo JText::_('COM_JEDCHECKER_RULE_PH3_DESC'); ?>
+                    </p>
+                </li>
             </ul>
         </div>
     </div>
