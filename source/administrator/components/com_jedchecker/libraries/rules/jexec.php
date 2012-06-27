@@ -68,33 +68,43 @@ class jedcheckerRulesJexec
     {
         $content = (array) file($file);
 
+        $defines = array(
+            '_JEXEC',
+            'JPATH_PLATFORM',
+            'JPATH_BASE',
+            'AKEEBAENGINE',
+            'WF_EDITOR'
+        );
+
         foreach($content AS $line)
         {
-            $pos_2 = strpos($line, '_JEXEC');
+            foreach ($defines AS $define)
+            {
+                // Search for "defined"
+                $pos_1 = stripos($line, 'defined');
+                // Skip the line if "defined" is not found
+                if ($pos_1 === false) {
+                    continue;
+                }
 
-            // Skip the line if _JEXEC is not found
-            if($pos_2 === false) {
-                // Alternatively search for JPATH_PLATFORM
-                $pos_2 = strpos($line, 'JPATH_PLATFORM');
+                // Search for "die".
+                //  "or" may not be present depending on syntax
+                $pos_3 = stripos($line, 'die');
+                // Skip the line if "die" is not found
+                if ($pos_3 === false) {
+                    continue;
+                }
 
-                // Nothing found, skip the line
+                // Search for the define
+                $pos_2 = strpos($line, $define);
+                // Skip the line if the define is not found
                 if($pos_2 === false) continue;
-            }
 
-            // Search for "defined" and "die". "or" may not be present
-            // depending on syntax
-            $pos_1 = stripos($line, 'defined');
-            $pos_3 = stripos($line, 'die');
-
-            // Both words must be present
-            if($pos_1 === false || $pos_3 === false) {
-                continue;
-            }
-
-            // Check the position of the words
-            if($pos_2 > $pos_1 && $pos_3 > $pos_2) {
-                unset($content);
-                return true;
+                // Check the position of the words
+                if($pos_2 > $pos_1 && $pos_3 > $pos_2) {
+                    unset($content);
+                    return true;
+                }
             }
         }
 
