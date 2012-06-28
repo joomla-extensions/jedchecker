@@ -24,7 +24,7 @@ class jedcheckerRulesHtmlindexes {
         $indexes = array_replace($this->folders, $this->indexes);
 
         echo '<span class="rule">'.JText::_('COM_JEDCHECKER_RULE_SE1') . '</span><br />';
-        if(count($indexes)) {
+        if(count($indexes) && in_array(false, $indexes)) {
             foreach($indexes as $key => $index) {
                 if(!$index) {
                     echo $key . '<br />';
