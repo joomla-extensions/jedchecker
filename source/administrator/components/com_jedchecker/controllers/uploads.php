@@ -122,7 +122,7 @@ class jedcheckerControllerUploads extends JController
                         $this->unzipAll($unzip);
                     }
                 }
-            } else {
+            } else if (!$iterator->isDot()) {
                 $this->unzipAll($file->getPathname());
 
             }
