@@ -61,9 +61,9 @@ JHtml::script('media/com_jedchecker/js/police.js');
             <p><?php echo JText::_('COM_JEDCHECKER_PEOPLE_THAT_HAVE_HELPED_WITH_THE_DEVELOPMENT'); ?></p>
             <ul>
                 <li>Tobias Kuhn (<a href="http://projectfork.net" target="_blank">projectfork</a>)</li>
-                <li>Peter van Westen (<a href="http://www.nonumber.nl/" target="_blank">NoNumber!</a>)</li>
-                <li>Alain Rivest (<a href="http://aldra.ca/" target="_blank">Aldra.ca</a>)</li>
-                <li>OpenTranslators (<a href="http://opentranslators.org/" target="_blank">opentranslators.org</a>)</li>
+                <li>Peter van Westen (<a href="http://www.nonumber.nl" target="_blank">NoNumber</a>)</li>
+                <li>Alain Rivest (<a href="http://aldra.ca" target="_blank">Aldra.ca</a>)</li>
+                <li>OpenTranslators (<a href="http://opentranslators.org" target="_blank">opentranslators.org</a>)</li>
             </ul>
         </div>
     </div>
@@ -81,27 +81,6 @@ JHtml::script('media/com_jedchecker/js/police.js');
                     <p>
                         <span class="rule"><?php echo JText::_('COM_JEDCHECKER_RULE_SE1'); ?></span><br />
                         <?php echo JText::_('COM_JEDCHECKER_RULE_SE1_DESC'); ?>
-                    </p>
-
-                    <p>
-                        <?php echo JText::_('COM_JEDCHECKER_RULE_SE1_MORE_INFO_INTERPRETING'); ?> <br />
-                        <?php echo JText::_('COM_JEDCHECKER_RULE_SE1_MORE_INFO_INTERPRETING1'); ?><br />
-
-                        <i>administrator/components/your_component</i> <br/>
-                        <i>components/your_component</i> <br/>
-                        <?php echo JText::_('COM_JEDCHECKER_RULE_SE1_MORE_INFO_INTERPRETING2'); ?><br />
-
-                        <i>administrator</i><br/>
-                        <i>administrator/components</i><br/>
-                        <i>administrator/components/your_component</i><br/>
-                        <i>components/</i><br/>
-                        <i>components/your_component</i><br/>
-                        <?php echo JText::_('COM_JEDCHECKER_RULE_SE1_MORE_INFO_INTERPRETING3'); ?><br />
-
-                        <i>administrator/components/your_component</i><br/>
-                        <i>components/your_component</i><br/>
-                        <?php echo JText::_('COM_JEDCHECKER_RULE_SE1_MORE_INFO_INTERPRETING4'); ?>
-
                     </p>
                 </li>
                 <li>
