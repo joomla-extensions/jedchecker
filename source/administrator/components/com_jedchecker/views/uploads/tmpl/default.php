@@ -61,6 +61,8 @@ JHtml::script('media/com_jedchecker/js/police.js');
             <p><?php echo JText::_('COM_JEDCHECKER_PEOPLE_THAT_HAVE_HELPED_WITH_THE_DEVELOPMENT'); ?></p>
             <ul>
                 <li>Tobias Kuhn (<a href="http://projectfork.net" target="_blank">projectfork</a>)</li>
+                <li>Peter van Westen (<a href="http://www.nonumber.nl/" target="_blank">NoNumber!</a>)</li>
+                <li>Alain Rivest (<a href="http://aldra.ca/" target="_blank">Aldra.ca</a>)</li>
             </ul>
         </div>
     </div>
