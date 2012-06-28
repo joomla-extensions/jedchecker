@@ -63,6 +63,7 @@ JHtml::script('media/com_jedchecker/js/police.js');
                 <li>Tobias Kuhn (<a href="http://projectfork.net" target="_blank">projectfork</a>)</li>
                 <li>Peter van Westen (<a href="http://www.nonumber.nl/" target="_blank">NoNumber!</a>)</li>
                 <li>Alain Rivest (<a href="http://aldra.ca/" target="_blank">Aldra.ca</a>)</li>
+                <li>OpenTranslators (<a href="http://opentranslators.org/" target="_blank">opentranslators.org</a>)</li>
             </ul>
         </div>
     </div>
