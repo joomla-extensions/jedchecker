@@ -77,26 +77,25 @@ JHtml::script('media/com_jedchecker/js/police.js');
                 <?php echo JText::_('COM_JEDCHECKER_HOW_TO_INTERPRET_RESULTS'); ?>
             </h2>
             <ul>
-                <li>
-                    <p>
-                        <span class="rule"><?php echo JText::_('COM_JEDCHECKER_RULE_SE1'); ?></span><br />
-                        <?php echo JText::_('COM_JEDCHECKER_RULE_SE1_DESC'); ?>
-                    </p>
-                </li>
-                <li>
-                    <p>
-                        <span class="rule"><?php echo JText::_('COM_JEDCHECKER_RULE_PH2'); ?></span><br />
-                        <?php echo JText::_('COM_JEDCHECKER_RULE_PH2_DESC'); ?>
+                <?php
+                foreach($this->jsOptions['rules'] AS $rule)
+                {
+                    $class = 'jedcheckerRules'.ucfirst($rule);
 
-
-                    </p>
-                </li>
-                <li>
-                    <p>
-                        <span class="rule"><?php echo JText::_('COM_JEDCHECKER_RULE_PH3'); ?></span><br />
-                        <?php echo JText::_('COM_JEDCHECKER_RULE_PH3_DESC'); ?>
-                    </p>
-                </li>
+                    if(!class_exists($class)) continue;
+                    $rule = new $class();
+                    ?>
+                    <li>
+                        <p>
+                            <span class="rule">
+                                <?php echo JText::_('COM_JEDCHECKER_RULE').' '.$rule->get('id').' - '.JText::_($rule->get('title'));?>
+                            </span>
+                            <p><?php echo JText::_($rule->get('description')); ?></p>
+                        </p>
+                    </li>
+                    <?php
+                }
+                ?>
             </ul>
         </div>
     </div>

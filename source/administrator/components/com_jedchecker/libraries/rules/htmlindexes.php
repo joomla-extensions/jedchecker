@@ -1,7 +1,7 @@
 <?php
 /**
  * @author Daniel Dimitrov - compojoom.com
- * @date: 02.06.12
+ * @date: 06.07.12
  *
  * @copyright  Copyright (C) 2008 - 2012 compojoom.com . All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE
@@ -9,13 +9,39 @@
 
 defined('_JEXEC') or die('Restricted access');
 
-class jedcheckerRulesHtmlindexes {
+// Include the rule base class
+require_once(JPATH_COMPONENT_ADMINISTRATOR.'/models/rule.php');
+
+
+class jedcheckerRulesHtmlindexes extends JEDcheckerRule
+{
+    /**
+     * The formal ID of this rule. For example: SE1.
+     *
+     * @var    string
+     */
+    protected $id = 'SE1';
+
+    /**
+     * The title or caption of this rule.
+     *
+     * @var    string
+     */
+    protected $title = 'COM_JEDCHECKER_RULE_SE1';
+
+    /**
+     * The description of this rule.
+     *
+     * @var    string
+     */
+    protected $description = 'COM_JEDCHECKER_RULE_SE1_DESC';
+
     public $folders = array();
     public $indexes = array();
 
-    public function check($startFolder)
+    public function check()
     {
-        $this->findHtml($startFolder, 1);
+        $this->findHtml($this->basedir, 1);
 
         /**
          * let us "merge" the 2 arrays
@@ -23,18 +49,14 @@ class jedcheckerRulesHtmlindexes {
          */
         $indexes = array_replace($this->folders, $this->indexes);
 
-        echo '<span class="rule">'.JText::_('COM_JEDCHECKER_RULE_SE1') . '</span><br />';
         if(count($indexes) && in_array(false, $indexes)) {
-            foreach($indexes as $key => $index) {
+            foreach($indexes as $key => $index)
+            {
                 if(!$index) {
-                    echo $key . '<br />';
+                    $this->report->addError($key, 'COM_JEDCHECKER_ERROR_HTML_INDEX_NOT_FOUND');
                 }
             }
-        } else {
-            echo '<span class="success">'.JText::_('COM_JEDCHECKER_EVERYTHING_SEEMS_TO_BE_FINE_WITH_THAT_RULE').'</span>';
         }
-
-
     }
 
     /**
@@ -45,25 +67,12 @@ class jedcheckerRulesHtmlindexes {
      */
     public function findHtml($start, $root = 0)
     {
-
         // array of system folders (regex)
         // will match paths ending with these folders
-        $system_folders = array(
-            'administrator',
-            'components',
-            'language',
-            'language/.*',
-            'media',
-            'modules',
-            'plugins',
-            'plugins/content',
-            'plugins/editors',
-            'plugins/editors-xtd',
-            'plugins/finder',
-            'plugins/search',
-            'plugins/system',
-            'plugins/user'
-        );
+        $system_folders = explode(',', $this->params->get('sysfolders'));
+
+        // Make sure there are no spaces
+        array_walk($system_folders, create_function('&$v', '$v = trim($v);'));
 
         $iterator = new DirectoryIterator($start);
 
