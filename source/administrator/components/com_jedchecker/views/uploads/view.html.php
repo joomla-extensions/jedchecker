@@ -24,11 +24,15 @@ class jedcheckerViewUploads extends JView
 
     public function getRules()
     {
-        $exclude = array('.svn', 'CVS', '.DS_Store', '__MACOSX', 'index.html');
-        $files = JFolder::files(JPATH_COMPONENT_ADMINISTRATOR . '/libraries/rules', '.', false, false, $exclude);
-        foreach ($files as $file) {
-            $rules[] = str_replace('.php', '', $file);
+        $rules = array();
+        $files = JFolder::files(JPATH_COMPONENT_ADMINISTRATOR . '/libraries/rules', '.php$', false, false);
+        JLoader::discover('jedcheckerRules',JPATH_COMPONENT_ADMINISTRATOR . '/libraries/rules/');
+
+        foreach ($files as $file)
+        {
+            $rules[] = substr($file, 0, -4);
         }
+
         return $rules;
     }
 
