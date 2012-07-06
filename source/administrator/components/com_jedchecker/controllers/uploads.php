@@ -28,6 +28,7 @@ class jedcheckerControllerUploads extends JController
      */
     public function upload()
     {
+        JRequest::checkToken() or die( 'Invalid Token' );
         $appl = JFactory::getApplication();
         $file = JRequest::getVar('extension', '', 'files', 'array');
         if ($file['tmp_name']) {
@@ -71,6 +72,7 @@ class jedcheckerControllerUploads extends JController
      */
     public function unzip()
     {
+        JRequest::checkToken() or die( 'Invalid Token' );
         $appl = JFactory::getApplication();
         // if folder doesn't exist - create it!
         if(!JFolder::exists($this->pathUnzipped)) {
@@ -122,7 +124,7 @@ class jedcheckerControllerUploads extends JController
                         $this->unzipAll($unzip);
                     }
                 }
-            } else {
+            } else if (!$iterator->isDot()) {
                 $this->unzipAll($file->getPathname());
 
             }

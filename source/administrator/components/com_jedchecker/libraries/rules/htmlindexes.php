@@ -13,8 +13,9 @@ class jedcheckerRulesHtmlindexes {
     public $folders = array();
     public $indexes = array();
 
-    public function check($startFolder){
-        $this->findHtml($startFolder);
+    public function check($startFolder)
+    {
+        $this->findHtml($startFolder, 1);
 
         /**
          * let us "merge" the 2 arrays
@@ -23,7 +24,7 @@ class jedcheckerRulesHtmlindexes {
         $indexes = array_replace($this->folders, $this->indexes);
 
         echo '<span class="rule">'.JText::_('COM_JEDCHECKER_RULE_SE1') . '</span><br />';
-        if(count($indexes)) {
+        if(count($indexes) && in_array(false, $indexes)) {
             foreach($indexes as $key => $index) {
                 if(!$index) {
                     echo $key . '<br />';
@@ -42,30 +43,58 @@ class jedcheckerRulesHtmlindexes {
      * + it also saves all folders names in the folders array (folder_name => false)
      * @param $start
      */
-    public function findHtml($start) {
-        $iterator = new RecursiveDirectoryIterator($start);
+    public function findHtml($start, $root = 0)
+    {
 
-        // there should be a better way to find out if the main directory has an index.html file...
-        if(file_exists($start.'/index.html')) {
-            $this->folders[$start] = true;
-        } else {
-            $this->folders[$start] = false;
-        }
+        // array of system folders (regex)
+        // will match paths ending with these folders
+        $system_folders = array(
+            'administrator',
+            'components',
+            'language',
+            'language/.*',
+            'media',
+            'modules',
+            'plugins',
+            'plugins/content',
+            'plugins/editors',
+            'plugins/editors-xtd',
+            'plugins/finder',
+            'plugins/search',
+            'plugins/system',
+            'plugins/user'
+        );
 
-        foreach($iterator as $file){
-            if($file->isFile()) {
-                if($file->getFileName() == 'index.html') {
-                    // fill an array with the tables that contain an index.html file
-                    $this->indexes[$file->getPath()] = true;
+        $iterator = new DirectoryIterator($start);
+
+        foreach ($iterator as $file) {
+            if ($file->isFile()) {
+                continue;
+            }
+
+            $path = $file->getPathname();
+
+            // set the path to the root start path only for first time
+            if ($root && $file->getFileName() == '.') {
+                $path = $start;
+            } else if ($file->isDot()) {
+                continue;
+            }
+
+            $this->folders[$path] = true;
+            // only check index.html in non-system folders
+            if (!preg_match('#/('.implode('|', $system_folders).')$#i', str_replace('\\', '/', $path))) {
+                if (!file_exists($path.'/index.html')) {
+                    $this->folders[$path] = false;
                 }
             } else {
-                //let us save all folders in an array
-                $this->folders[$file->getPathname()] = false;
-                $this->findHtml($file->getPathname());
-
+                // set parent to true too
+                $this->folders[dirname($path)] = true;
+            }
+            // search in subfolders if not same as start
+            if ($path != $start) {
+                $this->findHtml($path);
             }
         }
-
-
     }
 }
