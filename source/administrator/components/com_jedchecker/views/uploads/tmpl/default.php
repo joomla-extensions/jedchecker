@@ -102,5 +102,6 @@ JHtml::script('media/com_jedchecker/js/police.js');
 </div>
 <div class="clr"></div>
 <div class="copyright">
+    <?php echo JText::sprintf('COM_JEDCHECKER_LEAVE_A_REVIEW_JED', 'http://extensions.joomla.org/extensions/tools/development-tools/21336'); ?> <br />
     <?php echo JText::sprintf('COM_JEDCHECKER_DEVELOPED_BY', 'https://compojoom.com'); ?> :)
 </div>
