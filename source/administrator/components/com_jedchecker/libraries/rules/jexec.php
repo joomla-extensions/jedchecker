@@ -1,7 +1,7 @@
 <?php
 /**
  * @author     eaxs
- * @date       06/08/2012
+ * @date       07/06/2012
  * @copyright  Copyright (C) 2008 - 2012 compojoom.com . All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
@@ -9,52 +9,58 @@
 defined('_JEXEC') or die('Restricted access');
 
 
+// Include the rule base class
+require_once(JPATH_COMPONENT_ADMINISTRATOR.'/models/rule.php');
+
+
 /**
  * This class searches all files for the _JEXEC check
  * which prevents direct file access.
  *
  */
-class jedcheckerRulesJexec
+class jedcheckerRulesJexec extends JEDcheckerRule
 {
     /**
-     * Holds all file names that failed to pass the check
-     * @var    array
+     * The formal ID of this rule. For example: SE1.
+     *
+     * @var    string
      */
-    protected $missing;
+    protected $id = 'PH2';
+
+    /**
+     * The title or caption of this rule.
+     *
+     * @var    string
+     */
+    protected $title = 'COM_JEDCHECKER_RULE_PH2';
+
+    /**
+     * The description of this rule.
+     *
+     * @var    string
+     */
+    protected $description = 'COM_JEDCHECKER_RULE_PH2_DESC';
 
 
     /**
      * Initiates the file search and check
      *
-     * @param     string    $basedir    The base directory of the package to check
      * @return    void
      */
-    public function check($basedir)
+    public function check()
     {
-        $this->missing = array();
-        $files = JFolder::files($basedir, '.php', true, true);
+        // Find all php files of the extension
+        $files = JFolder::files($this->basedir, '.php$', true, true);
 
-        // Iterate through all files in the package
+        // Iterate through all files
         foreach($files as $file)
         {
             // Try to find the _JEXEC check in the file
-            if(!$this->findJExec($file)) {
-                $this->missing[] = $file;
+            if(!$this->find($file)) {
+                // Add as error to the report if it was not found
+                $this->report->addError($file, 'COM_JEDCHECKER_ERROR_JEXEC_NOT_FOUND');
             }
         }
-
-
-        echo '<span class="rule">'.JText::_('COM_JEDCHECKER_RULE_PH2') .'</span><br/>';
-        if(count($this->missing)) {
-            // Echo all files which don't have the _JEXEC check
-            foreach($this->missing AS $file)
-            {
-                echo $file.'<br/>';
-            }
-        } else {
-            echo '<span class="success">'.JText::_('COM_JEDCHECKER_EVERYTHING_SEEMS_TO_BE_FINE_WITH_THAT_RULE').'</span>';
-        }
-
     }
 
 
@@ -64,36 +70,36 @@ class jedcheckerRulesJexec
      * @param     string    $file    The path to the file
      * @return    boolean            True if the statement was found, otherwise False.
      */
-    protected function findJexec($file)
+    protected function find($file)
     {
         $content = (array) file($file);
 
-        $defines = array(
-            '_JEXEC',
-            'JPATH_PLATFORM',
-            'JPATH_BASE',
-            'AKEEBAENGINE',
-            'WF_EDITOR'
-        );
+        // Get the constants to look for
+        $defines = $this->params->get('constants');
+        $defines = explode(',', $defines);
 
-        foreach($content AS $line)
+        foreach ($content AS $line)
         {
+            // Search for "defined"
+            $pos_1 = stripos($line, 'defined');
+
+            // Skip the line if "defined" is not found
+            if ($pos_1 === false) {
+                continue;
+            }
+
+            // Search for "die".
+            //  "or" may not be present depending on syntax
+            $pos_3 = stripos($line, 'die');
+            // Skip the line if "die" is not found
+            if ($pos_3 === false) {
+                continue;
+            }
+
+            // Search for the constant name
             foreach ($defines AS $define)
             {
-                // Search for "defined"
-                $pos_1 = stripos($line, 'defined');
-                // Skip the line if "defined" is not found
-                if ($pos_1 === false) {
-                    continue;
-                }
-
-                // Search for "die".
-                //  "or" may not be present depending on syntax
-                $pos_3 = stripos($line, 'die');
-                // Skip the line if "die" is not found
-                if ($pos_3 === false) {
-                    continue;
-                }
+                $define = trim($define);
 
                 // Search for the define
                 $pos_2 = strpos($line, $define);
