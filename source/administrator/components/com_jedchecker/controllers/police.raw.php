@@ -27,14 +27,23 @@ class jedcheckerControllerPolice extends JController
 
         // Stop if the class does not exist
         if(!class_exists($class)) {
+            echo 'Class '.$class.' does not exist';
             return false;
         }
 
-        // Prepare rule properties
-        $folders    = JFolder::folders($path);
-        $properties = array('basedir' => $path.'/'.$folders[0]);
+        // Loop through each folder and police it
+        $folders    = $this->getFolders();
+        foreach($folders as $folder) {
+            $this->police($class, $folder);
+        }
 
+        return true;
+    }
+
+    protected function police($class, $folder)
+    {
         // Create instance of the rule
+        $properties = array('basedir' => $folder);
         $police = new $class($properties);
 
         // Perform check
@@ -47,6 +56,44 @@ class jedcheckerControllerPolice extends JController
            .  JText::_('COM_JEDCHECKER_RULE') .' ' . JText::_($police->get('id'))
            . ' - '. JText::_($police->get('title'))
            . '</span><br/>'
-           . $report->getHTML();
+           . '<span class="folder">Folder: '.str_replace(JPATH_ROOT, '', $folder).'</span><br/>'
+           . $report->getHTML()
+           . '<br/>&nbsp;<br/>'
+        ;
+
+        flush();
+        ob_flush();
+    }
+
+    protected function getFolders()
+    {
+        $folders = array();
+
+        // Add the folders in the "jed_checked/unzipped" folder
+        $path = JFactory::getConfig()->get('tmp_path') . '/jed_checker/unzipped';
+        $tmp_folders = JFolder::folders($path);
+        if(!empty($tmp_folders)) {
+            foreach($tmp_folders as $tmp_folder) {
+                $folders[] = $path.'/'.$tmp_folder;
+            }
+        }
+
+        // Parse the local.ini file and parse it
+        $local = JFactory::getConfig()->get('tmp_path') . '/jed_checker/local.txt';
+        if(JFile::exists($local)) {
+            $content = JFile::read($local);
+            if(!empty($content)) {
+                $lines = explode("\n", $content);
+                if(!empty($lines)) {
+                    foreach($lines as $line) {
+                        if(!empty($line) && JFolder::exists(JPATH_ROOT.'/'.$line)) {
+                            $folders[] = JPATH_ROOT.'/'.$line;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $folders;
     }
 }
