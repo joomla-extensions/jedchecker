@@ -59,6 +59,11 @@ class jedcheckerViewUploads extends JView
             if(JFolder::folders($path, '.', false) || JFolder::files($path, '.', false)) {
                 return true;
             }
+        } else {
+            $local = JFactory::getConfig()->get('tmp_path') . '/jed_checker/local.txt';
+            if ($type == 'unzipped' && JFile::exists($local)) {
+                return true;
+            }
         }
         return false;
     }
