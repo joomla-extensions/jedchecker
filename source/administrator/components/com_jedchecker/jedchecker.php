@@ -8,12 +8,13 @@
  */
 
 defined('_JEXEC') or die('Restricted access');
-jimport('joomla.application.component.controller');
+jimport('joomla.application.component.controllerlegacy');
 
-$view = JRequest::getCmd('view','');
-if($view == '' && JRequest::getCmd('task') == '') {
-    JRequest::setVar('view', 'uploads');
+$input = JFactory::getApplication()->input;
+$view = $input->getCmd('view','');
+if($view == '' && $input->getCmd('task', '') == '') {
+	$input->set('view', 'uploads');
 }
-$controller = JController::getInstance('jedchecker');
-$controller->execute(JRequest::getCmd('task'));
+$controller = JControllerLegacy::getInstance('jedchecker');
+$controller->execute($input->getCmd('task',''));
 $controller->redirect();

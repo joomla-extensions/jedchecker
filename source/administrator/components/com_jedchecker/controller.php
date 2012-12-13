@@ -9,7 +9,7 @@
 
 defined( '_JEXEC' ) or die ( 'Restricted access' );
 
-class jedcheckerController extends JController
+class jedcheckerController extends JControllerlegacy
 {
 
 }

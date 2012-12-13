@@ -9,9 +9,9 @@
 
 defined('_JEXEC') or die('Restricted access');
 
-jimport('joomla.application.component.view');
+jimport('joomla.application.component.viewlegacy');
 
-class jedcheckerViewUploads extends JView
+class jedcheckerViewUploads extends JViewLegacy
 {
 
     public function display($tpl = null)
@@ -55,6 +55,7 @@ class jedcheckerViewUploads extends JView
      */
     private function filesExist($type) {
         $path = JFactory::getConfig()->get('tmp_path') . '/jed_checker/'.$type;
+		jimport('joomla.filesystem.folder');
         if(JFolder::exists($path)) {
             if(JFolder::folders($path, '.', false) || JFolder::files($path, '.', false)) {
                 return true;

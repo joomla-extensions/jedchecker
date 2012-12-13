@@ -11,10 +11,11 @@ defined('_JEXEC') or die('Restricted access');
 
 
 jimport('joomla.filesystem');
+jimport('joomla.filesystem.folder');
 jimport('joomla.filesystem.archive');
 
 
-class jedcheckerControllerPolice extends JController
+class jedcheckerControllerPolice extends JControllerlegacy
 {
     public function check()
     {
