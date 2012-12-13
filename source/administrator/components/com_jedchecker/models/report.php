@@ -32,13 +32,13 @@ class JEDcheckerReport extends JObject
     protected $basedir;
 
 
-    /**
-     * Constructor. Initialises variables.
-     *
-     * @param     mixed    $properties    See JObject::__construct
-     *
-     * @return    void
-     */
+	/**
+	 * Constructor. Initialises variables.
+	 *
+	 * @param     mixed    $properties    See JObject::__construct
+	 *
+	 * @return \JEDcheckerReport
+	 */
     public function __construct($properties = null)
     {
         // Construct JObject
@@ -60,11 +60,13 @@ class JEDcheckerReport extends JObject
 
         $this->data['errors'] = array();
         $this->data['compat'] = array();
+        $this->data['info'] = array();
 
         $this->data['count'] = new stdClass();
         $this->data['count']->total  = 0;
         $this->data['count']->errors = 0;
         $this->data['count']->compat = 0;
+        $this->data['count']->info = 0;
     }
 
 
@@ -74,7 +76,7 @@ class JEDcheckerReport extends JObject
      * @param    string     $location    The location of the error. Can be a path to a file or dir.
      * @param    string     $text        An optional description of the error.
      * @param    integer    $line        If $location is a file, you may specify the line where the
-     *                                   error occured.
+     *                                   error occurred.
      *
      * @return    void
      */
@@ -88,6 +90,26 @@ class JEDcheckerReport extends JObject
         $this->addItem($item, 'errors');
     }
 
+	/**
+	 * Adds an error to the report.
+	 *
+	 * @param    string     $location    The location of the error. Can be a path to a file or dir.
+	 * @param    string     $text        An optional description of the error.
+	 * @param    integer    $line        If $location is a file, you may specify the line where the
+	 *                                   error occurred.
+	 *
+	 * @return    void
+	 */
+	public function addInfo($location, $text = NULL, $line = 0)
+	{
+		$item = new stdClass();
+		$item->location = $location;
+		$item->line     = $line;
+		$item->text     = (empty($text) ? '' : JText::_($text));
+
+		$this->addItem($item, 'info');
+	}
+
 
     /**
      * Adds a compatibility issue to the report.
@@ -95,7 +117,7 @@ class JEDcheckerReport extends JObject
      * @param    string     $location    The location of the issue. Can be a path to a file or dir.
      * @param    string     $text        An optional description of the issue
      * @param    integer    $line        If $location is a file, you may specify the line where the
-     *                                   issue occured.
+     *                                   issue occurred.
      *
      * @return    void
      */
@@ -128,6 +150,7 @@ class JEDcheckerReport extends JObject
         else {
             $error_count  = $this->data['count']->errors;
             $compat_count = $this->data['count']->compat;
+            $info_count = $this->data['count']->info;
 
             // Go through the error list
             if($error_count > 0) {
@@ -188,6 +211,37 @@ class JEDcheckerReport extends JObject
 
                 $html[] = '</ul>';
             }
+
+			// Go through the compat list
+			if($info_count > 0) {
+				$html[] = '<strong>'.$info_count. ' '.JText::_('COM_JEDCHECKER_INFO').'</strong>';
+				$html[] = '<ul class="jedchecker-info-message">';
+
+				foreach($this->data['info'] AS $i => $item)
+				{
+					$num = $i + 1;
+
+					// Add the error count number
+					$html[] = '<li><p><strong>#'.str_pad($num, 3, '0', STR_PAD_LEFT).'</strong> ';
+					$html[] = $item->location;
+
+					// Add line information if given
+					if($item->line > 0) {
+						$html[] = ' '.JText::_('COM_JEDCHECKER_IN_LINE').': <strong>'.$item->line.'</strong>';
+					}
+
+					$html[] = '</p>';
+
+					// Add text if given
+					if(!empty($item->text)) {
+						$html[] = '<small>'.$item->text.'</small>';
+					}
+
+					$html[] = '</li>';
+				}
+
+				$html[] = '</ul>';
+			}
         }
 
 

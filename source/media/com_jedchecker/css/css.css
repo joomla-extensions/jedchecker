@@ -46,3 +46,12 @@
     color: green;
     font-weight: bold;
 }
+
+.jedchecker-info-message {
+	background-color: #D9EDF7;
+	border: 1px solid #BCE8F1;
+	color: #3A87AD;
+	margin: 5px;
+	padding: 5px;
+	list-style:none;
+}
