@@ -113,7 +113,7 @@ class jedcheckerControllerUploads extends JControllerlegacy
 
         foreach ($iterator as $file) {
             if ($file->isFile()) {
-                $extension = $file->getExtension();
+                $extension = pathinfo($file->getFilename(), PATHINFO_EXTENSION);;
                 if ($extension == 'zip') {
                     $unzip = $file->getPath() . '/' . $file->getBasename('.' . $extension);
                     $result = JArchive::extract($file->getPathname(), $unzip);
