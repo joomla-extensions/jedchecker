@@ -4,3 +4,6 @@
 /builds/build.properties
 /source/administrator/components/com_jedchecker/tmp
 /tx.exe
+/.settings
+/.buildpath
+/.project

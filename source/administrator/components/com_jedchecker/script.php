@@ -16,7 +16,7 @@ class com_jedcheckerInstallerScript
 
     function preflight( $type, $parent ) {
         $this->parent = $parent;
-        if (version_compare(PHP_VERSION, '5.3.6', '<')) {
+        if (version_compare(PHP_VERSION, '5.3.1', '<')) {
             $this->loadLanguage();
             Jerror::raiseWarning(null, JText::sprintf('COM_JEDCHECKER_PHP_VERSION_INCOMPATIBLE', PHP_VERSION, '5.3.6'));
             return false;
