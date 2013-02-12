@@ -78,7 +78,7 @@ class jedcheckerControllerPolice extends JControllerlegacy
         }
 
         // Parse the local.txt file and parse it
-        $local = JFactory::getConfig()->get('tmp_path') . '/com_jedchecker/local.txt';
+        $local = JFactory::getConfig()->get('tmp_path') . '/jed_checker/local.txt';
         if (JFile::exists($local)) {
             $content = JFile::read($local);
             if (!empty($content)) {
