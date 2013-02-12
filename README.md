@@ -18,12 +18,11 @@ the upload-button. Once uploaded, the contents of the package (your files) will 
 
 Adding rules
 ------------
-If you want to write a rule have a look a the library/rules folder.
+If you want to write a rule have a look a the `administrator/components/com_jedchecker/library/rules` folder.
 
-You just need to add a new file with your rule. Example:
-yourrule.php
+You just need to add a new file with your rule, for example `yourrule.php`.
 
-"yourrule.php" needs to have a class jedcheckerRulesYourrule and that class needs to have a
+The file `yourrule.php` needs to have a class `jedcheckerRulesYourrule` and that class needs to have a
 function that accepts the basedir as parameter. This is all - the component will automatically call
 your rule check function.
 
