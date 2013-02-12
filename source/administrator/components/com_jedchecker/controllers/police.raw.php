@@ -31,9 +31,19 @@ class jedcheckerControllerPolice extends JControllerlegacy
             return false;
         }
 
+        // Loop through each folder and police it
+        $folders    = $this->getFolders();
+        foreach ($folders as $folder) {
+            $this->police($class, $folder);
+        }
+
+        return true;
+    }
+
+    protected function police($class, $folder)
+    {
         // Prepare rule properties
-        $folders    = JFolder::folders($path);
-        $properties = array('basedir' => $path.'/'.$folders[0]);
+        $properties = array('basedir' => $folder);
 
         // Create instance of the rule
         $police = new $class($properties);
@@ -49,5 +59,45 @@ class jedcheckerControllerPolice extends JControllerlegacy
            . ' - '. JText::_($police->get('title'))
            . '</span><br/>'
            . $report->getHTML();
+
+        flush();
+        ob_flush();
+    }
+
+    protected function getFolders()
+    {
+        $folders = array();
+
+        // Add the folders in the "jed_checked/unzipped" folder
+        $path = JFactory::getConfig()->get('tmp_path') . '/jed_checker/unzipped';
+        $tmp_folders = JFolder::folders($path);
+        if (!empty($tmp_folders)) {
+            foreach ($tmp_folders as $tmp_folder) {
+                $folders[] = $path.'/'.$tmp_folder;
+            }
+        }
+
+        // Parse the local.txt file and parse it
+        $local = JFactory::getConfig()->get('tmp_path') . '/jed_checker/local.txt';
+        if (JFile::exists($local)) {
+            $content = JFile::read($local);
+            if (!empty($content)) {
+                $lines = explode("\n", $content);
+                if (!empty($lines)) {
+                    foreach ($lines as $line) {
+                        $line = trim($line);
+                        if (!empty($line)) {
+                            if (JFolder::exists(JPATH_ROOT.'/'.$line)) {
+                                $folders[] = JPATH_ROOT.'/'.$line;
+                            } elseif (JFolder::exists($line)) {
+                                $folders[] = $line;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return $folders;
     }
 }

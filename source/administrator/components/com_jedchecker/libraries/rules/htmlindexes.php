@@ -88,6 +88,8 @@ class jedcheckerRulesHtmlindexes extends JEDcheckerRule
                 $path = $start;
             } else if ($file->isDot()) {
                 continue;
+            } else if ($file->getFileName() == '.svn') {
+                continue;
             }
 
             $this->folders[$path] = true;
