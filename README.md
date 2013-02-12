@@ -29,12 +29,14 @@ your rule check function.
 Checking on existing files and folders
 --------------------------------------
 The extension also supports a scan of a pre-defined set of existing files and folders.
-For this to work, add a list of folders to a textfile tmp/jed_checker/local.txt. 
+For this to work, add a list of folders to a textfile `tmp/jed_checker/local.txt`.
 There should be a folder on each line. 
 Once the file exists, a "Check" button becomes visible in the jedchecker-toolbar. Just hit it.
 
-Example "tmp/jed_checker/local.txt" file:
-    components/com_weblinks
-    administrator/components/com_weblinks
-    plugins/system
+Example `tmp/jed_checker/local.txt` file:
+
+        components/com_weblinks
+        administrator/components/com_weblinks
+        plugins/system
+
 
