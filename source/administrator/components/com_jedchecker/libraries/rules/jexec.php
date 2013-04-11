@@ -58,7 +58,7 @@ class jedcheckerRulesJexec extends JEDcheckerRule
             // Try to find the _JEXEC check in the file
             if(!$this->find($file)) {
                 // Add as error to the report if it was not found
-                $this->report->addError($file, 'COM_JEDCHECKER_ERROR_JEXEC_NOT_FOUND');
+                $this->report->addError($file, JText::_('COM_JEDCHECKER_ERROR_JEXEC_NOT_FOUND'));
             }
         }
     }

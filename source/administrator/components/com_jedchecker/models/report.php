@@ -85,7 +85,7 @@ class JEDcheckerReport extends JObject
         $item = new stdClass();
         $item->location = $location;
         $item->line     = $line;
-        $item->text     = (empty($text) ? '' : JText::_($text));
+        $item->text     = $text;
 
         $this->addItem($item, 'errors');
     }
@@ -105,7 +105,7 @@ class JEDcheckerReport extends JObject
 		$item = new stdClass();
 		$item->location = $location;
 		$item->line     = $line;
-		$item->text     = (empty($text) ? '' : JText::_($text));
+		$item->text     = $text;
 
 		$this->addItem($item, 'info');
 	}
@@ -126,7 +126,7 @@ class JEDcheckerReport extends JObject
         $item = new stdClass();
         $item->location = $location;
         $item->line     = $line;
-        $item->text     = empty($text) ? NULL : JText::_($text);
+        $item->text     = $text;
 
         $this->addItem($item, 'compat');
     }
@@ -224,6 +224,7 @@ class JEDcheckerReport extends JObject
 					// Add the error count number
 					$html[] = '<li><p><strong>#'.str_pad($num, 3, '0', STR_PAD_LEFT).'</strong> ';
 					$html[] = $item->location;
+
 
 					// Add line information if given
 					if($item->line > 0) {

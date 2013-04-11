@@ -83,7 +83,7 @@ class jedcheckerRulesXMLlicense extends JEDcheckerRule
 
         // Check if there's a license tag
         if (!isset($xml->license)) {
-            $this->report->addError($file, 'COM_JEDCHECKER_ERROR_XML_LICENSE_NOT_FOUND');
+            $this->report->addError($file, JText::_('COM_JEDCHECKER_ERROR_XML_LICENSE_NOT_FOUND'));
             return false;
         }
 
@@ -91,7 +91,7 @@ class jedcheckerRulesXMLlicense extends JEDcheckerRule
         if (stripos($xml->license, 'gpl') === false &&
             stripos($xml->license, 'general public license') === false)
         {
-            $this->report->addCompat($file, 'COM_JEDCHECKER_ERROR_XML_LICENSE_NOT_GPL');
+            $this->report->addCompat($file, JText::_('COM_JEDCHECKER_ERROR_XML_LICENSE_NOT_GPL'));
             return false;
         }
 
