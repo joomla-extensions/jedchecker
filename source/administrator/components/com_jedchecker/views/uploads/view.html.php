@@ -42,7 +42,7 @@ class jedcheckerViewUploads extends JViewLegacy
             JToolBarHelper::custom('uploads.unzip', 'unzip', 'unzip', 'unzip', false);
         }
         if($this->filesExist('unzipped')) {
-            JToolBarHelper::custom('police.check', 'police-check', 'police-check', 'check', false);
+            JToolBarHelper::custom('police.check', 'police-check', 'police-check', 'Check', false);
         }
 
         JToolBarHelper::title('JED checker');
@@ -53,11 +53,20 @@ class jedcheckerViewUploads extends JViewLegacy
      * @param $type
      * @return bool
      */
-    private function filesExist($type) {
+    private function filesExist($type) 
+    {
         $path = JFactory::getConfig()->get('tmp_path') . '/jed_checker/'.$type;
+
+        // Check for the existence of files
 		jimport('joomla.filesystem.folder');
         if(JFolder::exists($path)) {
             if(JFolder::folders($path, '.', false) || JFolder::files($path, '.', false)) {
+                return true;
+            }
+
+        } else {
+            $local = JFactory::getConfig()->get('tmp_path') . '/jed_checker/local.txt';
+            if ($type == 'unzipped' && JFile::exists($local)) {
                 return true;
             }
         }
