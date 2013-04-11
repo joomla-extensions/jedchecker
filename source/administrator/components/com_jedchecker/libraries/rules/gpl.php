@@ -111,7 +111,7 @@ class jedcheckerRulesGpl extends JEDcheckerRule
 				else
 				{
 					$this->report->addInfo($file,
-						JText::_('COM_JEDCHECKER_GPL_COMPATIBLE_LICENSE_WAS_FOUND') . ':'. '<strong>'.$line.'</line>',
+						JText::_('COM_JEDCHECKER_GPL_COMPATIBLE_LICENSE_WAS_FOUND') . ':'. '<strong>'.$line.'</strong>',
 						$key);
 					return true;
 				}
