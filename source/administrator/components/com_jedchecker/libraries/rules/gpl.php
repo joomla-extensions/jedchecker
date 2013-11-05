@@ -1,6 +1,7 @@
 <?php
 /**
- * @author     eaxs
+ * @author     eaxs <support@projectfork.net>
+ * @author     Daniel Dimitrov <daniel@compojoom.com>
  * @date       07/06/2012
  * @copyright  Copyright (C) 2008 - 2012 compojoom.com . All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE
@@ -14,11 +15,14 @@ require_once(JPATH_COMPONENT_ADMINISTRATOR . '/models/rule.php');
 
 
 /**
+ * class JedcheckerRulesGpl
+ *
  * This class searches all files for the _JEXEC check
  * which prevents direct file access.
  *
+ * @since  1.0
  */
-class jedcheckerRulesGpl extends JEDcheckerRule
+class JedcheckerRulesGpl extends JEDcheckerRule
 {
 	/**
 	 * The formal ID of this rule. For example: SE1.
@@ -40,7 +44,6 @@ class jedcheckerRulesGpl extends JEDcheckerRule
 	 * @var    string
 	 */
 	protected $description = 'COM_JEDCHECKER_RULE_PH1_DESC';
-
 
 	/**
 	 * Initiates the file search and check
@@ -64,18 +67,17 @@ class jedcheckerRulesGpl extends JEDcheckerRule
 		}
 	}
 
-
 	/**
 	 * Reads a file and searches for the _JEXEC statement
 	 *
-	 * @param     string $file    The path to the file
+	 * @param   string  $file  - The path to the file
 	 *
-	 * @return    boolean            True if the statement was found, otherwise False.
+	 * @return boolean True if the statement was found, otherwise False.
 	 */
 	protected function find($file)
 	{
-
 		$content = (array) file($file);
+
 		// Get the constants to look for
 		$licenses = $this->params->get('constants');
 		$licenses = explode(',', $licenses);
@@ -103,9 +105,12 @@ class jedcheckerRulesGpl extends JEDcheckerRule
 
 			if ($gpl || $gnu || $gpl_long)
 			{
-				$this->report->addInfo($file,
-					JText::_('COM_JEDCHECKER_PH1_LICENSE_FOUND') .':' .'<strong>'.$line.'</strong>',
-					$key);
+				$this->report->addInfo(
+					$file,
+					JText::_('COM_JEDCHECKER_PH1_LICENSE_FOUND') . ':' . '<strong>' . $line . '</strong>',
+					$key
+				);
+
 				return true;
 			}
 
@@ -116,6 +121,7 @@ class jedcheckerRulesGpl extends JEDcheckerRule
 
 				// Search for the license
 				$found = strpos($line, $license);
+
 				// Skip the line if the license is not found
 				if ($found === false)
 				{
@@ -123,9 +129,12 @@ class jedcheckerRulesGpl extends JEDcheckerRule
 				}
 				else
 				{
-					$this->report->addInfo($file,
-						JText::_('COM_JEDCHECKER_GPL_COMPATIBLE_LICENSE_WAS_FOUND') . ':'. '<strong>'.$line.'</strong>',
-						$key);
+					$this->report->addInfo(
+						$file,
+						JText::_('COM_JEDCHECKER_GPL_COMPATIBLE_LICENSE_WAS_FOUND') . ':' . '<strong>' . $line . '</strong>',
+						$key
+					);
+
 					return true;
 				}
 			}
