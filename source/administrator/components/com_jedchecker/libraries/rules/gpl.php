@@ -80,8 +80,21 @@ class jedcheckerRulesGpl extends JEDcheckerRule
 		$licenses = $this->params->get('constants');
 		$licenses = explode(',', $licenses);
 
+		$hascode = 0;
+
 		foreach ($content AS $key => $line)
 		{
+			$tline = trim($line);
+
+			if ($tline == '' || $tline == '<?php' || $tline == '?>')
+			{
+				continue;
+			}
+
+			if ($tline['0'] != '/' && $tline['0'] != '*')
+			{
+				$hascode = 1;
+			}
 
 			// Search for GPL license
 			$gpl = stripos($line, 'GPL');
@@ -120,6 +133,6 @@ class jedcheckerRulesGpl extends JEDcheckerRule
 
 		unset($content);
 
-		return false;
+		return $hascode ? false : true;
 	}
 }
