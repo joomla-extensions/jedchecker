@@ -1,3 +1,7 @@
 Changelog:
 
+~ code cleaup and joomla's phpcs compatibility (at least for the rules)
+# Fixed unnecessary GPL checks in php files with no code - thanks to Peter van Westen
+# Fixed unnecessary JEXEC checks in php files with no code - thanks to Peter van Westen
++ added rule to check for error_reporting(0) - thanks to Denis Delici
 # JFile not found

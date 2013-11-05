@@ -10,12 +10,11 @@
 <project name="com_jedchecker" default="buildZip">
     <property file="./build.properties"/>
 
-    <taskdef name="extfile" classname="phingext.listJPackageFilesTask"/>
-    <taskdef name="gitversion" classname="phingext.GitVersionTask"/>
-    <taskdef name="explode" classname="phingext.explodeTask"/>
+	<taskdef name="extfile" classname="phingext.listJPackageFilesTask" classpath="../../buildtools"/>
+	<taskdef name="gitversion" classname="phingext.GitVersionTask"  classpath="../../buildtools"/>
+	<taskdef name="explode" classname="phingext.explodeTask"  classpath="../../buildtools"/>
 
-    <import file="plugin.xml" optional="true"/>
-    <import file="module.xml" optional="true"/>
+	<import file="../../buildtools/helper.xml" optional="true"/>
 
     <target name="setup-properties">
         <!-- Initialize the version if it's not set -->
@@ -142,19 +141,6 @@
                  component="com_${component.name}"
                 />
 
-        <if>
-            <isset property="plugins"/>
-            <then>
-                <foreach list="${plugins}" param="plugin" target="buildPlugin"/>
-            </then>
-        </if>
-
-        <if>
-            <isset property="modules_admin"/>
-            <then>
-                <foreach list="${modules_admin}" param="module_admin" target="buildModule"/>
-            </then>
-        </if>
     </target>
 
     <target name="dev-release" description="Makes everything except the documentation"
