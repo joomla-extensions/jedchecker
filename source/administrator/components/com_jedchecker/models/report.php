@@ -69,6 +69,7 @@ class JEDcheckerReport extends JObject
 		$this->data['count']->total = 0;
 		$this->data['count']->errors = 0;
 		$this->data['count']->compat = 0;
+		$this->data['count']->warning = 0;
 		$this->data['count']->info = 0;
 	}
 
@@ -133,6 +134,26 @@ class JEDcheckerReport extends JObject
 	}
 
 	/**
+	 * Adds a warning issue to the report.
+	 *
+	 * @param   string   $location  - The location of the issue. Can be a path to a file or dir.
+	 * @param   string   $text      - An optional description of the issue
+	 * @param   integer  $line      - If $location is a file, you may specify the line where the
+	 *                                   issue occurred.
+	 *
+	 * @return    void
+	 */
+	public function addWarning($location, $text = null, $line = 0)
+	{
+		$item = new stdClass;
+		$item->location = $location;
+		$item->line = $line;
+		$item->text = $text;
+
+		$this->addItem($item, 'warning');
+	}
+
+	/**
 	 * Formats the existing report data into HTML and returns it.
 	 *
 	 * @return    string    The HTML report data
@@ -153,6 +174,7 @@ class JEDcheckerReport extends JObject
 			$error_count = $this->data['count']->errors;
 			$compat_count = $this->data['count']->compat;
 			$info_count = $this->data['count']->info;
+			$warning_count = $this->data['count']->warning;
 
 			// Go through the error list
 			if ($error_count > 0)
@@ -231,6 +253,40 @@ class JEDcheckerReport extends JObject
 					$num = $i + 1;
 
 					// Add the error count number
+					$html[] = '<li><p><strong>#' . str_pad($num, 3, '0', STR_PAD_LEFT) . '</strong> ';
+					$html[] = $item->location;
+
+					// Add line information if given
+					if ($item->line > 0)
+					{
+						$html[] = ' ' . JText::_('COM_JEDCHECKER_IN_LINE') . ': <strong>' . $item->line . '</strong>';
+					}
+
+					$html[] = '</p>';
+
+					// Add text if given
+					if (!empty($item->text))
+					{
+						$html[] = '<small>' . $item->text . '</small>';
+					}
+
+					$html[] = '</li>';
+				}
+
+				$html[] = '</ul>';
+			}
+
+			// Go through the warning list
+			if ($warning_count > 0)
+			{
+				$html[] = '<strong>' . $warning_count . ' ' . JText::_('COM_JEDCHECKER_WARNING') . '</strong>';
+				$html[] = '<ul class="jedchecker-warning-message">';
+
+				foreach ($this->data['warning'] AS $i => $item)
+				{
+					$num = $i + 1;
+
+					// Add the warning count number
 					$html[] = '<li><p><strong>#' . str_pad($num, 3, '0', STR_PAD_LEFT) . '</strong> ';
 					$html[] = $item->location;
 
