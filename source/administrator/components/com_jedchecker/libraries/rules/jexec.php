@@ -78,8 +78,22 @@ class jedcheckerRulesJexec extends JEDcheckerRule
         $defines = $this->params->get('constants');
         $defines = explode(',', $defines);
 
+		$hascode = 0;
+
         foreach ($content AS $line)
         {
+			$tline = trim($line);
+
+			if ($tline == '' || $tline == '<?php' || $tline == '?>')
+			{
+				continue;
+			}
+
+			if ($tline['0'] != '/' && $tline['0'] != '*')
+			{
+				$hascode = 1;
+			}
+
             // Search for "defined"
             $pos_1 = stripos($line, 'defined');
 
@@ -116,6 +130,6 @@ class jedcheckerRulesJexec extends JEDcheckerRule
 
         unset($content);
 
-        return false;
+		return $hascode ? false : true;
     }
 }
