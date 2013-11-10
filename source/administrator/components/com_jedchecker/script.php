@@ -23,6 +23,37 @@ class com_jedcheckerInstallerScript
         }
     }
 
+	/**
+	 * Update cleans out any old rules.
+	 *
+	 * @param   JInstallerComponent  $parent  Is the class calling this method.
+	 *
+	 * @return  bool|null  If this returns false, Joomla will abort the update and undo everything already done.
+	 */
+	public function update($parent)
+	{
+		// Doing it this way in case there are other old rules to be deleted
+		$oldRules = array('htmlindexes');
+
+		foreach ($oldRules as $rule)
+		{
+			$rulePhpFile = JPATH_ADMINISTRATOR . $this->extension . 'libraries/rules/' . $rule . '.php';
+			$ruleIniFile = JPATH_ADMINISTRATOR . $this->extension . 'libraries/rules/' . $rule . '.ini';
+
+			// Remove the rule's php file
+			if(file_exists($rulePhpFile) && JFile::delete($rulePhpFile))
+			{
+				echo JText::sprintf('COM_JEDCHECKER_OLD_RULE_X_PHP_FILE_REMOVED', $rule);
+			}
+
+			// Remove the rule's ini file
+			if(file_exists($rulePhpFile) && JFile::delete($rulePhpFile))
+			{
+				echo JText::sprintf('COM_JEDCHECKER_OLD_RULE_X_INI_FILE_REMOVED', $rule);
+			}
+
+		}
+	}
 
     public function loadLanguage()
     {
