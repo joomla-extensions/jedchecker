@@ -29,6 +29,13 @@ You will also need the following path structure on your system
 - com_jedchecker - This repository
 - buildtools - Compojoom build tools (https://github.com/compojoom/buildtools)
 
+To execute the build, copy `com_jedchecker/builds/build.properties.txt` renaming it without the `.txt` suffix.
+
+Then in your command line navigate to the `builds` directory and run `phing`
+
+    cd com_jedchecker/builds/
+    phing
+
 ## Uploading your package
 After installing this extension in your Joomla! backend, you can use it by uploading a Joomla! extension-package using
 the upload-button. Once uploaded, the contents of the package (your files) will be checked against JED-rules.
