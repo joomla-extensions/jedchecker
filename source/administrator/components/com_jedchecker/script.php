@@ -32,6 +32,9 @@ class com_jedcheckerInstallerScript
 	 */
 	public function update($parent)
 	{
+        // Load our language
+        $this->loadLanguage();
+
 		// Doing it this way in case there are other old rules to be deleted
 		$oldRules = array('htmlindexes');
 
@@ -45,11 +48,11 @@ class com_jedcheckerInstallerScript
 			{
 				if(JFile::delete($rulePhpFile))
 				{
-					echo JText::sprintf('COM_JEDCHECKER_OLD_RULE_X_PHP_FILE_REMOVED', $rule);
+					echo '<p>' . JText::sprintf('COM_JEDCHECKER_OLD_RULE_X_PHP_FILE_REMOVED', $rule) . '</p>';
 				}
 				else
 				{
-					echo JText::sprintf('COM_JEDCHECKER_OLD_RULE_X_PHP_FILE_NOT_REMOVED', $rule);
+					echo '<p>' . JText::sprintf('COM_JEDCHECKER_OLD_RULE_X_PHP_FILE_NOT_REMOVED', $rule) . '</p>';
 				}
 			}
 
@@ -58,11 +61,11 @@ class com_jedcheckerInstallerScript
 			{
 				if(JFile::delete($ruleIniFile))
 				{
-					echo JText::sprintf('COM_JEDCHECKER_OLD_RULE_X_INI_FILE_REMOVED', $rule);
+					echo '<p>' . JText::sprintf('COM_JEDCHECKER_OLD_RULE_X_INI_FILE_REMOVED', $rule) . '</p>';
 				}
 				else
 				{
-					echo JText::sprintf('COM_JEDCHECKER_OLD_RULE_X_INI_FILE_NOT_REMOVED', $rule);
+					echo '<p>' . JText::sprintf('COM_JEDCHECKER_OLD_RULE_X_INI_FILE_NOT_REMOVED', $rule) . '</p>';
 				}
 			}
 		}
