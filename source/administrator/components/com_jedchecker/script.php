@@ -71,7 +71,7 @@ class com_jedcheckerInstallerScript
 	public function loadLanguage()
     {
         $extension = $this->extension;
-        $jlang =& JFactory::getLanguage();
+        $jlang = JFactory::getLanguage();
         $path = $this->parent->getParent()->getPath('source') . '/administrator';
         $jlang->load($extension, $path, 'en-GB', true);
         $jlang->load($extension, $path, $jlang->getDefault(), true);
