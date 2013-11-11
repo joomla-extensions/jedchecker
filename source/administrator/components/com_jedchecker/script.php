@@ -41,21 +41,34 @@ class com_jedcheckerInstallerScript
 			$ruleIniFile = JPATH_ADMINISTRATOR . $this->extension . 'libraries/rules/' . $rule . '.ini';
 
 			// Remove the rule's php file
-			if(file_exists($rulePhpFile) && JFile::delete($rulePhpFile))
+			if(file_exists($rulePhpFile))
 			{
-				echo JText::sprintf('COM_JEDCHECKER_OLD_RULE_X_PHP_FILE_REMOVED', $rule);
+				if(JFile::delete($rulePhpFile))
+				{
+					echo JText::sprintf('COM_JEDCHECKER_OLD_RULE_X_PHP_FILE_REMOVED', $rule);
+				}
+				else
+				{
+					echo JText::sprintf('COM_JEDCHECKER_OLD_RULE_X_PHP_FILE_NOT_REMOVED', $rule);
+				}
 			}
 
 			// Remove the rule's ini file
-			if(file_exists($rulePhpFile) && JFile::delete($rulePhpFile))
+			if(file_exists($ruleIniFile))
 			{
-				echo JText::sprintf('COM_JEDCHECKER_OLD_RULE_X_INI_FILE_REMOVED', $rule);
+				if(JFile::delete($ruleIniFile))
+				{
+					echo JText::sprintf('COM_JEDCHECKER_OLD_RULE_X_INI_FILE_REMOVED', $rule);
+				}
+				else
+				{
+					echo JText::sprintf('COM_JEDCHECKER_OLD_RULE_X_INI_FILE_NOT_REMOVED', $rule);
+				}
 			}
-
 		}
 	}
 
-    public function loadLanguage()
+	public function loadLanguage()
     {
         $extension = $this->extension;
         $jlang =& JFactory::getLanguage();
