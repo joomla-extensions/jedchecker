@@ -40,8 +40,8 @@ class com_jedcheckerInstallerScript
 
 		foreach ($oldRules as $rule)
 		{
-			$rulePhpFile = JPATH_ADMINISTRATOR . $this->extension . 'libraries/rules/' . $rule . '.php';
-			$ruleIniFile = JPATH_ADMINISTRATOR . $this->extension . 'libraries/rules/' . $rule . '.ini';
+			$rulePhpFile = JPATH_ADMINISTRATOR . '/components/' . $this->extension . '/libraries/rules/' . $rule . '.php';
+			$ruleIniFile = JPATH_ADMINISTRATOR . '/components/' . $this->extension . '/libraries/rules/' . $rule . '.ini';
 
 			// Remove the rule's php file
 			if(file_exists($rulePhpFile))
