@@ -23,11 +23,59 @@ class com_jedcheckerInstallerScript
         }
     }
 
+    /**
+     * Update cleans out any old rules.
+     *
+     * @param   JInstallerComponent  $parent  Is the class calling this method.
+     *
+     * @return  bool|null  If this returns false, Joomla will abort the update and undo everything already done.
+     */
+    public function update($parent)
+    {
+        $this->loadLanguage();
+
+        // Doing it this way in case there are other old rules to be deleted
+        $oldRules = array('htmlindexes');
+
+        foreach ($oldRules as $rule)
+        {
+            $rulePhpFile = JPATH_ADMINISTRATOR . '/components/' . $this->extension . '/libraries/rules/' . $rule . '.php';
+            $ruleIniFile = JPATH_ADMINISTRATOR . '/components/' . $this->extension . '/libraries/rules/' . $rule . '.ini';
+
+            // Remove the rule's php file
+            if(file_exists($rulePhpFile))
+            {
+                if(JFile::delete($rulePhpFile))
+                {
+                    $msg = JText::sprintf('COM_JEDCHECKER_OLD_RULE_X_PHP_FILE_REMOVED', $rule);
+                }
+                else
+                {
+                    $msg = JText::sprintf('COM_JEDCHECKER_OLD_RULE_X_PHP_FILE_NOT_REMOVED', $rule);
+                }
+                echo "<p>$msg</p>";
+            }
+
+            // Remove the rule's ini file
+            if(file_exists($ruleIniFile))
+            {
+                if(JFile::delete($ruleIniFile))
+                {
+                    $msg = JText::sprintf('COM_JEDCHECKER_OLD_RULE_X_INI_FILE_REMOVED', $rule);
+                }
+                else
+                {
+                    $msg = JText::sprintf('COM_JEDCHECKER_OLD_RULE_X_INI_FILE_NOT_REMOVED', $rule);
+                }
+                echo "<p>$msg</p>";
+            }
+        }
+    }
 
     public function loadLanguage()
     {
         $extension = $this->extension;
-        $jlang =& JFactory::getLanguage();
+        $jlang = JFactory::getLanguage();
         $path = $this->parent->getParent()->getPath('source') . '/administrator';
         $jlang->load($extension, $path, 'en-GB', true);
         $jlang->load($extension, $path, $jlang->getDefault(), true);
