@@ -16,9 +16,6 @@
 		<files folder="administrator/components/com_@@COMPONENTNAME@@">
             ##ADMINCOMPONENTPACKAGEFILES##
 		</files>
-		<languages folder="administrator/language">
-            ##ADMINLANGUAGEFILES##
-        </languages>
 	</administration>
 	<media destination="com_@@COMPONENTNAME@@" folder="media/com_@@COMPONENTNAME@@">
         ##MEDIAPACKAGEFILES##

@@ -39,8 +39,8 @@
 
         <available file="${dirs.source}\administrator\components\com_${component.name}"
                    type="dir" property="admin.exist" value="yes"/>
-        <available file="${dirs.source}\administrator\language"
-                   type="dir" property="adminLang.exist" value="yes"/>
+        <!--available file="${dirs.source}\administrator\language"
+                   type="dir" property="adminLang.exist" value="yes"/-->
         <available file="${dirs.source}\components\com_${component.name}"
                    type="dir" property="frontend.exist" value="yes"/>
         <available file="${dirs.source}\language"
@@ -74,11 +74,11 @@
             </fileset>
         </copy>
 
-        <copy todir="${destination.dir}/administrator/language/">
+        <!--copy todir="${destination.dir}/administrator/language/">
             <fileset dir="${dirs.source}/administrator/language/">
                 <include name="**/*.com_${component.name}.**"/>
             </fileset>
-        </copy>
+        </copy-->
 
         <if>
             <equals arg1="${frontend.exist}" arg2="yes"/>
