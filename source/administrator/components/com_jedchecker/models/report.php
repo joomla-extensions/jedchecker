@@ -211,7 +211,7 @@ class JEDcheckerReport extends JObject
 			// Go through the compat list
 			if ($compat_count > 0)
 			{
-				$html[] = '<strong>' . $error_count . ' ' . JText::_('COM_JEDCHECKER_COMPAT_ISSUES') . '</strong>';
+				$html[] = '<strong>' . $compat_count . ' ' . JText::_('COM_JEDCHECKER_COMPAT_ISSUES') . '</strong>';
 				$html[] = '<ul class="jedchecker-rule-compat">';
 
 				foreach ($this->data['compat'] AS $i => $item)
@@ -219,7 +219,7 @@ class JEDcheckerReport extends JObject
 					$num = $i + 1;
 
 					// Add the error count number
-					$html[] = '<li><p><strong>#' . str_pad($num, 3, '0', STR_PAD_LEFT) . '</strong> ';
+					$html[] = '<li><strong>#' . str_pad($num, 3, '0', STR_PAD_LEFT) . '</strong> ';
 					$html[] = $item->location;
 
 					// Add line information if given
@@ -228,7 +228,7 @@ class JEDcheckerReport extends JObject
 						$html[] = ' ' . JText::_('COM_JEDCHECKER_IN_LINE') . ': <strong>' . $item->line . '</strong>';
 					}
 
-					$html[] = '</p>';
+					$html[] = '<br />';
 
 					// Add text if given
 					if (!empty($item->text))
@@ -253,7 +253,7 @@ class JEDcheckerReport extends JObject
 					$num = $i + 1;
 
 					// Add the error count number
-					$html[] = '<li><p><strong>#' . str_pad($num, 3, '0', STR_PAD_LEFT) . '</strong> ';
+					$html[] = '<li><strong>#' . str_pad($num, 3, '0', STR_PAD_LEFT) . '</strong> ';
 					$html[] = $item->location;
 
 					// Add line information if given
@@ -262,7 +262,7 @@ class JEDcheckerReport extends JObject
 						$html[] = ' ' . JText::_('COM_JEDCHECKER_IN_LINE') . ': <strong>' . $item->line . '</strong>';
 					}
 
-					$html[] = '</p>';
+					$html[] = '<br />';
 
 					// Add text if given
 					if (!empty($item->text))
@@ -287,7 +287,7 @@ class JEDcheckerReport extends JObject
 					$num = $i + 1;
 
 					// Add the warning count number
-					$html[] = '<li><p><strong>#' . str_pad($num, 3, '0', STR_PAD_LEFT) . '</strong> ';
+					$html[] = '<li><strong>#' . str_pad($num, 3, '0', STR_PAD_LEFT) . '</strong> ';
 					$html[] = $item->location;
 
 					// Add line information if given
@@ -296,7 +296,7 @@ class JEDcheckerReport extends JObject
 						$html[] = ' ' . JText::_('COM_JEDCHECKER_IN_LINE') . ': <strong>' . $item->line . '</strong>';
 					}
 
-					$html[] = '</p>';
+					$html[] = '<br />';
 
 					// Add text if given
 					if (!empty($item->text))
