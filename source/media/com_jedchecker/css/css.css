@@ -13,8 +13,7 @@
     border: 1px solid #CCC;
 }
 
-#police-check-result div
-{
+#police-check-result div:nth-child(odd){
     border-bottom: 1px solid #CCCCCC;
 }
 
