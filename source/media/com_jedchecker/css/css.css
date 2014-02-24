@@ -94,3 +94,12 @@ small {
     white-space: nowrap;
     margin:0;
 	}
+
+.jamss_tooltip {
+	background-color:blue;
+	color:white;
+	border-radius:20px;
+}
+.jamss_tooltip.code {
+	background-color:#C03020;
+}

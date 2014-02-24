@@ -42,6 +42,8 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 
 	protected $tests = false;
 
+	protected $leftover_folders;
+
 	/**
 	 * Initiates the file search and check
 	 *
@@ -50,15 +52,44 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 	public function check()
 	{
 		$files = JFolder::files($this->basedir, '.php$', true, true);
+		$this->leftover_folders = explode(',', $this->params->get('leftover_folders'));
 
 		foreach ($files as $file)
 		{
-			// Process the file
-			if ($this->find($file))
+			if (!$this->excludeResource($file))
 			{
-				// Error messages are set by find() based on the errors found.
+				// Process the file
+				if ($this->find($file))
+				{
+					// Error messages are set by find() based on the errors found.
+				}
 			}
 		}
+	}
+
+	/**
+	 * Check if the given resourse is part
+	 *
+	 * @param   unknown_type  $file  The file name to test
+	 *
+	 * @return   boolean
+	 */
+	private function excludeResource($file)
+	{
+		// Warn about code versioning files included
+		$result = false;
+
+		foreach ($this->leftover_folders as $leftover_folder)
+		{
+			if (strpos($file, $leftover_folder) !== false)
+			{
+				$error_message = JText::_("COM_JEDCHECKER_ERROR_FRAMEWORK_GIT") . ":";
+				$this->report->addWarning($file, $error_message, 0);
+				$result = true;
+			}
+		}
+
+		return $result;
 	}
 
 	/**

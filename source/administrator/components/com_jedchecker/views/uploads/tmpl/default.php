@@ -70,6 +70,7 @@ JHtml::script('media/com_jedchecker/js/police.js');
 			<li>Alain Rivest (<a href="http://aldra.ca" target="_blank">Aldra.ca</a>)</li>
 			<li>OpenTranslators (<a href="http://opentranslators.org" target="_blank">opentranslators.org</a>)</li>
 			<li>Riccardo Zorn (<a href="http://fasterjoomla.com" target="_blank">fasterjoomla.com</a>)</li>
+			<li>Bernard Toplak (<a href="http://www.orion-web.hr/en/" target="_blank">orion-web.hr</a>)</li>
 		</ul>
 	</div>
 </div>
