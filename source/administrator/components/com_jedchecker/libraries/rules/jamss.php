@@ -118,30 +118,30 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 						// [1] = Name / Title
 						'1',
 						// [2] = number
-						'Detected preg_replace function that evaluates (executes) mathed code.
-						This means if PHP code is passed it will be executed.',
+						'Detected preg_replace function that evaluates (executes) mathed code. ' .
+						'This means if PHP code is passed it will be executed.',
 						// [3] = description
 						'Part example code from http://sucuri.net/malware/backdoor-phppreg_replaceeval'),
 				// [4] = More Information link
 				array('c999*sh_surl',
 						'Backdoor: PHP:C99:045',
 						'2',
-						'Detected the "C99? backdoor that allows attackers to manage (and reinfect) your site remotely.
-						It is often used as part of a compromise to maintain access to the hacked sites.',
+						'Detected the "C99? backdoor that allows attackers to manage (and reinfect) your site remotely. ' .
+						'It is often used as part of a compromise to maintain access to the hacked sites.',
 						'http://sucuri.net/malware/backdoor-phpc99045'),
 				array('preg_match\s*\(\s*\"\s*/\s*bot\s*/\s*\"',
 						'Backdoor: PHP:R57:01',
 						'3',
-						'Detected the "R57? backdoor that allows attackers to access, modify and reinfect your site.
-						It is often hidden in the filesystem and hard to find without access to the server or logs.',
+						'Detected the "R57? backdoor that allows attackers to access, modify and reinfect your site. ' .
+						'It is often hidden in the filesystem and hard to find without access to the server or logs.',
 						'http://sucuri.net/malware/backdoor-phpr5701'),
 						array('eval[\s/\*\#]*\(stripslashes[\s/\*\#]*\([\s/\*\#]*\$_(REQUEST|POST|GET)\s*\[\s*\\\s*[\'\"]\s*asc\s*\\\s*[\'\"]',
 						'Backdoor: PHP:GENERIC:07',
 						'5',
-						'Detected a generic backdoor that allows attackers to
-								upload files, delete files, access, modify and/or reinfect your site.
-								It is often hidden in the filesystem and hard to find without access to the server or logs.
-								It also includes uploadify scripts and similars that offer upload options without security. ',
+						'Detected a generic backdoor that allows attackers to ' .
+						'upload files, delete files, access, modify and/or reinfect your site. ' .
+						'It is often hidden in the filesystem and hard to find without access to the server or logs. ' .
+						'It also includes uploadify scripts and similars that offer upload options without security. ',
 						'http://sucuri.net/malware/backdoor-phpgeneric07'),
 						/*array('https?\S{1,63}\.ru',
 						 'russian URL',
@@ -152,8 +152,8 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 						array('preg_replace\s*\(\s*[\"\'\”]\s*/\s*\.\s*\*\s*/\s*e\s*[\"\'\”]\s*,\s*[\"\'\”]\s*\\x65\\x76\\x61\\x6c',
 						'Backdoor: PHP:Filesman:02',
 						'7',
-						'Detected the “Filesman” backdoor that allows attackers to access, modify and reinfect your site.
-								It is often hidden in the filesystem and hard to find without access to the server or logs.',
+						'Detected the “Filesman” backdoor that allows attackers to access, modify and reinfect your site. ' .
+						'It is often hidden in the filesystem and hard to find without access to the server or logs.',
 						'http://sucuri.net/malware/backdoor-phpfilesman02'),
 						array('(include|require)(_once)*\s*[\"\'][\w\W\s/\*]*php://input[\w\W\s/\*]*[\"\']',
 						'PHP:\input include',
@@ -166,21 +166,21 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 						array('RewriteCond\s*%\{HTTP_REFERER\}',
 						'.HTACCESS RewriteCond-Referer',
 						'10',
-						'Your .htaccess file has a conditional redirection based on "HTTP Referer".
-								This means it redirects according to site/url from where your visitors came to your site.
-								Such technique has been used for unwanted redirections after coming from Google or other search engines,
-								so check this directive carefully.',),
+						'Your .htaccess file has a conditional redirection based on "HTTP Referer". ' .
+						'This means it redirects according to site/url from where your visitors came to your site. ' .
+						'Such technique has been used for unwanted redirections after coming from Google or other search engines, ' .
+						'so check this directive carefully.',),
 						array('brute\s*force',
 						'"Brute Force" words',
 						'11',
-						'Detected the "Brute Force" words mentioned in code. <u>Sometimes it\'s a "false positive"</u> because
-								several developers like to mention it in they code, but it\'s worth double-checking if this file
-								is untouche (eg. compare it with one in original extension package).'),
+						'Detected the "Brute Force" words mentioned in code. <u>Sometimes it\'s a "false positive"</u> because ' .
+						'several developers like to mention it in they code, but it\'s worth double-checking if this file ' .
+						'is untouched (eg. compare it with one in original extension package).'),
 						array('GIF89a.*[\r\n]*.*<\?php',
 						'PHP file desguised as GIF image',
 						'15',
-						'Detected a PHP file that was most probably uploaded as an image via webform that loosely only checks
-								file headers.',),
+						'Detected a PHP file that was most probably uploaded as an image via webform that loosely only checks ' .
+						'file headers.',),
 						array('\$ip[\w\W\s/\*]*=[\w\W\s/\*]*getenv\(["\']REMOTE_ADDR["\']\);[\w\W\s/\*]*[\r\n]\$message',
 						'Probably malicious PHP script that "calls home"',
 						'16',
@@ -189,18 +189,18 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 						'str_replace|assert|unpack|urldecode)[\s/\*\w\W\(]*){2,}',
 						'PHP: multiple encoded, most probably obfuscated code found',
 						'17',
-						'This pattern could be used in highly encoded, malicious code hidden under a loop of code obfuscation function
-								calls. In most cases the decoded hacker code goes through an eval call to execute it.
-								This pattern is also often used for legitimate purposes, e.g. storing configuration information or
-								serialised object data.
-								Please inspect the file manually and compare it with the one in the original extension or
-								Joomla package to verify that this is not a false positive.',
+						'This pattern could be used in highly encoded, malicious code hidden under a loop of code obfuscation function ' .
+						'calls. In most cases the decoded hacker code goes through an eval call to execute it. ' .
+						'This pattern is also often used for legitimate purposes, e.g. storing configuration information or ' .
+						'serialised object data. ' .
+						'Please inspect the file manually and compare it with the one in the original extension or ' .
+						'Joomla package to verify that this is not a false positive.',
 						'Thanks to Dario Pintarić (dario.pintaric[et}orion-web.hr for this report!'),
 						array('<\s*iframe',
 						'IFRAME element',
 						'18',
-						'Found IFRAME element in code. It\'s mostly benevolent, but often used for bad stuff,
-								so please check if it\'s a valid code.'),
+						'Found IFRAME element in code. It\'s mostly benevolent, but often used for bad stuff, ' .
+						'so please check if it\'s a valid code.'),
 						array('strrev[\s/\*\#]*\([\s/\*\#]*[\'"]\s*tressa\s*[\'"]\s*\)',
 						'Reversed string "assert"',
 						'19',
@@ -212,24 +212,24 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 						array('(?:\\\\x[0-9A-Fa-f]{1,2}|\\\\[0-7]{1,3}){2,}',
 						'At least two characters in hexadecimal or octal notation',
 						'21',
-						'Found at least two characters in hexadecimal or octal notation. It doesn\'t mean it is malicious,
-								but it could be code hidding behind such notation.'),
+						'Found at least two characters in hexadecimal or octal notation. It doesn\'t mean it is malicious, ' .
+						'but it could be code hidding behind such notation.'),
 						array('\$_F\s*=\s*__FILE__\s*;\s*\$_X\s*=',
 						'SourceCop encoded code',
 						'22',
-						'Found the SourceCop encoded code. It is often used for malicious code
-								hidding, so go and check the code with some online SourceCop decoders'),
-								array('(?:exec|passthru|shell_exec|system|proc_|popen)[\w\W\s/\*]*\([\s/\*\#\'\"\w\W\-\_]*(?:\$_GET|\$_POST)',
-								'shell command execution from POST/GET variables',
-								'23',
-								'Found direct shell command execution getting variables from POST/GET,
-										which is highly dangerous security flaw or a part of malicious webrootkit'),
-										array('\$\w[\w\W\s/\*]*=[\w\W\s/\*]*`.*`',
-										'PHP execution operator: backticks (``)',
-										'24',
-										'PHP execution operator found. Note that these are not single-quotes!
-												PHP will attempt to execute the contents of the backticks as a shell
-												command, which might indicate a part of a webrootkit'),
+						'Found the SourceCop encoded code. It is often used for malicious code ' .
+						'hiding, so go and check the code with some online SourceCop decoders'),
+						array('(?:exec|passthru|shell_exec|system|proc_|popen)[\w\W\s/\*]*\([\s/\*\#\'\"\w\W\-\_]*(?:\$_GET|\$_POST)',
+						'shell command execution from POST/GET variables',
+						'23',
+						'Found direct shell command execution getting variables from POST/GET, ' .
+						'which is highly dangerous security flaw or a part of malicious webrootkit'),
+						array('\$\w[\w\W\s/\*]*=[\w\W\s/\*]*`.*`',
+						'PHP execution operator: backticks (``)',
+						'24',
+						'PHP execution operator found. Note that these are not single-quotes! ' .
+						'PHP will attempt to execute the contents of the backticks as a shell ' .
+						'command, which might indicate a part of a webrootkit'),
 		);
 
 		$jamssFileNames = array(
