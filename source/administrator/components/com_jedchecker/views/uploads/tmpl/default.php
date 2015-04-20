@@ -31,7 +31,7 @@ JHtml::script('media/com_jedchecker/js/police.js');
 		  method="post" class="form form-validate" name="adminForm" id="adminForm" enctype="multipart/form-data">
 		<fieldset>
 			<p>
-				<?php echo JText::sprintf('COM_JEDCHECKER_CONGRATS', 'http://extensions.joomla.org/index.php?option=com_content&id=50'); ?>
+				<?php echo JText::sprintf('COM_JEDCHECKER_CONGRATS', 'http://extensions.joomla.org/about-jed/terms-of-service#listings'); ?>
 			</p>
 
 			<p>
