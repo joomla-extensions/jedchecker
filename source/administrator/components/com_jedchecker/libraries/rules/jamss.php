@@ -277,7 +277,7 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 		$ext = $this->ext;
 		$patterns = $this->patterns;
 		$count = 0;
-		$total_result = 0;
+		$total_results = 0;
 		$jamssFileNames = $this->jamssFileNames;
 
 		// Removed: global $ext, $patterns, $count, $total_results, $jamssFileNames;
