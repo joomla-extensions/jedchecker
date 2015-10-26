@@ -1,9 +1,9 @@
 <?php
 /**
- * @author Daniel Dimitrov - compojoom.com
- * @date: 02.06.12
+ * @author     Daniel Dimitrov <daniel@compojoom.com>
+ * @date       26.10.15
  *
- * @copyright  Copyright (C) 2008 - 2012 compojoom.com . All rights reserved.
+ * @copyright  Copyright (C) 2008 - 2015 compojoom.com . All rights reserved.
  * @license    GNU General Public License version 2 or later; see LICENSE
  */
 
@@ -14,90 +14,130 @@ jimport('joomla.filesystem');
 jimport('joomla.filesystem.folder');
 jimport('joomla.filesystem.archive');
 
-
-class jedcheckerControllerPolice extends JControllerlegacy
+/**
+ * Class jedcheckerControllerPolice
+ *
+ * @since  1.0
+ */
+class JedcheckerControllerPolice extends JControllerlegacy
 {
-    public function check()
-    {
-        $rule = JRequest::getString('rule');
+	/**
+	 * Runs all the rules on the given directory
+	 *
+	 * @return bool
+	 */
+	public function check()
+	{
+		$rule = JRequest::getString('rule');
 
-        JLoader::discover('jedcheckerRules',JPATH_COMPONENT_ADMINISTRATOR . '/libraries/rules/');
+		JLoader::discover('jedcheckerRules', JPATH_COMPONENT_ADMINISTRATOR . '/libraries/rules/');
 
-        $path   = JFactory::getConfig()->get('tmp_path') . '/jed_checker/unzipped';
-        $class  = 'jedcheckerRules'.ucfirst($rule);
+		$path  = JFactory::getConfig()->get('tmp_path') . '/jed_checker/unzipped';
+		$class = 'jedcheckerRules' . ucfirst($rule);
 
-        // Stop if the class does not exist
-        if(!class_exists($class)) {
-            return false;
-        }
+		// Stop if the class does not exist
+		if (!class_exists($class))
+		{
+			return false;
+		}
 
-        // Loop through each folder and police it
-        $folders    = $this->getFolders();
-        foreach ($folders as $folder) {
-            $this->police($class, $folder);
-        }
+		// Loop through each folder and police it
+		$folders = $this->getFolders();
 
-        return true;
-    }
+		foreach ($folders as $folder)
+		{
+			$this->police($class, $folder);
+		}
 
-    protected function police($class, $folder)
-    {
-        // Prepare rule properties
-        $properties = array('basedir' => $folder);
+		return true;
+	}
 
-        // Create instance of the rule
-        $police = new $class($properties);
+	/**
+	 * Run each rule and echo the result
+	 *
+	 * @param   string  $class   - the class anme
+	 * @param   string  $folder  - the folder where the component is located
+	 *
+	 * @return void
+	 */
+	protected function police($class, $folder)
+	{
+		// Prepare rule properties
+		$properties = array('basedir' => $folder);
 
-        // Perform check
-        $police->check();
+		// Create instance of the rule
+		$police = new $class($properties);
 
-        // Get the report and then print it
-        $report = $police->get('report');
+		// Perform check
+		$police->check();
 
-        echo '<span class="rule">'
-           .  JText::_('COM_JEDCHECKER_RULE') .' ' . JText::_($police->get('id'))
-           . ' - '. JText::_($police->get('title'))
-           . '</span><br/>'
-           . $report->getHTML();
+		// Get the report and then print it
+		$report = $police->get('report');
 
-        flush();
-        ob_flush();
-    }
+		echo '<span class="rule">'
+			. JText::_('COM_JEDCHECKER_RULE') . ' ' . JText::_($police->get('id'))
+			. ' - ' . JText::_($police->get('title'))
+			. '</span><br/>'
+			. $report->getHTML();
 
-    protected function getFolders()
-    {
-        $folders = array();
+		flush();
+		ob_flush();
+	}
 
-        // Add the folders in the "jed_checked/unzipped" folder
-        $path = JFactory::getConfig()->get('tmp_path') . '/jed_checker/unzipped';
-        $tmp_folders = JFolder::folders($path);
-        if (!empty($tmp_folders)) {
-            foreach ($tmp_folders as $tmp_folder) {
-                $folders[] = $path.'/'.$tmp_folder;
-            }
-        }
+	/**
+	 * Get the folders that should be checked
+	 *
+	 * @return array
+	 */
+	protected function getFolders()
+	{
+		$folders = array();
 
-        // Parse the local.txt file and parse it
-        $local = JFactory::getConfig()->get('tmp_path') . '/jed_checker/local.txt';
-        if (JFile::exists($local)) {
-            $content = JFile::read($local);
-            if (!empty($content)) {
-                $lines = explode("\n", $content);
-                if (!empty($lines)) {
-                    foreach ($lines as $line) {
-                        $line = trim($line);
-                        if (!empty($line)) {
-                            if (JFolder::exists(JPATH_ROOT.'/'.$line)) {
-                                $folders[] = JPATH_ROOT.'/'.$line;
-                            } elseif (JFolder::exists($line)) {
-                                $folders[] = $line;
-                            }
-                        }
-                    }
-                }
-            }
-        }
+		// Add the folders in the "jed_checked/unzipped" folder
+		$path        = JFactory::getConfig()->get('tmp_path') . '/jed_checker/unzipped';
+		$tmp_folders = JFolder::folders($path);
 
-        return $folders;
-    }
+		if (!empty($tmp_folders))
+		{
+			foreach ($tmp_folders as $tmp_folder)
+			{
+				$folders[] = $path . '/' . $tmp_folder;
+			}
+		}
+
+		// Parse the local.txt file and parse it
+		$local = JFactory::getConfig()->get('tmp_path') . '/jed_checker/local.txt';
+
+		if (JFile::exists($local))
+		{
+			$content = JFile::read($local);
+
+			if (!empty($content))
+			{
+				$lines = explode("\n", $content);
+
+				if (!empty($lines))
+				{
+					foreach ($lines as $line)
+					{
+						$line = trim($line);
+
+						if (!empty($line))
+						{
+							if (JFolder::exists(JPATH_ROOT . '/' . $line))
+							{
+								$folders[] = JPATH_ROOT . '/' . $line;
+							}
+							elseif (JFolder::exists($line))
+							{
+								$folders[] = $line;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		return $folders;
+	}
 }
