@@ -1,7 +1,30 @@
-Changelog:
+<?php defined('_JEXEC') or die(); ?>
 
+=====================================================================
+Hotspots 1.6 - Released 26-October-2015
+=====================================================================
+~ phpcs
+# uploading zip files no longer displays a warning on j 3.4.4
+# updated link to JED listing requirements
++ added rule framework, jamss
+
+=====================================================================
+Hotspots 1.6 - Released 5-November-2015
+=====================================================================
 ~ code cleaup and joomla's phpcs compatibility (at least for the rules)
 # Fixed unnecessary GPL checks in php files with no code - thanks to Peter van Westen
 # Fixed unnecessary JEXEC checks in php files with no code - thanks to Peter van Westen
 + added rule to check for error_reporting(0) - thanks to Denis Delici
 # JFile not found
+
+=====================================================================
+LEGEND
+=====================================================================
+! Note
++ New feature or addition
+^ Major change
+~ Small change
+$ Language change
+* Security fix
+# Bug fix
+- Feature removal
