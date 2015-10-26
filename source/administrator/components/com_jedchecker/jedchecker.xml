@@ -20,4 +20,7 @@
 	<media destination="com_@@COMPONENTNAME@@" folder="media/com_@@COMPONENTNAME@@">
         ##MEDIAPACKAGEFILES##
 	</media>
+	<updateservers>
+		<server type="extension" priority="1" name="JEDChecker Updates"><![CDATA[https://compojoom.com/index.php?option=com_ars&view=update&task=stream&format=xml&id=12&dummy=extension.xml]]></server>
+	</updateservers>
 </extension>
