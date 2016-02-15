@@ -10,6 +10,11 @@
 defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.component.controllerlegacy');
 
+if (!JFactory::getUser()->authorise('core.manage', 'com_jedchecker')) 
+{
+	throw new Exception(JText::_('JERROR_ALERTNOAUTHOR'));
+}
+
 // We'll need jfile and JFolder all through the compoenent so let us load them here
 jimport('joomla.filesystem.folder');
 jimport('joomla.filesystem.file');
