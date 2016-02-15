@@ -70,6 +70,11 @@ class JedcheckerViewUploads extends JViewLegacy
 		}
 
 		JToolBarHelper::title('JED checker');
+		
+		if (JFactory::getUser()->authorise('core.admin', 'com_jedchecker'))     
+		{	
+			JToolBarHelper::preferences('com_jedchecker');
+		}
 	}
 
 	/**
