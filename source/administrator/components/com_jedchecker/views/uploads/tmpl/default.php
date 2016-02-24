@@ -42,9 +42,9 @@ JHtml::script('media/com_jedchecker/js/police.js');
 				<?php echo JText::_('COM_JEDCHECKER_HOW_TO_USE'); ?>
 			</p>
 			<ol>
-				<li> 1. <?php echo JText::_('COM_JEDCHECKER_STEP1'); ?></li>
-				<li> 2. <?php echo JText::_('COM_JEDCHECKER_STEP2'); ?></li>
-				<li> 3. <?php echo JText::_('COM_JEDCHECKER_STEP3'); ?></li>
+				<li> <?php echo JText::_('COM_JEDCHECKER_STEP1'); ?></li>
+				<li> <?php echo JText::_('COM_JEDCHECKER_STEP2'); ?></li>
+				<li> <?php echo JText::_('COM_JEDCHECKER_STEP3'); ?></li>
 			</ol>
 
 
