@@ -61,12 +61,12 @@ class JedcheckerViewUploads extends JViewLegacy
 	{
 		if ($this->filesExist('archives'))
 		{
-			JToolBarHelper::custom('uploads.unzip', 'unzip', 'unzip', 'unzip', false);
+			JToolBarHelper::custom('uploads.unzip', 'folder', 'folder', 'unzip', false);
 		}
 
 		if ($this->filesExist('unzipped'))
 		{
-			JToolBarHelper::custom('police.check', 'police-check', 'police-check', 'Check', false);
+			JToolBarHelper::custom('police.check', 'search', 'search', 'Check', false);
 		}
 
 		JToolBarHelper::title('JED checker');
