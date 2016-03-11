@@ -165,9 +165,9 @@ class JEDcheckerReport extends JObject
 		if ($this->data['count']->total == 0)
 		{
 			// No errors or compatibility issues found
-			$html[] = '<span class="success">';
+			$html[] = '<div class="alert alert-success">';
 			$html[] = JText::_('COM_JEDCHECKER_EVERYTHING_SEEMS_TO_BE_FINE_WITH_THAT_RULE');
-			$html[] = '</span>';
+			$html[] = '</div>';
 		}
 		else
 		{
@@ -180,7 +180,7 @@ class JEDcheckerReport extends JObject
 			if ($error_count > 0)
 			{
 				$html[] = '<strong>' . $error_count . ' ' . JText::_('COM_JEDCHECKER_ERRORS') . '</strong>';
-				$html[] = '<ul class="jedchecker-rule-errors">';
+				$html[] = '<ul class="alert alert-danger">';
 
 				foreach ($this->data['errors'] AS $i => $item)
 				{
@@ -212,7 +212,7 @@ class JEDcheckerReport extends JObject
 			if ($compat_count > 0)
 			{
 				$html[] = '<strong>' . $compat_count . ' ' . JText::_('COM_JEDCHECKER_COMPAT_ISSUES') . '</strong>';
-				$html[] = '<ul class="jedchecker-rule-compat">';
+				$html[] = '<ul class="alert alert-warning">';
 
 				foreach ($this->data['compat'] AS $i => $item)
 				{
@@ -246,7 +246,7 @@ class JEDcheckerReport extends JObject
 			if ($info_count > 0)
 			{
 				$html[] = '<strong>' . $info_count . ' ' . JText::_('COM_JEDCHECKER_INFO') . '</strong>';
-				$html[] = '<ul class="jedchecker-info-message">';
+				$html[] = '<ul class="alert alert-info">';
 
 				foreach ($this->data['info'] AS $i => $item)
 				{
@@ -280,7 +280,7 @@ class JEDcheckerReport extends JObject
 			if ($warning_count > 0)
 			{
 				$html[] = '<strong>' . $warning_count . ' ' . JText::_('COM_JEDCHECKER_WARNING') . '</strong>';
-				$html[] = '<ul class="jedchecker-warning-message">';
+				$html[] = '<ul class="alert alert-warning">';
 
 				foreach ($this->data['warning'] AS $i => $item)
 				{
