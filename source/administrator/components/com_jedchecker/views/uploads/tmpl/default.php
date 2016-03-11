@@ -79,7 +79,7 @@ JHtml::script('media/com_jedchecker/js/police.js');
 <div id="prison" style="display:none;">
 	<div class="row-fluid">
 		<div class="span8">
-			<div id="police-check-result" class="well"></div>
+			<div id="police-check-result" class="well"><h2 style="padding-left:10px;"><?php echo JText::_('COM_JEDCHECKER_RESULTS'); ?></h2></div>
 		</div>
 		<div class="span4">
 			<div class="well">
