@@ -25,85 +25,89 @@ JHtml::script('media/com_jedchecker/js/police.js');
 		Joomla.submitform(task);
 	}
 </script>
+<div class="row-fluid">
+	<div class="span8">
+		<form action="<?php echo JRoute::_('index.php?option=com_jedchecker&view=uploads'); ?>"
+			  method="post" class="form form-validate" name="adminForm" id="adminForm" enctype="multipart/form-data">
+			<fieldset>
+				<p>
+					<?php echo JText::sprintf('COM_JEDCHECKER_CONGRATS', 'http://extensions.joomla.org/about-jed/terms-of-service#listings'); ?>
+				</p>
 
-<div class="fltlft width-60 span8">
-	<form action="<?php echo JRoute::_('index.php?option=com_jedchecker&view=uploads'); ?>"
-		  method="post" class="form form-validate" name="adminForm" id="adminForm" enctype="multipart/form-data">
-		<fieldset>
-			<p>
-				<?php echo JText::sprintf('COM_JEDCHECKER_CONGRATS', 'http://extensions.joomla.org/about-jed/terms-of-service#listings'); ?>
-			</p>
+				<p>
+					<?php echo JText::sprintf('COM_JEDCHECKER_CODE_STANDARDS', 'http://developer.joomla.org/coding-standards.html', 'https://github.com/compojoom/jedchecker'); ?>
+				</p>
 
-			<p>
-				<?php echo JText::sprintf('COM_JEDCHECKER_CODE_STANDARDS', 'http://developer.joomla.org/coding-standards.html', 'https://github.com/compojoom/jedchecker'); ?>
-			</p>
-
-			<p>
-				<?php echo JText::_('COM_JEDCHECKER_HOW_TO_USE'); ?>
-			</p>
-			<ol>
-				<li> <?php echo JText::_('COM_JEDCHECKER_STEP1'); ?></li>
-				<li> <?php echo JText::_('COM_JEDCHECKER_STEP2'); ?></li>
-				<li> <?php echo JText::_('COM_JEDCHECKER_STEP3'); ?></li>
-			</ol>
+				<p>
+					<?php echo JText::_('COM_JEDCHECKER_HOW_TO_USE'); ?>
+				</p>
+				<ol>
+					<li> <?php echo JText::_('COM_JEDCHECKER_STEP1'); ?></li>
+					<li> <?php echo JText::_('COM_JEDCHECKER_STEP2'); ?></li>
+					<li> <?php echo JText::_('COM_JEDCHECKER_STEP3'); ?></li>
+				</ol>
 
 
-			<input type="file" name="extension" class="required"/>
-			<button onclick="Joomla.submitbutton('uploads.upload')" class="btn btn-success">
-				<span class="icon-upload "></span> <?php echo JText::_('COM_JEDCHECKER_UPLOAD_FILE'); ?>
-			</button>
-			<input type="hidden" name="task" value=""/>
-			<?php echo JHTML::_('form.token'); ?>
-		</fieldset>
-	</form>
-</div>
-<div class="fltrt width-40 span4">
-	<div class="help">
-		<h2><?php echo JText::_('COM_JEDCHECKER_WALL_OF_HONOR'); ?></h2>
+				<input type="file" name="extension" class="required"/>
+				<button onclick="Joomla.submitbutton('uploads.upload')" class="btn btn-success">
+					<span class="icon-upload "></span> <?php echo JText::_('JSUBMIT'); ?>
+				</button>
+				<input type="hidden" name="task" value=""/>
+				<?php echo JHTML::_('form.token'); ?>
+			</fieldset>
+		</form>
+	</div>
+	<div class="span4">
+		<div class="well">
+			<h2><?php echo JText::_('COM_JEDCHECKER_WALL_OF_HONOR'); ?></h2>
 
-		<p><?php echo JText::_('COM_JEDCHECKER_PEOPLE_THAT_HAVE_HELPED_WITH_THE_DEVELOPMENT'); ?></p>
-		<ul>
-			<li>Tobias Kuhn (<a href="http://projectfork.net" target="_blank">projectfork</a>)</li>
-			<li>Jisse Reitsma (<a href="http://www.yireo.com/" target="_blank">yireo</a>)</li>
-			<li>Denis Dulici (<a href="http://mijosoft.com/" target="_blank">mijosoft</a>)</li>
-			<li>Peter van Westen (<a href="http://www.nonumber.nl" target="_blank">NoNumber</a>)</li>
-			<li>Alain Rivest (<a href="http://aldra.ca" target="_blank">Aldra.ca</a>)</li>
-			<li>OpenTranslators (<a href="http://opentranslators.org" target="_blank">opentranslators.org</a>)</li>
-			<li>Riccardo Zorn (<a href="http://fasterjoomla.com" target="_blank">fasterjoomla.com</a>)</li>
-			<li>Bernard Toplak (<a href="http://www.orion-web.hr/en/" target="_blank">orion-web.hr</a>)</li>
-		</ul>
+			<p><?php echo JText::_('COM_JEDCHECKER_PEOPLE_THAT_HAVE_HELPED_WITH_THE_DEVELOPMENT'); ?></p>
+			<ul>
+				<li>Tobias Kuhn (<a href="http://projectfork.net" target="_blank">projectfork</a>)</li>
+				<li>Jisse Reitsma (<a href="http://www.yireo.com/" target="_blank">yireo</a>)</li>
+				<li>Denis Dulici (<a href="http://mijosoft.com/" target="_blank">mijosoft</a>)</li>
+				<li>Peter van Westen (<a href="http://www.nonumber.nl" target="_blank">NoNumber</a>)</li>
+				<li>Alain Rivest (<a href="http://aldra.ca" target="_blank">Aldra.ca</a>)</li>
+				<li>OpenTranslators (<a href="http://opentranslators.org" target="_blank">opentranslators.org</a>)</li>
+				<li>Riccardo Zorn (<a href="http://fasterjoomla.com" target="_blank">fasterjoomla.com</a>)</li>
+				<li>Bernard Toplak (<a href="http://www.orion-web.hr/en/" target="_blank">orion-web.hr</a>)</li>
+				<li>Jaz Parkyn (<a href="http://www.pixeldustsolutions.com" target="_blank">Pixel Dust Solutions</a>)</li>
+			</ul>
+		</div>
 	</div>
 </div>
 <div id="prison" style="display:none;">
-	<div class="fltlft width-60 span8">
-		<div id="police-check-result"></div>
-	</div>
-	<div class="fltrt width-40 span4">
-		<div class="help">
-			<h2>
-				<?php echo JText::_('COM_JEDCHECKER_HOW_TO_INTERPRET_RESULTS'); ?>
-			</h2>
-			<ul>
-				<?php
-				foreach ($this->jsOptions['rules'] AS $rule) {
-					$class = 'jedcheckerRules' . ucfirst($rule);
+	<div class="row-fluid">
+		<div class="span8">
+			<div id="police-check-result" class="well"></div>
+		</div>
+		<div class="span4">
+			<div class="well">
+				<h2>
+					<?php echo JText::_('COM_JEDCHECKER_HOW_TO_INTERPRET_RESULTS'); ?>
+				</h2>
+				<ul>
+					<?php
+					foreach ($this->jsOptions['rules'] AS $rule) {
+						$class = 'jedcheckerRules' . ucfirst($rule);
 
-					if (!class_exists($class)) continue;
-					$rule = new $class();
+						if (!class_exists($class)) continue;
+						$rule = new $class();
+						?>
+						<li>
+							<p>
+								<span class="rule">
+									<?php echo JText::_('COM_JEDCHECKER_RULE') . ' ' . $rule->get('id') . ' - ' . JText::_($rule->get('title'));?>
+								</span>
+
+							<p><?php echo JText::_($rule->get('description')); ?></p>
+							</p>
+						</li>
+					<?php
+					}
 					?>
-					<li>
-						<p>
-                            <span class="rule">
-                                <?php echo JText::_('COM_JEDCHECKER_RULE') . ' ' . $rule->get('id') . ' - ' . JText::_($rule->get('title'));?>
-                            </span>
-
-						<p><?php echo JText::_($rule->get('description')); ?></p>
-						</p>
-					</li>
-				<?php
-				}
-				?>
-			</ul>
+				</ul>
+			</div>
 		</div>
 	</div>
 </div>
