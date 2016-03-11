@@ -49,8 +49,8 @@ JHtml::script('media/com_jedchecker/js/police.js');
 
 
 			<input type="file" name="extension" class="required"/>
-			<button onclick="Joomla.submitbutton('uploads.upload')">
-				<?php echo JText::_('JSUBMIT'); ?>
+			<button onclick="Joomla.submitbutton('uploads.upload')" class="btn btn-success">
+				<span class="icon-upload "></span> <?php echo JText::_('COM_JEDCHECKER_UPLOAD_FILE'); ?>
 			</button>
 			<input type="hidden" name="task" value=""/>
 			<?php echo JHTML::_('form.token'); ?>
