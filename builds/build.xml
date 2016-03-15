@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-        Hotspots build file for Phing
+        JED Checker build file for Phing
         written by Daniel Dimitrov - https://compojoom.com
         
         Run "phing -f component.xml"
-        from the build directory to build the component, modules and plugins
+        from the build directory to build the component
 -->
 
 <project name="com_jedchecker" default="buildZip">
