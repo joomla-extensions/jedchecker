@@ -70,6 +70,8 @@
         <copy todir="${destination.dir}/">
             <fileset dir="${dirs.source}/administrator/components/com_${component.name}">
                 <include name="${component.name}.xml"/>
+                <include name="access.xml"/>
+                <include name="config.xml"/>
                 <include name="script.php"/>
             </fileset>
         </copy>
