@@ -61,7 +61,7 @@ class JedcheckerRulesErrorreporting extends JEDcheckerRule
 			if ($this->find($file))
 			{
 				// Add as error to the report if it was not found
-				$this->report->addWarning($file, JText::_('COM_JEDCHECKER_ERROR_ERRORREPORTING'));
+				$this->report->addError($file, JText::_('COM_JEDCHECKER_ERROR_ERRORREPORTING'));
 			}
 		}
 	}
