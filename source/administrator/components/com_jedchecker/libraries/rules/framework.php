@@ -132,9 +132,12 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 		{
 			foreach ($testObject->tests AS $singleTest)
 			{
-				if (stripos($line, $singleTest) !== false)
+				// Detect the $singleTest string, but only if it's not between single or double-quotes
+				// This is to avoid false positive such as JText::_('JERROR_ALERTNOAUTHOR') which matched JError
+				$regex = "/'[^']+'(*SKIP)(*F)|\"[^']+\"(*SKIP)(*F)|" . $singleTest . "/";
+				if (preg_match($regex, $line) !== 0)
 				{
-					$line = str_ireplace($singleTest, '<b>' . $singleTest . '</b>', $line);
+					$line = preg_replace($regex, '<b>' . $singleTest . '</b>', $line);
 					$error_message = JText::_('COM_JEDCHECKER_ERROR_FRAMEWORK_' . strtoupper($testObject->group)) . ':<pre>' . $line . '</pre>';
 
 					switch ($testObject->kind)
