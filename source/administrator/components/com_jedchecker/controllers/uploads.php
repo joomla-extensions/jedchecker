@@ -77,7 +77,7 @@ class JedcheckerControllerUploads extends JControllerlegacy
 			if (!JFile::upload($file['tmp_name'], $file['filepath'], false, true))
 			{
 				// Error in upload
-				JError::raiseWarning(100, JText::_('COM_JEDCHECKER_ERROR_UNABLE_TO_UPLOAD_FILE'));
+				JFactory::getApplication()->enqueueMessage(JText::_('COM_JEDCHECKER_ERROR_UNABLE_TO_UPLOAD_FILE'), 'error');
 
 				return false;
 			}
