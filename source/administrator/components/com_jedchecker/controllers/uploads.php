@@ -18,7 +18,7 @@ jimport('joomla.filesystem.archive');
  *
  * @since  1.0
  */
-class JedcheckerControllerUploads extends JControllerlegacy
+class JedcheckerControllerUploads extends JControllerLegacy
 {
 	/**
 	 * Constructor.

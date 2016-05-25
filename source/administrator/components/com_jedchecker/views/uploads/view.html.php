@@ -28,7 +28,7 @@ class JedcheckerViewUploads extends JViewLegacy
 	public function display($tpl = null)
 	{
 		$this->setToolbar();
-		$this->jsOptions['url'] = JURI::base();
+		$this->jsOptions['url'] = JUri::base();
 		$this->jsOptions['rules'] = $this->getRules();
 		parent::display($tpl);
 	}
@@ -61,19 +61,19 @@ class JedcheckerViewUploads extends JViewLegacy
 	{
 		if ($this->filesExist('archives'))
 		{
-			JToolBarHelper::custom('uploads.unzip', 'folder', 'folder', 'unzip', false);
+			JToolbarHelper::custom('uploads.unzip', 'folder', 'folder', 'unzip', false);
 		}
 
 		if ($this->filesExist('unzipped'))
 		{
-			JToolBarHelper::custom('police.check', 'search', 'search', 'Check', false);
+			JToolbarHelper::custom('police.check', 'search', 'search', 'Check', false);
 		}
 
-		JToolBarHelper::title('JED checker');
+		JToolbarHelper::title('JED checker');
 		
 		if (JFactory::getUser()->authorise('core.admin', 'com_jedchecker'))     
 		{	
-			JToolBarHelper::preferences('com_jedchecker');
+			JToolbarHelper::preferences('com_jedchecker');
 		}
 	}
 
