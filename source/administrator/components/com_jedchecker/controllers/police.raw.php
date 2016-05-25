@@ -19,7 +19,7 @@ jimport('joomla.filesystem.archive');
  *
  * @since  1.0
  */
-class JedcheckerControllerPolice extends JControllerlegacy
+class JedcheckerControllerPolice extends JControllerLegacy
 {
 	/**
 	 * Runs all the rules on the given directory
