@@ -99,9 +99,8 @@ JHtml::script('media/com_jedchecker/js/police.js');
 								<span class="rule">
 									<?php echo JText::_('COM_JEDCHECKER_RULE') . ' ' . $rule->get('id') . ' - ' . JText::_($rule->get('title'));?>
 								</span>
-
-							<p><?php echo JText::_($rule->get('description')); ?></p>
 							</p>
+							<p><?php echo JText::_($rule->get('description')); ?></p>
 						</li>
 					<?php
 					}
