@@ -73,7 +73,6 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 	 */
 	protected function find($file)
 	{
-		$content = (array) file($file);
 		$result = false;
 
 		$this->scan_file($file);
@@ -358,9 +357,6 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 						}
 						else
 						{
-							// It's a string, no comments available
-							$first_content = "";
-
 							foreach ($all_results as $match)
 							{
 								// Output the line of malware code, but sanitize it before

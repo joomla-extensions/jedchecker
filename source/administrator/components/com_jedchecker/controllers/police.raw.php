@@ -32,7 +32,6 @@ class JedcheckerControllerPolice extends JControllerlegacy
 
 		JLoader::discover('jedcheckerRules', JPATH_COMPONENT_ADMINISTRATOR . '/libraries/rules/');
 
-		$path  = JFactory::getConfig()->get('tmp_path') . '/jed_checker/unzipped';
 		$class = 'jedcheckerRules' . ucfirst($rule);
 
 		// Stop if the class does not exist
