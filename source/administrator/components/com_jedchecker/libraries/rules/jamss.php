@@ -86,9 +86,11 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 	 * In order to make this easy to update, no syntax changes are applied. Just store the variables in the object
 	 * for faster use.
 	 *
+	 * @param   bool  $deepscan  Merge the $jamssDeepSearchStrings
+	 *
 	 * @return void
 	 */
-	private function init_jamss()
+	private function init_jamss($deepscan = true)
 	{
 		/*
 		 * START OF JAMSS CODE (approx line 76)
