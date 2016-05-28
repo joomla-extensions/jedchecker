@@ -99,7 +99,7 @@ class JEDcheckerRule extends JObject
 	/**
 	 * Attempts to load a .ini param file of this rule.
 	 *
-	 * @return    JRegistry
+	 * @return    Joomla\Registry\Registry
 	 */
 	protected function loadParams()
 	{
@@ -107,7 +107,7 @@ class JEDcheckerRule extends JObject
 		$file_name = str_replace('jedcheckerrules', '', strtolower(get_class($this)));
 		$params_file = JPATH_COMPONENT_ADMINISTRATOR . '/libraries/rules/' . $file_name . '.ini';
 
-		$params = JRegistry::getInstance('jedchecker.rule.' . $file_name);
+		$params = Joomla\Registry\Registry::getInstance('jedchecker.rule.' . $file_name);
 
 		// Load the params from the ini file
 		if (file_exists($params_file))
