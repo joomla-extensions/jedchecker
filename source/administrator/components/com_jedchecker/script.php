@@ -30,10 +30,10 @@ class Com_JedcheckerInstallerScript
 	{
 		$this->parent = $parent;
 
-		if (version_compare(PHP_VERSION, '5.3.1', '<'))
+		if (version_compare(PHP_VERSION, '5.3.10', '<'))
 		{
 			$this->loadLanguage();
-			Jerror::raiseWarning(null, JText::sprintf('COM_JEDCHECKER_PHP_VERSION_INCOMPATIBLE', PHP_VERSION, '5.3.6'));
+			Jerror::raiseWarning(null, JText::sprintf('COM_JEDCHECKER_PHP_VERSION_INCOMPATIBLE', PHP_VERSION, '5.3.10'));
 
 			return false;
 		}
