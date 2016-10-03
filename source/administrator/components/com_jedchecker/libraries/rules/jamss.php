@@ -67,7 +67,7 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 	/**
 	 * reads a file and searches for any function defined in the params
 	 *
-	 * @param   unknown_type  $file  The file object
+	 * @param   string  $file  The file name
 	 *
 	 * @return    boolean            True if the statement was found, otherwise False.
 	 */
@@ -86,9 +86,9 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 	 * In order to make this easy to update, no syntax changes are applied. Just store the variables in the object
 	 * for faster use.
 	 *
-	 * @param   unknown_type  $deepscan  Join the $jamssDeepSearchStrings
+	 * @param   bool  $deepscan  Merge the $jamssDeepSearchStrings
 	 *
-	 * @return  nothing
+	 * @return void
 	 */
 	private function init_jamss($deepscan = true)
 	{
@@ -269,7 +269,7 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 	 *
 	 * @param   string  $path  path of the scanned file
 	 *
-	 * @return  nothing
+	 * @return  bool
 	 */
 	private function scan_file($path)
 	{
@@ -391,7 +391,7 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 	 * Calculates the line number where pattern match was found
 	 *
 	 * @param   int  $offset        The offset position of found pattern match
-	 * @param   str  $file_content  The file content in string format
+	 * @param   string  $file_content  The file content in string format
 	 *
 	 * @return  int  Returns        line number where the subject code was found
 	 */
@@ -408,13 +408,13 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 	 * Raise a warning and format it properly.
 	 * jamss warnings are very helpful but very verbose; hence we chose to use of tooltips
 	 *
-	 * @param   unknown_type  $path   The file name
-	 * @param   unknown_type  $title  The comment's title
-	 * @param   unknown_type  $info   The additional info on the error
-	 * @param   unknown_type  $code   The affected portion of the code
-	 * @param   unknown_type  $line   The line number of the first match
+	 * @param   string  $path   The file name
+	 * @param   string  $title  The comment's title
+	 * @param   mixed  $info   The additional info on the error
+	 * @param   string  $code   The affected portion of the code
+	 * @param   int  $line   The line number of the first match
 	 *
-	 * @return  unknown_type          Returns nothing
+	 * @return  void          Returns nothing
 	 */
 	private function jamssWarning($path, $title, $info, $code, $line)
 	{

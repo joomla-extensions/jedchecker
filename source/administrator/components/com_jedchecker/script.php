@@ -28,13 +28,13 @@ class Com_JedcheckerInstallerScript
 	{
 		$this->parent = $parent;
 
-		if (version_compare(PHP_VERSION, '5.3.1', '<'))
+		if (version_compare(PHP_VERSION, '5.3.10', '<'))
 		{
 			$this->loadLanguage();
-			// Enqueue the error message
-			JFactory::getApplication()->enqueueMessage(JText::sprintf('COM_JEDCHECKER_PHP_VERSION_INCOMPATIBLE', PHP_VERSION, '5.3.6'), 'error');
-			// Stop the execution and return to the installer page
-			JFactory::getApplication()->redirect(JRoute::_('index.php?option=com_installer', false));
+			
+			Jerror::raiseWarning(null, JText::sprintf('COM_JEDCHECKER_PHP_VERSION_INCOMPATIBLE', PHP_VERSION, '5.3.10'));
+
+			return false;
 		}
 	}
 

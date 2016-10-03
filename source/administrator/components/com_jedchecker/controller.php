@@ -14,6 +14,6 @@ defined('_JEXEC') or die ('Restricted access');
  *
  * @since  1.0
  */
-class JedcheckerController extends JControllerlegacy
+class JedcheckerController extends JControllerLegacy
 {
 }

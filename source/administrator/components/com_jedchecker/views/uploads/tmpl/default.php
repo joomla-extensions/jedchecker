@@ -9,7 +9,7 @@
 
 defined('_JEXEC') or die('Restricted access');
 
-JHTML::_('behavior.framework', true);
+JHtml::_('behavior.framework', true);
 JHtml::_('behavior.formvalidation');
 JHtml::_('behavior.keepalive');
 JHtml::stylesheet('media/com_jedchecker/css/css.css');
@@ -53,7 +53,7 @@ JHtml::script('media/com_jedchecker/js/police.js');
 					<span class="icon-upload "></span> <?php echo JText::_('JSUBMIT'); ?>
 				</button>
 				<input type="hidden" name="task" value=""/>
-				<?php echo JHTML::_('form.token'); ?>
+				<?php echo JHtml::_('form.token'); ?>
 			</fieldset>
 		</form>
 	</div>
@@ -99,9 +99,8 @@ JHtml::script('media/com_jedchecker/js/police.js');
 								<span class="rule">
 									<?php echo JText::_('COM_JEDCHECKER_RULE') . ' ' . $rule->get('id') . ' - ' . JText::_($rule->get('title'));?>
 								</span>
-
-							<p><?php echo JText::_($rule->get('description')); ?></p>
 							</p>
+							<p><?php echo JText::_($rule->get('description')); ?></p>
 						</li>
 					<?php
 					}
