@@ -18,7 +18,7 @@ jimport('joomla.filesystem.archive');
  *
  * @since  1.0
  */
-class JedcheckerControllerUploads extends JControllerLegacy
+class JedcheckerControllerUploads extends JControllerlegacy
 {
 	/**
 	 * Constructor.
@@ -39,9 +39,18 @@ class JedcheckerControllerUploads extends JControllerLegacy
 	 */
 	public function upload()
 	{
-		JRequest::checkToken() or die('Invalid Token');
-		$appl = JFactory::getApplication();
-		$file = JRequest::getVar('extension', '', 'files', 'array');
+		$appl  = JFactory::getApplication();
+		$input = JFactory::getApplication()->input;
+		$token = JSession::getFormToken();
+
+		// Checking the form token
+		if (!$token || !$appl->input->get($token, null, 'alnum'))
+		{
+			jexit('Invalid Token');
+		}
+
+		// Gets the uploaded file from the sent form
+		$file = $input->files->get('extension', null, 'raw');
 
 		if ($file['tmp_name'])
 		{
@@ -76,8 +85,9 @@ class JedcheckerControllerUploads extends JControllerLegacy
 			// Let us try to upload
 			if (!JFile::upload($file['tmp_name'], $file['filepath'], false, true))
 			{
-				// Error in upload
+				// Error in upload - redirect back with an error notice
 				JFactory::getApplication()->enqueueMessage(JText::_('COM_JEDCHECKER_ERROR_UNABLE_TO_UPLOAD_FILE'), 'error');
+				$this->setRedirect('index.php?option=com_jedchecker&view=uploads');
 
 				return false;
 			}
@@ -97,8 +107,14 @@ class JedcheckerControllerUploads extends JControllerLegacy
 	 */
 	public function unzip()
 	{
-		JRequest::checkToken() or die('Invalid Token');
-		$appl = JFactory::getApplication();
+		$appl  = JFactory::getApplication();
+		$token = JSession::getFormToken();
+
+		// Checking the form token
+		if (!$token || !$appl->input->get($token, null, 'alnum'))
+		{
+			jexit('Invalid Token');
+		}
 
 		// If folder doesn't exist - create it!
 		if (!JFolder::exists($this->pathUnzipped))
@@ -138,7 +154,7 @@ class JedcheckerControllerUploads extends JControllerLegacy
 	/**
 	 * Recursively go through each folder and extract the archives
 	 *
-	 * @param   string  $start  - the directory where we start the unzipping from
+	 * @param   string $start - the directory where we start the unzipping from
 	 *
 	 * @return  void
 	 */
