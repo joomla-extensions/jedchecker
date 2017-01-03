@@ -66,7 +66,7 @@ JHtml::script('media/com_jedchecker/js/police.js');
 				<li>Tobias Kuhn (<a href="http://projectfork.net" target="_blank">projectfork</a>)</li>
 				<li>Jisse Reitsma (<a href="http://www.yireo.com/" target="_blank">yireo</a>)</li>
 				<li>Denis Dulici (<a href="http://mijosoft.com/" target="_blank">mijosoft</a>)</li>
-				<li>Peter van Westen (<a href="http://www.nonumber.nl" target="_blank">NoNumber</a>)</li>
+				<li>Peter van Westen (<a href="https://www.regularlabs.com" target="_blank">Regular Labs</a>)</li>
 				<li>Alain Rivest (<a href="http://aldra.ca" target="_blank">Aldra.ca</a>)</li>
 				<li>OpenTranslators (<a href="http://opentranslators.org" target="_blank">opentranslators.org</a>)</li>
 				<li>Riccardo Zorn (<a href="http://fasterjoomla.com" target="_blank">fasterjoomla.com</a>)</li>
