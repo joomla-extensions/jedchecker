@@ -161,7 +161,7 @@ class JEDcheckerReport extends JObject
 	public function getHTML()
 	{
 		$html = array();
-
+		
 		if ($this->data['count']->total == 0)
 		{
 			// No errors or compatibility issues found
@@ -179,8 +179,10 @@ class JEDcheckerReport extends JObject
 			// Go through the error list
 			if ($error_count > 0)
 			{
-				$html[] = '<strong>' . $error_count . ' ' . JText::_('COM_JEDCHECKER_ERRORS') . '</strong>';
-				$html[] = '<ul class="alert alert-danger">';
+				$collapseID = uniqid('error_');
+				
+				$html[] = '<div class="alert alert-danger" data-toggle="collapse" data-target="#' . $collapseID . '"><strong>' . $error_count . ' ' . JText::_('COM_JEDCHECKER_ERRORS') . '</strong> - Click to View Details</div>';
+				$html[] = '<div id="' . $collapseID . '" class="collapse"><ul class="alert alert-danger">';
 
 				foreach ($this->data['errors'] AS $i => $item)
 				{
@@ -205,15 +207,18 @@ class JEDcheckerReport extends JObject
 					$html[] = '</li>';
 				}
 
-				$html[] = '</ul>';
+				$html[] = '</ul></div>';
 			}
 
 			// Go through the compat list
 			if ($compat_count > 0)
 			{
-				$html[] = '<strong>' . $compat_count . ' ' . JText::_('COM_JEDCHECKER_COMPAT_ISSUES') . '</strong>';
-				$html[] = '<ul class="alert alert-warning">';
-
+				
+				$collapseID = uniqid('warning_');
+				
+				$html[] = '<div class="alert alert-warning" data-toggle="collapse" data-target="#' . $collapseID . '"><strong>' . $compat_count . ' ' . JText::_('COM_JEDCHECKER_COMPAT_ISSUES') . '</strong> - Click to View Details</div>';
+				$html[] = '<div id="' . $collapseID . '" class="collapse"><ul class="alert alert-warning">';
+				
 				foreach ($this->data['compat'] AS $i => $item)
 				{
 					$num = $i + 1;
@@ -239,15 +244,18 @@ class JEDcheckerReport extends JObject
 					$html[] = '</li>';
 				}
 
-				$html[] = '</ul>';
+				$html[] = '</ul></div>';
 			}
 
 			// Go through the compat list
 			if ($info_count > 0)
 			{
-				$html[] = '<strong>' . $info_count . ' ' . JText::_('COM_JEDCHECKER_INFO') . '</strong>';
-				$html[] = '<ul class="alert alert-info">';
-
+				
+				$collapseID = uniqid('info_');
+				
+				$html[] = '<div class="alert alert-info" data-toggle="collapse" data-target="#' . $collapseID . '"><strong>' . $info_count . ' ' . JText::_('COM_JEDCHECKER_INFO') . '</strong> - Click to View Details</div>';
+				$html[] = '<div id="' . $collapseID . '" class="collapse"><ul class="alert alert-info">';
+				
 				foreach ($this->data['info'] AS $i => $item)
 				{
 					$num = $i + 1;
@@ -273,15 +281,17 @@ class JEDcheckerReport extends JObject
 					$html[] = '</li>';
 				}
 
-				$html[] = '</ul>';
+				$html[] = '</ul></div>';
 			}
 
 			// Go through the warning list
 			if ($warning_count > 0)
 			{
-				$html[] = '<strong>' . $warning_count . ' ' . JText::_('COM_JEDCHECKER_WARNING') . '</strong>';
-				$html[] = '<ul class="alert alert-warning">';
-
+				$collapseID = uniqid('warning_');
+				
+				$html[] = '<div class="alert alert-warning" data-toggle="collapse" data-target="#' . $collapseID . '"><strong>' . $warning_count . ' ' . JText::_('COM_JEDCHECKER_WARNING') . '</strong> - Click to View Details</div>';
+				$html[] = '<div id="' . $collapseID . '" class="collapse"><ul class="alert alert-warning">';
+				
 				foreach ($this->data['warning'] AS $i => $item)
 				{
 					$num = $i + 1;
@@ -307,7 +317,7 @@ class JEDcheckerReport extends JObject
 					$html[] = '</li>';
 				}
 
-				$html[] = '</ul>';
+				$html[] = '</ul></div>';
 			}
 		}
 
