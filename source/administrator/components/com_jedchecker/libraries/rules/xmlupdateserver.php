@@ -13,9 +13,9 @@ defined('_JEXEC') or die('Restricted access');
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/models/rule.php';
 
 /**
- * class JedcheckerRulesXMLlicense
+ * class JedcheckerRulesXMLUpdateServer
  *
- * This class searches all xml manifestes for a valid license.
+ * This class searches all xml files for valid Update Servers
  *
  * @since  1.0
  */
