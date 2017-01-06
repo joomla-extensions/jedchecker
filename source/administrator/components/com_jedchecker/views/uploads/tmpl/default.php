@@ -71,7 +71,7 @@ JHtml::script('media/com_jedchecker/js/police.js');
 				<li>OpenTranslators (<a href="http://opentranslators.org" target="_blank">opentranslators.org</a>)</li>
 				<li>Riccardo Zorn (<a href="http://fasterjoomla.com" target="_blank">fasterjoomla.com</a>)</li>
 				<li>Bernard Toplak (<a href="http://www.orion-web.hr/en/" target="_blank">orion-web.hr</a>)</li>
-				<li>Jaz Parkyn (<a href="http://www.pixeldustsolutions.com" target="_blank">Pixel Dust Solutions</a>)</li>
+				<li>Jaz Parkyn (<a href="https://volunteers.joomla.org/joomlers/337-jaz-parkyn" target="_blank">Joomla! Extensions Directory</a>)</li>
 			</ul>
 		</div>
 	</div>
