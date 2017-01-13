@@ -104,13 +104,9 @@ class JedcheckerControllerUploads extends JControllerlegacy
 	public function unzip()
 	{
 		$appl  = JFactory::getApplication();
-		$token = JSession::getFormToken();
-
-		// Checking the form token
-		if (!$token || !$appl->input->get($token, null, 'alnum'))
-		{
-			jexit('Invalid Token');
-		}
+		
+		// Form check token
+		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
 		// If folder doesn't exist - create it!
 		if (!JFolder::exists($this->pathUnzipped))
