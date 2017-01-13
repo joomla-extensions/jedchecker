@@ -56,19 +56,18 @@ class JedcheckerRulesXMLUpdateServer extends JEDcheckerRule
 		$packageFile = $this->checkPackageXML($files);
 
 		if (!$packageFile){
-			// Iterate through all the xml files
-			foreach ($files as $file)
-			{
-				// Try to find the license
-				$this->find($file);
-			}
+			
+			$XMLFiles = $this->findXMLPaths($files);
+
 		}
+		
+		return true;
 	}
 	
 	/**
 	 * Reads a file and searches for package xml file
 	 *
-	 * @param   string  $file  - The path to the file
+	 * @param   string  $files  - The path to the file
 	 *
 	 * @return boolean True if the package xml file was found, otherwise False.
 	 */
@@ -100,6 +99,67 @@ class JedcheckerRulesXMLUpdateServer extends JEDcheckerRule
 			return true;
 		}
 	}
+	
+	/**
+	 * Reads a file and searches for paths of xml files
+	 *
+	 * @param   string  $files  - The path to the file
+	 *
+	 * @return void
+	 */
+	protected function findXMLPaths($files)
+	{		
+		$XMLFiles = array();
+		$componentPaths = array();
+		
+		foreach ($files as $file) 
+		{
+			$xml = JFactory::getXml($file);
+
+			// Check if this is an XML and an extension manifest
+			if ($xml && ($xml->getName() == 'install' || $xml->getName() == 'extension'))
+			{				
+				$XMLFiles[] = array(
+					'type' => (string) $xml->attributes()->type, 
+					'filepath' => $file, 
+					'directoryPath' => substr($file, 0, strrpos( $file, '/')), 
+					'directory' => trim(end(explode('/', substr($file, 0, strrpos( $file, '/')))))
+				);
+				
+				if ($xml->attributes()->type == 'component'){
+					$componentPaths[] = substr($file, 0, strrpos( $file, '/'));
+				}
+			} 
+		}
+				
+		foreach ($XMLFiles as $XMLFile)
+		{
+			// Always check component XML files for update servers
+			if ($XMLFile['type'] == 'component')
+			{
+				$this->find($XMLFile['filepath']);
+				
+			} else {
+				// If not component, check if XML is nested inside component folder.
+				$nested = false;
+				
+				foreach ($componentPaths as $component)
+				{
+					if (strpos($XMLFile['directoryPath'], $component) !== false)
+					{
+						$nested = true;
+					}
+				}
+				
+				if (!$nested){
+					$this->find($XMLFile['filepath']);
+				}
+			}
+		}
+		
+		return true;
+	}
+
 
 	/**
 	 * Reads a file and searches for the update server
