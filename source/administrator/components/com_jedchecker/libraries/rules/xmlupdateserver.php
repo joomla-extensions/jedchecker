@@ -51,26 +51,65 @@ class JedcheckerRulesXMLUpdateServer extends JEDcheckerRule
 	{
 		// Find all XML files of the extension
 		$files = JFolder::files($this->basedir, '.xml$', true, true);
+		
+		// Find XML package file
+		$packageFile = $this->checkPackageXML($files);
 
-		// Iterate through all the xml files
-		foreach ($files as $file)
+		if (!$packageFile){
+			// Iterate through all the xml files
+			foreach ($files as $file)
+			{
+				// Try to find the license
+				$this->find($file);
+			}
+		}
+	}
+	
+	/**
+	 * Reads a file and searches for package xml file
+	 *
+	 * @param   string  $file  - The path to the file
+	 *
+	 * @return boolean True if the package xml file was found, otherwise False.
+	 */
+	protected function checkPackageXML($files)
+	{		
+		$packageCount = 0;
+		
+		foreach ($files as $file) 
 		{
-			// Try to find the license
-			$this->find($file);
+			$xml = JFactory::getXml($file);
+
+			// Check if this is an XML and an extension manifest
+			if ($xml && ($xml->getName() == 'install' || $xml->getName() == 'extension'))
+			{				
+				// Check if extension attribute 'type' is for a package
+				if($xml->attributes()->type == 'package'){
+					$packageCount++;
+					$this->find($file);
+				}
+			} 
+		}
+		
+		// No XML file found for package
+		if ($packageCount == 0){
+			return false;
+		} else {
+			return true;
 		}
 	}
 
 	/**
-	 * Reads a file and searches for the license
+	 * Reads a file and searches for the update server
 	 *
 	 * @param   string  $file  - The path to the file
 	 *
-	 * @return boolean True if the license was found, otherwise False.
+	 * @return boolean True if the update server was found, otherwise False.
 	 */
 	protected function find($file)
 	{
 		$xml = JFactory::getXml($file);
-
+		
 		// Failed to parse the xml file.
 		// Assume that this is not a extension manifest
 		if (!$xml)
