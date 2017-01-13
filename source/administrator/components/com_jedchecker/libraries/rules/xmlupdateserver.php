@@ -84,7 +84,8 @@ class JedcheckerRulesXMLUpdateServer extends JEDcheckerRule
 			if ($xml && ($xml->getName() == 'install' || $xml->getName() == 'extension'))
 			{				
 				// Check if extension attribute 'type' is for a package
-				if($xml->attributes()->type == 'package'){
+				if($xml->attributes()->type == 'package')
+				{
 					$packageCount++;
 					$this->find($file);
 				}
@@ -92,7 +93,8 @@ class JedcheckerRulesXMLUpdateServer extends JEDcheckerRule
 		}
 		
 		// No XML file found for package
-		if ($packageCount == 0){
+		if ($packageCount == 0)
+		{
 			return false;
 		} else {
 			return true;
