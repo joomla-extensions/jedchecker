@@ -55,10 +55,9 @@ class JedcheckerRulesXMLUpdateServer extends JEDcheckerRule
 		// Find XML package file
 		$packageFile = $this->checkPackageXML($files);
 
-		if (!$packageFile){
-			
+		if (!$packageFile)
+		{
 			$XMLFiles = $this->findXMLPaths($files);
-
 		}
 		
 		return true;
@@ -126,7 +125,8 @@ class JedcheckerRulesXMLUpdateServer extends JEDcheckerRule
 					'directory' => trim(end(explode('/', substr($file, 0, strrpos( $file, '/')))))
 				);
 				
-				if ($xml->attributes()->type == 'component'){
+				if ($xml->attributes()->type == 'component')
+				{
 					$componentPaths[] = substr($file, 0, strrpos( $file, '/'));
 				}
 			} 
