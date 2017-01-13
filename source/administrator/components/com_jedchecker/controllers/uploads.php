@@ -41,13 +41,9 @@ class JedcheckerControllerUploads extends JControllerlegacy
 	{
 		$appl  = JFactory::getApplication();
 		$input = JFactory::getApplication()->input;
-		$token = JSession::getFormToken();
-
-		// Checking the form token
-		if (!$token || !$appl->input->get($token, null, 'alnum'))
-		{
-			jexit('Invalid Token');
-		}
+		
+		// Check the sent token by the form
+		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
 		// Gets the uploaded file from the sent form
 		$file = $input->files->get('extension', null, 'raw');
