@@ -117,12 +117,13 @@ class JedcheckerRulesXMLUpdateServer extends JEDcheckerRule
 
 			// Check if this is an XML and an extension manifest
 			if ($xml && ($xml->getName() == 'install' || $xml->getName() == 'extension'))
-			{				
+			{
+				$directories = explode('/', substr($file, 0, strrpos( $file, '/')));
 				$XMLFiles[] = array(
-					'type' => (string) $xml->attributes()->type, 
-					'filepath' => $file, 
-					'directoryPath' => substr($file, 0, strrpos( $file, '/')), 
-					'directory' => trim(end(explode('/', substr($file, 0, strrpos( $file, '/')))))
+					'type' => (string) $xml->attributes()->type,
+					'filepath' => $file,
+					'directoryPath' => substr($file, 0, strrpos( $file, '/')),
+					'directory' => trim(end($directories))
 				);
 				
 				if ($xml->attributes()->type == 'component')
