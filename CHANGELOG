@@ -1,6 +1,19 @@
 <?php defined('_JEXEC') or die(); ?>
 
 =====================================================================
+JED Checker 1.7 - Released 23-January-2017
+=====================================================================
++ New Update Server rule
++ Addition of bootstrap collapses
+- Removal of some deprecated Joomla Framework code
++ Add ACL
+# Fixed some parameters and return types
+~ Further bootstrapping
+~ Language string updates
+^ Minimum PHP version 5.3.10
+^ error_reporting(0) now flags as error (was warning before)
+
+=====================================================================
 JED Checker 1.6 - Released 26-October-2015
 =====================================================================
 ~ phpcs
@@ -9,7 +22,7 @@ JED Checker 1.6 - Released 26-October-2015
 + added rule framework, jamss
 
 =====================================================================
-JED Checker 1.6 - Released 5-November-2015
+JED Checker 1.5 - Released 5-November-2015
 =====================================================================
 ~ code cleaup and joomla's phpcs compatibility (at least for the rules)
 # Fixed unnecessary GPL checks in php files with no code - thanks to Peter van Westen
