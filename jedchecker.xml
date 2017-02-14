@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension method="upgrade" type="component" version="2.5.0">
 	<name>COM_JEDCHECKER</name>
-	<author>Compojoom.com</author>
-	<creationDate>2017-01-23</creationDate>
-	<copyright>(C) 2012 compojoom.com</copyright>
-	<authorEmail>daniel@compojoom.com</authorEmail>
-	<authorUrl>www.compojoom.com</authorUrl>
+	<author>Joomla! Extensions Directory</author>
+	<creationDate>2017-02-14</creationDate>
+	<copyright>Copyright (C) 2005 - 2017 Open Source Matters, Inc. All rights reserved.</copyright>
+	<authorEmail>extensions@extensions.joomla.org</authorEmail>
+	<authorUrl>https://github.com/joomla-extensions/jedchecker</authorUrl>
 	<version>1.7</version>
 	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
-	<description><![CDATA[Jedchecker will check your extension files and will let you know in advance if there are any possible problems with your extension for submitting to the JED]]>
+	<description><![CDATA[JED Checker will check your extension files and will let you know in advance if there are any possible problems with your extension for submitting to the JED]]>
 	</description>
     <scriptfile>script.php</scriptfile>
 	<administration>
 		<menu>COM_JEDCHECKER</menu>
-		<files folder="administrator/components/com_jedchecker">
+				<files folder="administrator/components/com_jedchecker">
             <file>access.xml</file>
-<file>config.xml</file>
-<file>controller.php</file>
-<folder>controllers</folder>
-<file>jedchecker.php</file>
-<file>jedchecker.xml</file>
-<folder>language</folder>
-<folder>libraries</folder>
-<folder>models</folder>
-<file>script.php</file>
-<folder>views</folder>
+			<file>config.xml</file>
+			<file>controller.php</file>
+			<folder>controllers</folder>
+			<file>jedchecker.php</file>
+			<file>jedchecker.xml</file>
+			<folder>language</folder>
+			<folder>libraries</folder>
+			<folder>models</folder>
+			<file>script.php</file>
+			<folder>views</folder>
 		</files>
 	</administration>
 	<media destination="com_jedchecker" folder="media/com_jedchecker">
         <folder>css</folder>
-<folder>js</folder>
+		<folder>js</folder>
 	</media>
 	<updateservers>
 		<server type="extension" priority="1" name="JEDChecker Updates"><![CDATA[https://compojoom.com/index.php?option=com_ars&view=update&task=stream&format=xml&id=12&dummy=extension.xml]]></server>
