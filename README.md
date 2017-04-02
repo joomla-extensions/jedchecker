@@ -1,40 +1,10 @@
-JEDchecker
+JED Checker
 ==========
 
 This extension is able to check your components, modules or plugins for common errors that will prevent you
 from publishing your extension on the JED (Joomla! Extensions Directory).
 
-Installing this extension
-ZIP packages with the latest stable version of the extension can be found here:
-https://compojoom.com/downloads/official-releases-stable/jedchecker
-
 If you are developer and want to contribute to this extension you can fork this repo.
-
-## Building the zip package from this repository
-In order to build the installation packages of this library you need to have
-the following tools:
-
-- A command line environment. Bash under Linux / Mac OS X . On Windows
-  you will need to run most tools using an elevated privileges (administrator)
-  command prompt.
-- The PHP CLI binary in your path
-
-- Command line Subversion and Git binaries(*)
-
-- PEAR and Phing installed, with the Net_FTP and VersionControl_SVN PEAR
-  packages installed
-
-You will also need the following path structure on your system
-
-- com_jedchecker - This repository
-- buildtools - Compojoom build tools (https://github.com/compojoom/buildtools)
-
-To execute the build, copy `com_jedchecker/builds/build.properties.txt` renaming it without the `.txt` suffix.
-
-Then in your command line navigate to the `builds` directory and run `phing`
-
-    cd com_jedchecker/builds/
-    phing
 
 ## Uploading your package
 After installing this extension in your Joomla! backend, you can use it by uploading a Joomla! extension-package using
