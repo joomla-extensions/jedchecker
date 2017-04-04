@@ -4,7 +4,7 @@ JED Checker
 This extension is able to check your components, modules or plugins for common errors that will prevent you
 from publishing your extension on the JED (Joomla! Extensions Directory).
 
-If you are developer and want to contribute to this extension you can fork this repo.
+If you are a developer and want to contribute to this extension you can fork this repo.
 
 ## Uploading your package
 After installing this extension in your Joomla! backend, you can use it by uploading a Joomla! extension-package using
