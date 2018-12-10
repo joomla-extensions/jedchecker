@@ -28,8 +28,8 @@ class JedcheckerControllerPolice extends JControllerLegacy
 	 */
 	public function check()
 	{
-		$rule = JRequest::getString('rule');
-
+		$rule = JFactory::getApplication()->input->get('rule', null);
+				
 		JLoader::discover('jedcheckerRules', JPATH_COMPONENT_ADMINISTRATOR . '/libraries/rules/');
 
 		$path  = JFactory::getConfig()->get('tmp_path') . '/jed_checker/unzipped';
@@ -40,7 +40,7 @@ class JedcheckerControllerPolice extends JControllerLegacy
 		{
 			return false;
 		}
-
+		
 		// Loop through each folder and police it
 		$folders = $this->getFolders();
 
@@ -48,7 +48,7 @@ class JedcheckerControllerPolice extends JControllerLegacy
 		{
 			$this->police($class, $folder);
 		}
-
+		
 		return true;
 	}
 
@@ -67,13 +67,13 @@ class JedcheckerControllerPolice extends JControllerLegacy
 
 		// Create instance of the rule
 		$police = new $class($properties);
-
+		
 		// Perform check
-		$police->check();
+		$police->check();		
 
 		// Get the report and then print it
 		$report = $police->get('report');
-
+		
 		echo '<span class="rule">'
 			. JText::_('COM_JEDCHECKER_RULE') . ' ' . JText::_($police->get('id'))
 			. ' - ' . JText::_($police->get('title'))
