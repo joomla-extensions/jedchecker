@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\Registry\Registry;
+
 
 /**
  * class JEDcheckerRule
@@ -106,8 +108,11 @@ class JEDcheckerRule extends JObject
 		// Try to determine the name and location of the params file
 		$file_name = str_replace('jedcheckerrules', '', strtolower(get_class($this)));
 		$params_file = JPATH_COMPONENT_ADMINISTRATOR . '/libraries/rules/' . $file_name . '.ini';
+		
+		$params = new Registry('jedchecker.rule.' . $file_name);
+		//$params = $registry->getInstance('jedchecker.rule.' . $file_name);
 
-		$params = Joomla\Registry\Registry::getInstance('jedchecker.rule.' . $file_name);
+		//$params = Joomla\Registry\Registry::getInstance('jedchecker.rule.' . $file_name);
 
 		// Load the params from the ini file
 		if (file_exists($params_file))
@@ -117,14 +122,14 @@ class JEDcheckerRule extends JObject
 
 			// Get the contents of the file
 			$data = file_get_contents($params_file);
-
+			
 			if ($data)
 			{
 				$obj = (object) parse_ini_string($data);
 
 				if (is_object($obj))
 				{
-					$params->loadObject($obj);
+					$params->loadObject($obj);					
 				}
 			}
 		}
