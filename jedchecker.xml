@@ -18,18 +18,15 @@
 			<file>config.xml</file>
 			<file>controller.php</file>
 			<folder>controllers</folder>
-			<file>jedchecker.php</file>
-			<file>jedchecker.xml</file>
+			<file>jedchecker.php</file>			
 			<folder>language</folder>
 			<folder>libraries</folder>
-			<folder>models</folder>
-			<file>script.php</file>
+			<folder>models</folder>			
 			<folder>views</folder>
 		</files>
 	</administration>
 	<media destination="com_jedchecker" folder="media/com_jedchecker">
-        <folder>css</folder>
-		<folder>js</folder>
+        <folder>css</folder>		
 	</media>
 	<updateservers>
 		<server type="extension" priority="1" name="JEDChecker Updates"><![CDATA[To be updated]]></server>
