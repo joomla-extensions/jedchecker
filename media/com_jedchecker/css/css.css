@@ -55,3 +55,7 @@ small {
 .jamss_tooltip.code {
 	background-color:#C03020;
 }
+
+.btn {
+   white-space: normal !important;
+}
