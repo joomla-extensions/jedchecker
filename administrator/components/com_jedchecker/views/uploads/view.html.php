@@ -27,6 +27,8 @@ class JedcheckerViewUploads extends JViewLegacy
 	 */
 	public function display($tpl = null)
 	{
+		$this->path         = JFactory::getConfig()->get('tmp_path') . '/jed_checker';
+		
 		$this->setToolbar();
 		$this->jsOptions['url'] = JUri::base();
 		$this->jsOptions['rules'] = $this->getRules();
@@ -59,17 +61,16 @@ class JedcheckerViewUploads extends JViewLegacy
 	 */
 	public function setToolbar()
 	{
-		if ($this->filesExist('archives'))
-		{
-			JToolbarHelper::custom('uploads.unzip', 'folder', 'folder', 'unzip', false);
-		}
-
 		if ($this->filesExist('unzipped'))
 		{
-			JToolbarHelper::custom('police.check', 'search', 'search', 'Check', false);
+			JToolbarHelper::custom('check', 'search', 'search', 'Check', false);
 		}
 
 		JToolbarHelper::title('JED checker');
+		if ( file_exists($this->path) ) 
+		{
+			JToolbarHelper::custom('uploads.clear', 'delete', 'delete', 'Clear', false);
+		}
 		
 		if (JFactory::getUser()->authorise('core.admin', 'com_jedchecker'))     
 		{	
