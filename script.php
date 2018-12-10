@@ -26,16 +26,7 @@ class Com_JedcheckerInstallerScript
 	 */
 	public function preflight($type, $parent)
 	{
-		$this->parent = $parent;
-
-		if (version_compare(PHP_VERSION, '5.3.10', '<'))
-		{
-			$this->loadLanguage();
-			
-			Jerror::raiseWarning(null, JText::sprintf('COM_JEDCHECKER_PHP_VERSION_INCOMPATIBLE', PHP_VERSION, '5.3.10'));
-
-			return false;
-		}
+		$this->parent = $parent;		
 	}
 
 	/**
