@@ -10,109 +10,186 @@
 defined('_JEXEC') or die('Restricted access');
 
 JHtml::_('behavior.framework', true);
-JHtml::_('behavior.formvalidation');
-JHtml::_('behavior.keepalive');
 JHtml::stylesheet('media/com_jedchecker/css/css.css');
-JHtml::script('media/com_jedchecker/js/police.js');
 ?>
+
+<script>
+function add_validation() {
+	// Fetch all the forms we want to apply custom Bootstrap validation styles to
+    var forms = document.getElementsByClassName('needs-validation');
+    // Loop over them and prevent submission
+    var validation = Array.prototype.filter.call(forms, function(form) {
+      form.addEventListener('submit', function(event) {
+        if (form.checkValidity() === false) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        form.classList.add('was-validated');
+      }, false);
+    });
+}
+</script>
+
 <script type="text/javascript">
+
+	function check(url,rule) {	
+		jQuery.ajax({
+			url: url + 'index.php?option=com_jedchecker&task=police.check&format=raw&rule='+rule,
+			method: 'GET',
+			success: function(result){					
+				jQuery('#police-check-result').append(result);   
+			}
+		});		 
+	}
+	
 	Joomla.submitbutton = function (task) {
 		var options = <?php echo json_encode($this->jsOptions); ?>;
-		if (task == 'police.check') {
-			new police(options);
-			return false;
+		
+		if (task == 'check') {
+			jQuery("#police-check-result").empty();
+			
+			for (index = 0; index < options["rules"].length; ++index) {
+				check(options["url"],options["rules"][index]);				
+			}
+			
+			jQuery("#prison" ).show();			
+			
+		}  else {			
+			Joomla.submitform(task);
 		}
-		Joomla.submitform(task);
 	}
 </script>
-<div class="row-fluid">
-	<div class="span8">
-		<form action="<?php echo JRoute::_('index.php?option=com_jedchecker&view=uploads'); ?>"
-			  method="post" class="form form-validate" name="adminForm" id="adminForm" enctype="multipart/form-data">
-			<fieldset>
-				<p>
-					<?php echo JText::sprintf('COM_JEDCHECKER_CONGRATS', 'http://extensions.joomla.org/about-jed/terms-of-service#listings'); ?>
-				</p>
+	<?php 
+	if ( version_compare(JVERSION, '3.20', 'lt') ) {
+	?>
+	<!-- Styling of Bootstrap 4 core CSS-->
+	<link href="<?php echo JURI::root(); ?>media/com_jedchecker/css/j3.css" rel="stylesheet">	
+	<?php } ?>
 
-				<p>
-					<?php echo JText::sprintf('COM_JEDCHECKER_CODE_STANDARDS', 'http://developer.joomla.org/coding-standards.html', 'https://github.com/compojoom/jedchecker'); ?>
-				</p>
-
-				<p>
-					<?php echo JText::_('COM_JEDCHECKER_HOW_TO_USE'); ?>
-				</p>
-				<ol>
-					<li> <?php echo JText::_('COM_JEDCHECKER_STEP1'); ?></li>
-					<li> <?php echo JText::_('COM_JEDCHECKER_STEP2'); ?></li>
-					<li> <?php echo JText::_('COM_JEDCHECKER_STEP3'); ?></li>
-				</ol>
-
-
-				<input type="file" name="extension" class="required"/>
-				<button onclick="Joomla.submitbutton('uploads.upload')" class="btn btn-success">
-					<span class="icon-upload "></span> <?php echo JText::_('JSUBMIT'); ?>
-				</button>
+	<div class="row">
+		<div class="col-xs-12 col-md-8">		
+			<form action="<?php echo JRoute::_('index.php?option=com_jedchecker&view=uploads'); ?>"
+			  method="post" class="needs-validation" name="adminForm" id="adminForm" enctype="multipart/form-data">
+			  
+				<div class="card bg-light mb-3">
+					<div class="card-body">						
+						<p class="card-text"><?php echo JText::sprintf('COM_JEDCHECKER_CONGRATS', 'http://extensions.joomla.org/about-jed/terms-of-service#listings'); ?></p>
+						<p class="card-text"><?php echo JText::sprintf('COM_JEDCHECKER_CODE_STANDARDS', 'http://developer.joomla.org/coding-standards.html', 'https://github.com/compojoom/jedchecker'); ?></p>
+						<p class="card-text"><?php echo JText::_('COM_JEDCHECKER_HOW_TO_USE'); ?></p>
+						<p class="card-text">
+							<ol>
+								<li> <?php echo JText::_('COM_JEDCHECKER_STEP1'); ?></li>
+								<li> <?php echo JText::_('COM_JEDCHECKER_STEP2'); ?></li>
+							</ol>
+						</p>
+						<div class="form-row">
+							<div class="col-md-6 mb-3">
+								<div class="custom-file">
+									<input type="file" class="custom-file-input" name="extension" id="extension" required>
+									<label class="custom-file-label" for="extension"><?php echo JText::_('COM_JEDCHECKER_UPLOAD_FILE'); ?></label>
+									<div class="invalid-feedback"><?php echo JText::_('COM_JEDCHECKER_EMPTY_UPLOAD_FIELD'); ?></div>							
+								</div>								
+							</div>
+							<div class="col-md-6 mb-3">
+								<button onclick="add_validation(); Joomla.submitbutton('uploads.upload')" class="btn btn-success">
+									<span class="icon-upload "></span> <?php echo JText::_('JSUBMIT'); ?>
+								</button>
+							</div>
+						</div>	
+					</div>
+				</div>			
+				
 				<input type="hidden" name="task" value=""/>
 				<?php echo JHtml::_('form.token'); ?>
-			</fieldset>
-		</form>
-	</div>
-	<div class="span4">
-		<div class="well">
-			<h2><?php echo JText::_('COM_JEDCHECKER_WALL_OF_HONOR'); ?></h2>
-
-			<p><?php echo JText::_('COM_JEDCHECKER_PEOPLE_THAT_HAVE_HELPED_WITH_THE_DEVELOPMENT'); ?></p>
-			<ul>
-				<li>Tobias Kuhn (<a href="http://projectfork.net" target="_blank">projectfork</a>)</li>
-				<li>Jisse Reitsma (<a href="http://www.yireo.com/" target="_blank">yireo</a>)</li>
-				<li>Denis Dulici (<a href="http://mijosoft.com/" target="_blank">mijosoft</a>)</li>
-				<li>Peter van Westen (<a href="https://www.regularlabs.com" target="_blank">Regular Labs</a>)</li>
-				<li>Alain Rivest (<a href="http://aldra.ca" target="_blank">Aldra.ca</a>)</li>
-				<li>OpenTranslators (<a href="http://opentranslators.org" target="_blank">opentranslators.org</a>)</li>
-				<li>Riccardo Zorn (<a href="http://fasterjoomla.com" target="_blank">fasterjoomla.com</a>)</li>
-				<li>Bernard Toplak (<a href="http://www.orion-web.hr/en/" target="_blank">orion-web.hr</a>)</li>
-				<li>Jaz Parkyn (<a href="https://volunteers.joomla.org/joomlers/337-jaz-parkyn" target="_blank">Joomla! Extensions Directory</a>)</li>
-			</ul>
+			
+			</form>
+		</div>
+		
+		<div class="col-xs-6 col-md-4">
+		
+			<div class="card text-white bg-info mb-3">
+				<div class="card-header"><?php echo JText::_('COM_JEDCHECKER_WALL_OF_HONOR'); ?></div>
+				<div class="card-body">
+					<h5 class="card-title"><?php echo JText::_('COM_JEDCHECKER_PEOPLE_THAT_HAVE_HELPED_WITH_THE_DEVELOPMENT'); ?></h5>
+					<p class="card-text">
+						<ul>
+							<li>Tobias Kuhn (<a href="http://projectfork.net" target="_blank">projectfork</a>)</li>
+							<li>Jisse Reitsma (<a href="http://www.yireo.com/" target="_blank">yireo</a>)</li>
+							<li>Denis Dulici (<a href="http://mijosoft.com/" target="_blank">mijosoft</a>)</li>
+							<li>Peter van Westen (<a href="https://www.regularlabs.com" target="_blank">Regular Labs</a>)</li>
+							<li>Alain Rivest (<a href="http://aldra.ca" target="_blank">Aldra.ca</a>)</li>
+							<li>OpenTranslators (<a href="http://opentranslators.org" target="_blank">opentranslators.org</a>)</li>
+							<li>Riccardo Zorn (<a href="http://fasterjoomla.com" target="_blank">fasterjoomla.com</a>)</li>
+							<li>Bernard Toplak (<a href="http://www.orion-web.hr/en/" target="_blank">orion-web.hr</a>)</li>
+							<li>Jaz Parkyn (<a href="https://volunteers.joomla.org/joomlers/337-jaz-parkyn" target="_blank">Joomla! Extensions Directory</a>)</li>
+							<li>José Antonio Luque (<a href="https://securitycheck.protegetuordenador.com" target="_blank">Securitycheck Extensions</a>)</li>
+						</ul>
+					</p>
+				</div>
+			</div>		
 		</div>
 	</div>
-</div>
-<div id="prison" style="display:none;">
-	<div class="row-fluid">
-		<div class="span8">
-			<div id="police-check-result" class="well"><h2 style="padding-left:10px;"><?php echo JText::_('COM_JEDCHECKER_RESULTS'); ?></h2></div>
-		</div>
-		<div class="span4">
-			<div class="well">
-				<h2>
-					<?php echo JText::_('COM_JEDCHECKER_HOW_TO_INTERPRET_RESULTS'); ?>
-				</h2>
-				<ul>
-					<?php
-					foreach ($this->jsOptions['rules'] AS $rule) {
-						$class = 'jedcheckerRules' . ucfirst($rule);
+	
+	<div id="prison" style="display: none">
+		<div class="row">
+		
+			<div class="col-md-8">
+				<div class="card bg-light mb-3">
+					<div class="card-header"><?php echo JText::_('COM_JEDCHECKER_RESULTS'); ?></div>
+					<div class="card-body">
+						<p class="card-text">
+							<div id="police-check-result"></div>
+						</p>
+					</div>
+					<div class="card-footer">
+					  <small class="text-muted">
+						<?php echo JText::sprintf('COM_JEDCHECKER_LEAVE_A_REVIEW_JED', 'http://extensions.joomla.org/extensions/tools/development-tools/21336'); ?>
+						<?php echo JText::sprintf('COM_JEDCHECKER_DEVELOPED_BY', 'https://github.com/joomla-extensions/jedchecker'); ?> :)
+					  </small>
+					</div>
+				</div>				
+			</div>
+			
+			<div class="col-md-4">			
+				<div class="card bg-light mb-3">
+					<div class="card-header"><?php echo JText::_('COM_JEDCHECKER_HOW_TO_INTERPRET_RESULTS'); ?></div>
+					<div class="card-body">
+						<p class="card-text">
+							<div id="accordion">
+								<?php
+								foreach ($this->jsOptions['rules'] AS $rule) {
+									$class = 'jedcheckerRules' . ucfirst($rule);
 
-						if (!class_exists($class)) continue;
-						$rule = new $class();
-						?>
-						<li>
-							<p>
-								<span class="rule">
-									<?php echo JText::_('COM_JEDCHECKER_RULE') . ' ' . $rule->get('id') . ' - ' . JText::_($rule->get('title'));?>
-								</span>
-							</p>
-							<p><?php echo JText::_($rule->get('description')); ?></p>
-						</li>
-					<?php
-					}
-					?>
-				</ul>
+									if (!class_exists($class)) continue;
+									$rule = new $class();
+									?>
+									<div class="card">
+										<?php 
+											echo '<div class="card-header" id="heading' . $rule->get('id') .'">';
+										?>
+											<h5 class="mb-0">
+										<?php
+											echo '<button class="btn btn-link" data-toggle="collapse" data-target="#collapse' . $rule->get('id') . '" aria-expanded="true" aria-controls="collapse' . $rule->get('id') . '">' . JText::_('COM_JEDCHECKER_RULE') . ' ' . $rule->get('id') . ' - ' . JText::_($rule->get('title'));
+										?>
+												</button>
+											</h5>
+										</div>
+										
+										<?php 
+											echo '<div id="collapse' . $rule->get('id') . '" class="collapse" aria-labelledby="heading' . $rule->get('id') . '" data-parent="#accordion">';
+										?>
+											<div class="card-body">
+												<?php echo JText::_($rule->get('description')); ?>
+											</div>
+										</div>
+									</div>									
+								<?php
+								}
+								?>
+							</div>						
+						</p>
+					</div>
+				</div>	
 			</div>
 		</div>
 	</div>
-</div>
-<div class="clr clearfix"></div>
-<div class="copyright row-fluid">
-	<?php echo JText::sprintf('COM_JEDCHECKER_LEAVE_A_REVIEW_JED', 'http://extensions.joomla.org/extensions/tools/development-tools/21336'); ?>
-	<br/>
-	<?php echo JText::sprintf('COM_JEDCHECKER_DEVELOPED_BY', 'https://compojoom.com'); ?> :)
-</div>
