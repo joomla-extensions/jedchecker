@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension method="upgrade" type="component" version="2.5.0">
+<extension type="component" version="3.6" method="upgrade">
 	<name>COM_@@COMPONENTNAMEUPPERCASE@@</name>
-	<author>Compojoom.com</author>
+	<author>Joomla! Extensions Directory</author>
 	<creationDate>@@DATE@@</creationDate>
-	<copyright>(C) 2012 compojoom.com</copyright>
-	<authorEmail>daniel@compojoom.com</authorEmail>
-	<authorUrl>www.compojoom.com</authorUrl>
+	<copyright>Copyright (C) 2005 - 2018 Open Source Matters, Inc. All rights reserved.</copyright>
+	<authorEmail>extensions@extensions.joomla.org</authorEmail>
+	<authorUrl>https://github.com/joomla-extensions/jedchecker</authorUrl>
 	<version>@@VERSION@@</version>
 	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
 	<description><![CDATA[Jedchecker will check your extension files and will let you know in advance if there are any possible problems with your extension for submitting to the JED]]>
@@ -21,6 +21,6 @@
         ##MEDIAPACKAGEFILES##
 	</media>
 	<updateservers>
-		<server type="extension" priority="1" name="JEDChecker Updates"><![CDATA[https://compojoom.com/index.php?option=com_ars&view=update&task=stream&format=xml&id=12&dummy=extension.xml]]></server>
+		<server type="extension" priority="1" name="JEDChecker Updates"><![CDATA[To be updated]]></server>
 	</updateservers>
 </extension>
