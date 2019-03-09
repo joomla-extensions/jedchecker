@@ -1,9 +1,9 @@
 <?php
 /**
- * @author     Daniel Dimitrov <daniel@compojoom.com>
- * @date       04/08/2012
- * @copyright  Copyright (C) 2008 - 2012 compojoom.com . All rights reserved.
- * @license    GNU General Public License version 2 or later; see LICENSE
+ * @package    Joomla.JEDChecker
+ *
+ * @copyright  Copyright (C) 2005 - 2019 Open Source Matters, Inc. All rights reserved.
+ * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 defined('_JEXEC') or die('Restricted access');

@@ -1,13 +1,14 @@
 <?php
 /**
- * @author     eaxs <support@projectfork.net>
- * @author     Daniel Dimitrov <daniel@compojoom.com>
- * @date       07/06/2012
- * @copyright  Copyright (C) 2008 - 2012 compojoom.com . All rights reserved.
- * @license    GNU General Public License version 2 or later; see LICENSE
+ * @package    Joomla.JEDChecker
+ *
+ * @copyright  Copyright (C) 2005 - 2019 Open Source Matters, Inc. All rights reserved.
+ * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 defined('_JEXEC') or die('Restricted access');
+
+use Joomla\Registry\Registry;
 
 
 /**
@@ -107,7 +108,10 @@ class JEDcheckerRule extends JObject
 		$file_name = str_replace('jedcheckerrules', '', strtolower(get_class($this)));
 		$params_file = JPATH_COMPONENT_ADMINISTRATOR . '/libraries/rules/' . $file_name . '.ini';
 
-		$params = Joomla\Registry\Registry::getInstance('jedchecker.rule.' . $file_name);
+		$params = new Registry('jedchecker.rule.' . $file_name);
+		//$params = $registry->getInstance('jedchecker.rule.' . $file_name);
+
+		//$params = Joomla\Registry\Registry::getInstance('jedchecker.rule.' . $file_name);
 
 		// Load the params from the ini file
 		if (file_exists($params_file))

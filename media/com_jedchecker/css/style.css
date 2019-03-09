@@ -1,12 +1,12 @@
 #adminForm {
-    background: #FFF;
+	background: #FFF;
 }
 
 #police-check-result {
 	padding: 0;
 }
 
-#police-check-result > div {
+#police-check-result>div {
 	border-top: 1px solid #ccc;
 	padding: 5px 10px;
 }
@@ -16,25 +16,27 @@
 }
 
 .copyright {
-    line-height: 160%;
-    margin: 10px;
-    text-align: center;
+	line-height: 160%;
+	margin: 10px;
+	text-align: center;
 }
 
 .rule {
-    font-weight: bold;
+	font-weight: bold;
 }
 
 small {
 	font-size: 110%;
-    padding: 0 0 0 30px;
-    white-space: nowrap;
+	padding: 0 0 0 30px;
+	white-space: nowrap;
 
 }
+
 #police-check-result li {
-	margin-bottom:0.7em;
-	overflow:hidden;
+	margin-bottom: 0.7em;
+	overflow: hidden;
 }
+
 #police-check-result ul li pre {
 	background: white none repeat scroll 0 0;
 	border: 1px solid #ccc;
@@ -48,10 +50,15 @@ small {
 }
 
 .jamss_tooltip {
-	background-color:blue;
-	color:white;
-	border-radius:20px;
+	background-color: blue;
+	color: white;
+	border-radius: 20px;
 }
+
 .jamss_tooltip.code {
-	background-color:#C03020;
+	background-color: #C03020;
+}
+
+.btn {
+	white-space: normal !important;
 }

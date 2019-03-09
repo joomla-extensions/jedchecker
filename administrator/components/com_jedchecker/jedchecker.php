@@ -1,16 +1,15 @@
 <?php
 /**
- * @author     Daniel Dimitrov - compojoom.com
- * @date       : 02.06.12
+ * @package    Joomla.JEDChecker
  *
- * @copyright  Copyright (C) 2008 - 2012 compojoom.com . All rights reserved.
- * @license    GNU General Public License version 2 or later; see LICENSE
+ * @copyright  Copyright (C) 2005 - 2019 Open Source Matters, Inc. All rights reserved.
+ * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 defined('_JEXEC') or die('Restricted access');
 jimport('joomla.application.component.controllerlegacy');
 
-if (!JFactory::getUser()->authorise('core.manage', 'com_jedchecker')) 
+if (!JFactory::getUser()->authorise('core.manage', 'com_jedchecker'))
 {
 	throw new Exception(JText::_('JERROR_ALERTNOAUTHOR'));
 }

@@ -1,10 +1,9 @@
 <?php
 /**
- * @author     Daniel Dimitrov <daniel@compojoom.com>
- * @date       02.06.12
+ * @package    Joomla.JEDChecker
  *
- * @copyright  Copyright (C) 2008 - 2012 compojoom.com . All rights reserved.
- * @license    GNU General Public License version 2 or later; see LICENSE
+ * @copyright  Copyright (C) 2005 - 2019 Open Source Matters, Inc. All rights reserved.
+ * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 defined('_JEXEC') or die('Restricted access');
@@ -27,6 +26,8 @@ class JedcheckerViewUploads extends JViewLegacy
 	 */
 	public function display($tpl = null)
 	{
+		$this->path         = JFactory::getConfig()->get('tmp_path') . '/jed_checker';
+
 		$this->setToolbar();
 		$this->jsOptions['url'] = JUri::base();
 		$this->jsOptions['rules'] = $this->getRules();
@@ -59,20 +60,19 @@ class JedcheckerViewUploads extends JViewLegacy
 	 */
 	public function setToolbar()
 	{
-		if ($this->filesExist('archives'))
-		{
-			JToolbarHelper::custom('uploads.unzip', 'folder', 'folder', 'unzip', false);
-		}
-
 		if ($this->filesExist('unzipped'))
 		{
-			JToolbarHelper::custom('police.check', 'search', 'search', 'Check', false);
+			JToolbarHelper::custom('check', 'search', 'search', 'Check', false);
 		}
 
 		JToolbarHelper::title('JED checker');
-		
-		if (JFactory::getUser()->authorise('core.admin', 'com_jedchecker'))     
-		{	
+		if ( file_exists($this->path) )
+		{
+			JToolbarHelper::custom('uploads.clear', 'delete', 'delete', 'Clear', false);
+		}
+
+		if (JFactory::getUser()->authorise('core.admin', 'com_jedchecker'))
+		{
 			JToolbarHelper::preferences('com_jedchecker');
 		}
 	}

@@ -1,10 +1,9 @@
 <?php
 /**
- * @author     Daniel Dimitrov <daniel@compojoom.com>
- * @date       02.06.12
+ * @package    Joomla.JEDChecker
  *
- * @copyright  Copyright (C) 2008 - 2012 compojoom.com . All rights reserved.
- * @license    GNU General Public License version 2 or later; see LICENSE
+ * @copyright  Copyright (C) 2005 - 2019 Open Source Matters, Inc. All rights reserved.
+ * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 defined('_JEXEC') or die('Restricted access');
@@ -31,7 +30,7 @@ class Com_JedcheckerInstallerScript
 		if (version_compare(PHP_VERSION, '5.3.10', '<'))
 		{
 			$this->loadLanguage();
-			
+
 			Jerror::raiseWarning(null, JText::sprintf('COM_JEDCHECKER_PHP_VERSION_INCOMPATIBLE', PHP_VERSION, '5.3.10'));
 
 			return false;

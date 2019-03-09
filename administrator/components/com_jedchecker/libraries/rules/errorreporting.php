@@ -1,9 +1,9 @@
 <?php
 /**
- * @author     Denis Dulici <denis@mijosoft.com>
- * @date       18.08.2013
- * @copyright  Copyright (C) 2008 - 2013 mijosoft.com . All rights reserved.
- * @license    GNU General Public License version 2 or later; see LICENSE
+ * @package    Joomla.JEDChecker
+ *
+ * @copyright  Copyright (C) 2005 - 2019 Open Source Matters, Inc. All rights reserved.
+ * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 defined('_JEXEC') or die('Restricted access');

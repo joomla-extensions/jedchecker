@@ -1,9 +1,9 @@
 <?php
 /**
- * @author     Riccardo Zorn <support@fasterjoomla.com>
- * @date       23.02.2014
- * @copyright  Copyright (C) 2008 - 2014 fasterjoomla.com . All rights reserved.
- * @license    GNU General Public License version 2 or later; see LICENSE
+ * @package    Joomla.JEDChecker
+ *
+ * @copyright  Copyright (C) 2005 - 2019 Open Source Matters, Inc. All rights reserved.
+ * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 defined('_JEXEC') or die('Restricted access');

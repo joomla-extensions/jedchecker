@@ -1,10 +1,9 @@
 <?php
 /**
- * @author     Daniel Dimitrov <daniel@compojoom.com>
- * @date       26.10.15
+ * @package    Joomla.JEDChecker
  *
- * @copyright  Copyright (C) 2008 - 2015 compojoom.com . All rights reserved.
- * @license    GNU General Public License version 2 or later; see LICENSE
+ * @copyright  Copyright (C) 2005 - 2019 Open Source Matters, Inc. All rights reserved.
+ * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 defined('_JEXEC') or die('Restricted access');
@@ -13,6 +12,8 @@ jimport('joomla.filesystem');
 jimport('joomla.filesystem.folder');
 jimport('joomla.filesystem.archive');
 
+use Joomla\Archive\Archive;
+
 /**
  * Class JedcheckerControllerUploads
  *
@@ -20,6 +21,11 @@ jimport('joomla.filesystem.archive');
  */
 class JedcheckerControllerUploads extends JControllerlegacy
 {
+
+var $path         = null;
+var $pathArchive  = null;
+var $pathUnzipped = null;
+
 	/**
 	 * Constructor.
 	 *
@@ -41,14 +47,14 @@ class JedcheckerControllerUploads extends JControllerlegacy
 	{
 		$appl  = JFactory::getApplication();
 		$input = JFactory::getApplication()->input;
-		
+
 		// Check the sent token by the form
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
 		// Gets the uploaded file from the sent form
 		$file = $input->files->get('extension', null, 'raw');
 
-		if ($file['tmp_name'])
+		if ( $file['tmp_name'] )
 		{
 			$path = $this->pathArchive;
 
@@ -83,14 +89,21 @@ class JedcheckerControllerUploads extends JControllerlegacy
 			{
 				// Error in upload - redirect back with an error notice
 				JFactory::getApplication()->enqueueMessage(JText::_('COM_JEDCHECKER_ERROR_UNABLE_TO_UPLOAD_FILE'), 'error');
-				$this->setRedirect('index.php?option=com_jedchecker&view=uploads');
+				$appl->redirect('index.php?option=com_jedchecker&view=uploads');
 
 				return false;
 			}
 
-			$appl->redirect('index.php?option=com_jedchecker&view=uploads', JText::_('COM_JEDCHECKER_UPLOAD_WAS_SUCCESSFUL'));
+			// Unzip uploaded files
+			$unzip_result = $this->unzip();
+
+			$this->setRedirect( 'index.php?option=com_jedchecker&view=uploads' );
+
 
 			return true;
+		} else {
+
+			$this->setRedirect('index.php?option=com_jedchecker&view=uploads');
 		}
 
 		return false;
@@ -104,7 +117,7 @@ class JedcheckerControllerUploads extends JControllerlegacy
 	public function unzip()
 	{
 		$appl  = JFactory::getApplication();
-		
+
 		// Form check token
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
 
@@ -125,22 +138,36 @@ class JedcheckerControllerUploads extends JControllerlegacy
 		}
 
 		$file   = JFolder::files($this->pathArchive);
-		$result = JArchive::extract($this->pathArchive . '/' . $file[0], $this->pathUnzipped . '/' . $file[0]);
+
+		$origin = $this->pathArchive . DIRECTORY_SEPARATOR . $file[0];
+		$destination = $this->pathUnzipped . DIRECTORY_SEPARATOR . $file[0];
+
+		try
+		{
+			$archive = new Archive;
+			$result = $archive->extract($origin, $destination);
+		}
+		catch (\Exception $e)
+		{
+			$result = false;
+		}
 
 		if ($result)
 		{
 			// Scan unzipped folders if we find zip file -> unzip them as well
 			$this->unzipAll($this->pathUnzipped . '/' . $file[0]);
 			$message = 'COM_JEDCHECKER_UNZIP_SUCCESS';
+			JFactory::getApplication()->enqueueMessage(JText::_($message));
 		}
 		else
 		{
 			$message = 'COM_JEDCHECKER_UNZIP_FAILED';
 		}
 
-		$appl->redirect('index.php?option=com_jedchecker&view=uploads', JText::_($message));
+		//$appl->redirect('index.php?option=com_jedchecker&view=uploads', JText::_($message));
+		$message = 'COM_JEDCHECKER_UNZIP_FAILED';
 
-		return $result;
+		return $message;
 	}
 
 	/**
@@ -163,7 +190,15 @@ class JedcheckerControllerUploads extends JControllerlegacy
 				if ($extension == 'zip')
 				{
 					$unzip  = $file->getPath() . '/' . $file->getBasename('.' . $extension);
-					$result = JArchive::extract($file->getPathname(), $unzip);
+					try
+					{
+						$archive = new Archive;
+						$result = $archive->extract($file->getPathname(), $unzip);
+					}
+					catch (\Exception $e)
+					{
+						$result = false;
+					}
 
 					// Delete the archive once we extract it
 					if ($result)
@@ -179,6 +214,30 @@ class JedcheckerControllerUploads extends JControllerlegacy
 			{
 				$this->unzipAll($file->getPathname());
 			}
+		}
+	}
+
+	/**
+	 * clear tmp folders
+	 *
+	*/
+	public function clear()
+	{
+		if ( file_exists($this->path) )
+		{
+			$result = JFolder::delete($this->path);
+
+			if (!$result)
+			{
+				echo 'could not delete ' . $this->path;
+				$message = 'COM_JEDCHECKER_DELETE_FAILED';
+			}
+
+			$message = 'COM_JEDCHECKER_DELETE_SUCCESS';
+
+			//JFactory::getApplication()->redirect('index.php?option=com_jedchecker&view=uploads', JText::_($message));
+			$this->setRedirect( 'index.php?option=com_jedchecker&view=uploads' );
+
 		}
 	}
 }

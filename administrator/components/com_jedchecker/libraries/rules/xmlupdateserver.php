@@ -1,10 +1,9 @@
 <?php
 /**
- * @author     eaxs <support@projectfork.net>
- * @author     Daniel Dimitrov <daniel@compojoom.com>
- * @date       07/06/2012
- * @copyright  Copyright (C) 2008 - 2012 compojoom.com . All rights reserved.
- * @license    GNU General Public License version 2 or later; see LICENSE
+ * @package    Joomla.JEDChecker
+ *
+ * @copyright  Copyright (C) 2005 - 2019 Open Source Matters, Inc. All rights reserved.
+ * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
 defined('_JEXEC') or die('Restricted access');
@@ -51,7 +50,7 @@ class JedcheckerRulesXMLUpdateServer extends JEDcheckerRule
 	{
 		// Find all XML files of the extension
 		$files = JFolder::files($this->basedir, '.xml$', true, true);
-		
+
 		// Find XML package file
 		$packageFile = $this->checkPackageXML($files);
 
@@ -59,10 +58,10 @@ class JedcheckerRulesXMLUpdateServer extends JEDcheckerRule
 		{
 			$XMLFiles = $this->findXMLPaths($files);
 		}
-		
+
 		return true;
 	}
-	
+
 	/**
 	 * Reads a file and searches for package xml file
 	 *
@@ -71,25 +70,25 @@ class JedcheckerRulesXMLUpdateServer extends JEDcheckerRule
 	 * @return boolean True if the package xml file was found, otherwise False.
 	 */
 	protected function checkPackageXML($files)
-	{		
+	{
 		$packageCount = 0;
-		
-		foreach ($files as $file) 
+
+		foreach ($files as $file)
 		{
 			$xml = JFactory::getXml($file);
 
 			// Check if this is an XML and an extension manifest
 			if ($xml && ($xml->getName() == 'install' || $xml->getName() == 'extension'))
-			{				
+			{
 				// Check if extension attribute 'type' is for a package
 				if($xml->attributes()->type == 'package')
 				{
 					$packageCount++;
 					$this->find($file);
 				}
-			} 
+			}
 		}
-		
+
 		// No XML file found for package
 		if ($packageCount == 0)
 		{
@@ -98,7 +97,7 @@ class JedcheckerRulesXMLUpdateServer extends JEDcheckerRule
 			return true;
 		}
 	}
-	
+
 	/**
 	 * Reads a file and searches for paths of xml files
 	 *
@@ -107,11 +106,11 @@ class JedcheckerRulesXMLUpdateServer extends JEDcheckerRule
 	 * @return void
 	 */
 	protected function findXMLPaths($files)
-	{		
+	{
 		$XMLFiles = array();
 		$componentPaths = array();
-		
-		foreach ($files as $file) 
+
+		foreach ($files as $file)
 		{
 			$xml = JFactory::getXml($file);
 
@@ -125,25 +124,25 @@ class JedcheckerRulesXMLUpdateServer extends JEDcheckerRule
 					'directoryPath' => substr($file, 0, strrpos( $file, '/')),
 					'directory' => trim(end($directories))
 				);
-				
+
 				if ($xml->attributes()->type == 'component')
 				{
 					$componentPaths[] = substr($file, 0, strrpos( $file, '/'));
 				}
-			} 
+			}
 		}
-				
+
 		foreach ($XMLFiles as $XMLFile)
 		{
 			// Always check component XML files for update servers
 			if ($XMLFile['type'] == 'component')
 			{
 				$this->find($XMLFile['filepath']);
-				
+
 			} else {
 				// If not component, check if XML is nested inside component folder.
 				$nested = false;
-				
+
 				foreach ($componentPaths as $component)
 				{
 					if (strpos($XMLFile['directoryPath'], $component) !== false)
@@ -151,13 +150,13 @@ class JedcheckerRulesXMLUpdateServer extends JEDcheckerRule
 						$nested = true;
 					}
 				}
-				
+
 				if (!$nested){
 					$this->find($XMLFile['filepath']);
 				}
 			}
 		}
-		
+
 		return true;
 	}
 
@@ -172,7 +171,7 @@ class JedcheckerRulesXMLUpdateServer extends JEDcheckerRule
 	protected function find($file)
 	{
 		$xml = JFactory::getXml($file);
-		
+
 		// Failed to parse the xml file.
 		// Assume that this is not a extension manifest
 		if (!$xml)
@@ -194,16 +193,16 @@ class JedcheckerRulesXMLUpdateServer extends JEDcheckerRule
 
 			return false;
 		}
-		
+
 		// Check if server tag(s) exist
 		if (!isset($xml->updateservers->server))
 		{
 			$this->report->addError($file, JText::_('COM_JEDCHECKER_ERROR_XML_UPDATE_SERVER_NOT_FOUND'));
 
 			return false;
-			
-		} 
-		
+
+		}
+
 		// Check if server tag(s) contain valid links
 		foreach ($xml->updateservers->server as $server)
 		{
@@ -212,7 +211,7 @@ class JedcheckerRulesXMLUpdateServer extends JEDcheckerRule
 				$this->report->addError($file, JText::_('COM_JEDCHECKER_ERROR_XML_UPDATE_SERVER_LINK_NOT_FOUND'));
 
 				return false;
-				
+
 			} else {
 				$this->report->addInfo($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_UPDATE_SERVER_LINK', (string) $server));
 			}

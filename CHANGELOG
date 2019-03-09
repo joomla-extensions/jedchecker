@@ -1,6 +1,14 @@
 <?php defined('_JEXEC') or die(); ?>
 
 =====================================================================
+JED Checker 2.1.0 - Released 9-March-2019
+=====================================================================
++ Compatibility with Joomla 4
++ Rule INFO_XML
++ Update Server Requirement
+~ Copyright updated to Joomla! / OSM
+
+=====================================================================
 JED Checker 2.0 - Released 2-April-2017
 =====================================================================
 ^ Removal of build tools
