@@ -38,7 +38,7 @@ Example `tmp/jed_checker/local.txt` file:
 
 ## History of the Extension
 
-This extension was previously maintained by Compojoom (Daniel Dimitrov). Other developers that collaborated with the original project were Denis Dulici (mijosoft.com), Riccardo Zorn (fasterjoomla.com), Bernard Toplak, eaxs (projectfork.net).
+This extension was previously maintained by Compojoom (Daniel Dimitrov). Other developers that collaborated with the original project were Denis Dulici (mijosoft.com), Riccardo Zorn (fasterjoomla.com), Bernard Toplak, and eaxs (projectfork.net).
 
 Now, JED Checker is currently supported by Joomla (Open Source Matters).
 
