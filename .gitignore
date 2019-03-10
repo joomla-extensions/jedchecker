@@ -7,3 +7,16 @@
 /.settings
 /.buildpath
 /.project
+
+# Project management
+.vscode/
+.editorconfig
+.eslintrc.json
+.jsbeautifyrc
+.jshintrc
+.markdownlint.json
+jsconfig.json
+.php_cs.dist
+.php_cs
+.gitkeep
+

@@ -2,7 +2,11 @@
 /**
  * @package    Joomla.JEDChecker
  *
- * @copyright  Copyright (C) 2005 - 2019 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2019 Open Source Matters, Inc. All rights reserved.
+ * 			   Copyright (C) 2008 - 2018 fasterjoomla.com. All rights reserved.
+ * @author     Riccardo Zorn <support@fasterjoomla.com>
+ * 			   Bernard Toplak <bernard@orion-web.hr>
+ *
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
