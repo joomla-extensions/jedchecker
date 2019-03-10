@@ -2,8 +2,8 @@
 /**
  * @package    Joomla.JEDChecker
  *
- * @copyright  Copyright (C) 2019 Open Source Matters, Inc. All rights reserved.
- * 			   Copyright (C) 2008 - 2018 compojoom.com . All rights reserved.
+ * @copyright  Copyright (C) 2017 - 2019 Open Source Matters, Inc. All rights reserved.
+ * 			   Copyright (C) 2008 - 2016 compojoom.com . All rights reserved.
  * @author     Daniel Dimitrov <daniel@compojoom.com>
  * 			   02.06.12
  *

@@ -2,8 +2,8 @@
 /**
  * @package    Joomla.JEDChecker
  *
- * @copyright  Copyright (C) 2019 Open Source Matters, Inc. All rights reserved.
- * 			   Copyright (C) 2008 - 2018 mijosoft.com . All rights reserved.
+ * @copyright  Copyright (C) 2017 - 2019 Open Source Matters, Inc. All rights reserved.
+ * 			   Copyright (C) 2008 - 2016 mijosoft.com . All rights reserved.
  * @author     Denis Dulici <denis@mijosoft.com>
  *
  * @license    GNU General Public License version 2 or later; see LICENSE.txt

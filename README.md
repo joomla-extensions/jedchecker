@@ -44,8 +44,8 @@ Now, JED Checker is currently supported by Joomla (Open Source Matters).
 
 ## COPYRIGHT AND DISCLAIMER
 
-Copyright (C) 2019 Open Source Matters, Inc. All rights reserved.
-Copyright (C) 2008 - 2018 compojoom.com . All rights reserved.
+Copyright (C) 2017 - 2019 Open Source Matters, Inc. All rights reserved.
+Copyright (C) 2008 - 2016 compojoom.com . All rights reserved.
 
 This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
 
