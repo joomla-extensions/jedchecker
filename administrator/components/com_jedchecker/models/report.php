@@ -217,7 +217,7 @@ class JEDcheckerReport extends JObject
 			if ($compat_count > 0)
 			{
 
-				$collapseID = uniqid('warning_');
+				$collapseID = uniqid('compat_');
 
 				$html[] = '<div class="alert alert-warning" data-toggle="collapse" data-target="#' . $collapseID . '"><strong>' . $compat_count . ' ' . JText::_('COM_JEDCHECKER_COMPAT_ISSUES') . '</strong> - Click to View Details</div>';
 				$html[] = '<div id="' . $collapseID . '" class="collapse"><ul class="alert alert-warning">';
