@@ -222,7 +222,7 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 						'22',
 						'Found the SourceCop encoded code. It is often used for malicious code ' .
 						'hiding, so go and check the code with some online SourceCop decoders'),
-						array('(?:exec|passthru|shell_exec|system|proc_|popen)[\w\W\s/\*]*\([\s/\*\#\'\"\w\W\-\_]*(?:\$_GET|\$_POST)',
+						array('\b(?:exec|passthru|shell_exec|system|proc_\w+|popen)\b[\w\W\s/\*]*\([\s/\*\#\'\"\w\W\-\_]*(?:\$_GET|\$_POST)',
 						'shell command execution from POST/GET variables',
 						'23',
 						'Found direct shell command execution getting variables from POST/GET, ' .
