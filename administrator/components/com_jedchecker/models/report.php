@@ -67,6 +67,7 @@ class JEDcheckerReport extends JObject
 		$this->data['errors'] = array();
 		$this->data['compat'] = array();
 		$this->data['info'] = array();
+		$this->data['warning'] = array();
 
 		$this->data['count'] = new stdClass;
 		$this->data['count']->total = 0;
