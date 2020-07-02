@@ -75,8 +75,8 @@ function add_validation() {
 
 				<div class="card bg-light mb-3">
 					<div class="card-body">
-						<p class="card-text"><?php echo JText::sprintf('COM_JEDCHECKER_CONGRATS', 'http://extensions.joomla.org/about-jed/terms-of-service#listings'); ?></p>
-						<p class="card-text"><?php echo JText::sprintf('COM_JEDCHECKER_CODE_STANDARDS', 'http://developer.joomla.org/coding-standards.html', 'https://github.com/compojoom/jedchecker'); ?></p>
+						<p class="card-text"><?php echo JText::sprintf('COM_JEDCHECKER_CONGRATS', 'https://extensions.joomla.org/community/terms-of-service/'); ?></p>
+						<p class="card-text"><?php echo JText::sprintf('COM_JEDCHECKER_CODE_STANDARDS', 'https://developer.joomla.org/coding-standards.html'); ?></p>
 						<p class="card-text"><?php echo JText::_('COM_JEDCHECKER_HOW_TO_USE'); ?></p>
 						<p class="card-text">
 							<ol>
@@ -135,7 +135,7 @@ function add_validation() {
 					</div>
 					<div class="card-footer">
 					  <small class="text-muted">
-						<?php echo JText::sprintf('COM_JEDCHECKER_LEAVE_A_REVIEW_JED', 'http://extensions.joomla.org/extensions/tools/development-tools/21336'); ?>
+						<?php echo JText::sprintf('COM_JEDCHECKER_LEAVE_A_REVIEW_JED', 'https://extensions.joomla.org/extensions/tools/development-tools/21336'); ?>
 						<?php echo JText::sprintf('COM_JEDCHECKER_DEVELOPED_BY', 'https://github.com/joomla-extensions/jedchecker'); ?> :)
 					  </small>
 					</div>
