@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension type="component" version="3.6" method="upgrade">
+<extension type="component" version="3.9" method="upgrade">
 	<name>COM_JEDCHECKER</name>
 	<author>Joomla! Extensions Directory</author>
-	<creationDate>2019-03-09</creationDate>
-	<copyright>Copyright (C) 2017 - 2019 Open Source Matters, Inc. All rights reserved.</copyright>
+	<creationDate>2020-07-02</creationDate>
+	<copyright>Copyright (C) 2017 - 2020 Open Source Matters, Inc. All rights reserved.</copyright>
 	<authorEmail>extensions@extensions.joomla.org</authorEmail>
 	<authorUrl>https://github.com/joomla-extensions/jedchecker</authorUrl>
 	<version>2.1.3</version>
@@ -30,6 +30,6 @@
 	</media>
 	<updateservers>
 		<!-- Note: No spaces or linebreaks allowed between the server tags -->
-		<server type="extension" name="Weblinks Update Site">https://raw.githubusercontent.com/joomla-extensions/jedchecker/master/manifest.xml</server>
+		<server type="extension" name="JED Checker Update Site">https://raw.githubusercontent.com/joomla-extensions/jedchecker/master/manifest.xml</server>
 	</updateservers>
 </extension>
