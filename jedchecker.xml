@@ -1,35 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" version="3.9" method="upgrade">
-	<name>COM_JEDCHECKER</name>
-	<author>Joomla! Extensions Directory</author>
-	<creationDate>2020-07-02</creationDate>
-	<copyright>Copyright (C) 2017 - 2020 Open Source Matters, Inc. All rights reserved.</copyright>
-	<authorEmail>extensions@extensions.joomla.org</authorEmail>
-	<authorUrl>https://github.com/joomla-extensions/jedchecker</authorUrl>
-	<version>2.1.3</version>
-	<license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
-	<description><![CDATA[JED Checker will check your extension files and will let you know in advance if there are any possible problems with your extension for submitting to the JED]]>
-	</description>
-	<scriptfile>script.php</scriptfile>
-	<administration>
-		<menu>COM_JEDCHECKER</menu>
-		<files folder="administrator/components/com_jedchecker">
-			<file>access.xml</file>
-			<file>config.xml</file>
-			<file>controller.php</file>
-			<folder>controllers</folder>
-			<file>jedchecker.php</file>
-			<folder>language</folder>
-			<folder>libraries</folder>
-			<folder>models</folder>
-			<folder>views</folder>
-		</files>
-	</administration>
-	<media destination="com_jedchecker" folder="media/com_jedchecker">
-		<folder>css</folder>
-	</media>
-	<updateservers>
-		<!-- Note: No spaces or linebreaks allowed between the server tags -->
-		<server type="extension" name="JED Checker Update Site">https://raw.githubusercontent.com/joomla-extensions/jedchecker/master/manifest.xml</server>
-	</updateservers>
+  <name>COM_JEDCHECKER</name>
+  <author>Joomla! Extensions Directory</author>
+  <creationDate>2020-08-22</creationDate>
+  <copyright>Copyright (C) 2017 - 2020 Open Source Matters, Inc. All rights reserved.</copyright>
+  <authorEmail>extensions@extensions.joomla.org</authorEmail>
+  <authorUrl>https://github.com/joomla-extensions/jedchecker</authorUrl>
+  <version>2.3.0</version>
+  <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
+  <description><![CDATA[JED Checker will check your extension files and will let you know in advance if there are any possible problems with your extension for submitting to the JED]]>
+  </description>
+  <scriptfile>script.php</scriptfile>
+  <administration>
+    <menu>COM_JEDCHECKER</menu>
+    <files folder="administrator/components/com_jedchecker">
+      <file>access.xml</file>
+      <file>config.xml</file>
+      <file>controller.php</file>
+      <folder>controllers</folder>
+      <file>jedchecker.php</file>
+      <folder>language</folder>
+      <folder>libraries</folder>
+      <folder>models</folder>
+      <folder>views</folder>
+    </files>
+
+    <languages folder="administrator/components/com_jedchecker/language">
+      <language tag="af-ZA">af-ZA/af-ZA.com_jedchecker.ini</language>
+      <language tag="af-ZA">af-ZA/af-ZA.com_jedchecker.sys.ini</language>
+      <language tag="ar-SA">ar-SA/ar-SA.com_jedchecker.ini</language>
+      <language tag="ar-SA">ar-SA/ar-SA.com_jedchecker.sys.ini</language>
+      <language tag="ca-ES">ca-ES/ca-ES.com_jedchecker.ini</language>
+      <language tag="ca-ES">ca-ES/ca-ES.com_jedchecker.sys.ini</language>
+      <language tag="cs-CZ">cs-CZ/cs-CZ.com_jedchecker.ini</language>
+      <language tag="cs-CZ">cs-CZ/cs-CZ.com_jedchecker.sys.ini</language>
+      <language tag="da-DK">da-DK/da-DK.com_jedchecker.ini</language>
+      <language tag="da-DK">da-DK/da-DK.com_jedchecker.sys.ini</language>
+      <language tag="de-DE">de-DE/de-DE.com_jedchecker.ini</language>
+      <language tag="de-DE">de-DE/de-DE.com_jedchecker.sys.ini</language>
+      <language tag="el-GR">el-GR/el-GR.com_jedchecker.ini</language>
+      <language tag="el-GR">el-GR/el-GR.com_jedchecker.sys.ini</language>
+      <language tag="en-GB">en-GB/en-GB.com_jedchecker.ini</language>
+      <language tag="en-GB">en-GB/en-GB.com_jedchecker.sys.ini</language>
+      <language tag="en-US">en-US/en-US.com_jedchecker.ini</language>
+      <language tag="en-US">en-US/en-US.com_jedchecker.sys.ini</language>
+      <language tag="es-ES">es-ES/es-ES.com_jedchecker.ini</language>
+      <language tag="es-ES">es-ES/es-ES.com_jedchecker.sys.ini</language>
+      <language tag="fi-FI">fi-FI/fi-FI.com_jedchecker.ini</language>
+      <language tag="fi-FI">fi-FI/fi-FI.com_jedchecker.sys.ini</language>
+      <language tag="fr-FR">fr-FR/fr-FR.com_jedchecker.ini</language>
+      <language tag="fr-FR">fr-FR/fr-FR.com_jedchecker.sys.ini</language>
+      <language tag="he-IL">he-IL/he-IL.com_jedchecker.ini</language>
+      <language tag="he-IL">he-IL/he-IL.com_jedchecker.sys.ini</language>
+      <language tag="hu-HU">hu-HU/hu-HU.com_jedchecker.ini</language>
+      <language tag="hu-HU">hu-HU/hu-HU.com_jedchecker.sys.ini</language>
+      <language tag="it-IT">it-IT/it-IT.com_jedchecker.ini</language>
+      <language tag="it-IT">it-IT/it-IT.com_jedchecker.sys.ini</language>
+      <language tag="ja-JP">ja-JP/ja-JP.com_jedchecker.ini</language>
+      <language tag="ja-JP">ja-JP/ja-JP.com_jedchecker.sys.ini</language>
+      <language tag="ko-KR">ko-KR/ko-KR.com_jedchecker.ini</language>
+      <language tag="ko-KR">ko-KR/ko-KR.com_jedchecker.sys.ini</language>
+      <language tag="nl-BE">nl-BE/nl-BE.com_jedchecker.ini</language>
+      <language tag="nl-BE">nl-BE/nl-BE.com_jedchecker.sys.ini</language>
+      <language tag="nl-NL">nl-NL/nl-NL.com_jedchecker.ini</language>
+      <language tag="nl-NL">nl-NL/nl-NL.com_jedchecker.sys.ini</language>
+      <language tag="no-NO">no-NO/no-NO.com_jedchecker.ini</language>
+      <language tag="no-NO">no-NO/no-NO.com_jedchecker.sys.ini</language>
+      <language tag="pl-PL">pl-PL/pl-PL.com_jedchecker.ini</language>
+      <language tag="pl-PL">pl-PL/pl-PL.com_jedchecker.sys.ini</language>
+      <language tag="pt-BR">pt-BR/pt-BR.com_jedchecker.ini</language>
+      <language tag="pt-BR">pt-BR/pt-BR.com_jedchecker.sys.ini</language>
+      <language tag="pt-PT">pt-PT/pt-PT.com_jedchecker.ini</language>
+      <language tag="pt-PT">pt-PT/pt-PT.com_jedchecker.sys.ini</language>
+      <language tag="ro-RO">ro-RO/ro-RO.com_jedchecker.ini</language>
+      <language tag="ro-RO">ro-RO/ro-RO.com_jedchecker.sys.ini</language>
+      <language tag="ru-RU">ru-RU/ru-RU.com_jedchecker.ini</language>
+      <language tag="ru-RU">ru-RU/ru-RU.com_jedchecker.sys.ini</language>
+      <language tag="sv-SE">sv-SE/sv-SE.com_jedchecker.ini</language>
+      <language tag="sv-SE">sv-SE/sv-SE.com_jedchecker.sys.ini</language>
+      <language tag="tr-TR">tr-TR/tr-TR.com_jedchecker.ini</language>
+      <language tag="tr-TR">tr-TR/tr-TR.com_jedchecker.sys.ini</language>
+      <language tag="uk-UA">uk-UA/uk-UA.com_jedchecker.ini</language>
+      <language tag="uk-UA">uk-UA/uk-UA.com_jedchecker.sys.ini</language>
+      <language tag="vi-VN">vi-VN/vi-VN.com_jedchecker.ini</language>
+      <language tag="vi-VN">vi-VN/vi-VN.com_jedchecker.sys.ini</language>
+      <language tag="zh-CN">zh-CN/zh-CN.com_jedchecker.ini</language>
+      <language tag="zh-CN">zh-CN/zh-CN.com_jedchecker.sys.ini</language>
+      <language tag="zh-TW">zh-TW/zh-TW.com_jedchecker.ini</language>
+      <language tag="zh-TW">zh-TW/zh-TW.com_jedchecker.sys.ini</language>
+    </languages>
+  </administration>
+  <media destination="com_jedchecker" folder="media/com_jedchecker">
+    <folder>css</folder>
+  </media>
+  <updateservers>
+    <!-- Note: No spaces or linebreaks allowed between the server tags -->
+    <server type="extension" name="JED Checker Update Site">https://raw.githubusercontent.com/joomla-extensions/jedchecker/master/manifest.xml</server>
+  </updateservers>
 </extension>
