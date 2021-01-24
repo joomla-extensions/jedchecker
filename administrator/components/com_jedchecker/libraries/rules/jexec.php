@@ -60,7 +60,7 @@ class JedcheckerRulesJexec extends JEDcheckerRule
 		foreach ($files as $file)
 		{
 			// Try to find the _JEXEC check in the file
-			if (!$this->find($file))
+			if (!$this->find($file) && !$this->is_class_only_declaration($file))
 			{
 				// Add as error to the report if it was not found
 				$this->report->addError($file, JText::_('COM_JEDCHECKER_ERROR_JEXEC_NOT_FOUND'));
@@ -145,5 +145,40 @@ class JedcheckerRulesJexec extends JEDcheckerRule
 		unset($content);
 
 		return $hascode ? false : true;
+	}
+
+	/**
+	 * Check the file is a class/interface/trait declaration only
+	 * (and so _JEXEC guard is not necessary)
+	 *
+	 * @param   string  $file  - The path to the file
+	 *
+	 * @return boolean True if the file is a declaration only, otherwise False.
+	 */
+	protected function is_class_only_declaration($file)
+	{
+		// load file and strip comments
+		$content = php_strip_whitespace($file);
+		// check there is no intermittent PHP and HTML codes
+		if (strrpos($content, '<?') !== 0) {
+			return false;
+		}
+		// some regexp magic instead of the full PHP parser
+		return (bool)preg_match(
+			'#^' .
+			'<\?php\s+' .
+			'(?:namespace [0-9A-Za-z_\\\\]+ ?; ?)?' .
+			'(?:use [0-9A-Za-z_\\\\]+( as [0-9A-Za-z_]+) ?; ?)*' .
+			'(?:' .
+			'(?:(?:abstract )?class|interface|trait) [0-9A-Za-z_]+' .
+			'(?: extends [0-9A-Za-z_\\\\]+(?:, ?[0-9A-Za-z_\\\\]+)*)?' .
+			'(?: implements [0-9A-Za-z_\\\\]+(?:, ?[0-9A-Za-z_\\\\]+)*)?' .
+			' ?' .
+			// recursive checking of curly braces and strings
+			'(\{((?>[^\{\}\'"]+)|\'(?:(?>[^\'\\\\]+)|\\\\.)*\'|"(?:(?>[^"\\\\]+)|\\\\.)*"|(?-2))*\})' .
+			' ?' .
+			')+' .
+			'$#',
+			$content);
 	}
 }
