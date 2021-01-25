@@ -47,12 +47,21 @@ class JedcheckerRulesJexec extends JEDcheckerRule
 	protected $description = 'COM_JEDCHECKER_RULE_PH2_DESC';
 
 	/**
+	 * Regexp to match _JEXEC-like guard
+	 *
+	 * @var    string
+	 */
+	protected $regex;
+
+	/**
 	 * Initiates the file search and check
 	 *
 	 * @return    void
 	 */
 	public function check()
 	{
+		$this->init_jexec();
+
 		// Find all php files of the extension
 		$files = JFolder::files($this->basedir, '.php$', true, true);
 
@@ -60,7 +69,7 @@ class JedcheckerRulesJexec extends JEDcheckerRule
 		foreach ($files as $file)
 		{
 			// Try to find the _JEXEC check in the file
-			if (!$this->find($file) && !$this->is_class_only_declaration($file))
+			if (!$this->find($file))
 			{
 				// Add as error to the report if it was not found
 				$this->report->addError($file, JText::_('COM_JEDCHECKER_ERROR_JEXEC_NOT_FOUND'));
@@ -77,94 +86,31 @@ class JedcheckerRulesJexec extends JEDcheckerRule
 	 */
 	protected function find($file)
 	{
-		$content = (array) file($file);
-
-		// Get the constants to look for
-		$defines = $this->params->get('constants');
-		$defines = explode(',', $defines);
-
-		$hascode = 0;
-
-		foreach ($content AS $line)
-		{
-			$tline = trim($line);
-
-			if ($tline == '' || $tline == '<?php' || $tline == '?>')
-			{
-				continue;
-			}
-
-			if ($tline['0'] != '/' && $tline['0'] != '*')
-			{
-				$hascode = 1;
-			}
-
-			// Search for "defined"
-			$pos_1 = stripos($line, 'defined');
-
-			// Skip the line if "defined" is not found
-			if ($pos_1 === false)
-			{
-				continue;
-			}
-
-			// Search for "die".
-			//  "or" may not be present depending on syntax
-			$pos_3 = stripos($line, 'die');
-
-			// Skip the line if "die" is not found
-			if ($pos_3 === false)
-			{
-				continue;
-			}
-
-			// Search for the constant name
-			foreach ($defines AS $define)
-			{
-				$define = trim($define);
-
-				// Search for the define
-				$pos_2 = strpos($line, $define);
-
-				// Skip the line if the define is not found
-				if ($pos_2 === false)
-				{
-					continue;
-				}
-
-				// Check the position of the words
-				if ($pos_2 > $pos_1 && $pos_3 > $pos_2)
-				{
-					unset($content);
-
-					return true;
-				}
-			}
-		}
-
-		unset($content);
-
-		return $hascode ? false : true;
-	}
-
-	/**
-	 * Check the file is a class/interface/trait declaration only
-	 * (and so _JEXEC guard is not necessary)
-	 *
-	 * @param   string  $file  - The path to the file
-	 *
-	 * @return boolean True if the file is a declaration only, otherwise False.
-	 */
-	protected function is_class_only_declaration($file)
-	{
 		// load file and strip comments
 		$content = php_strip_whitespace($file);
+
+		// skip empty files
+		if (preg_match('#^<\?php\s+$#', $content))
+		{
+			return true;
+		}
+
+		// check guards
+		if (preg_match($this->regex, $content))
+		{
+			return true;
+		}
+
 		// check there is no intermittent PHP and HTML codes
-		if (strrpos($content, '<?') !== 0) {
+		if (strrpos($content, '<?') !== 0)
+		{
 			return false;
 		}
-		// some regexp magic instead of the full PHP parser
-		return (bool)preg_match(
+
+		// Check the file is a class/interface/trait declaration only
+		// and so _JEXEC guard is not necessary
+		// (some regexp magic instead of the full PHP parser)
+		if (preg_match(
 			'#^' .
 			'<\?php\s+' .
 			'(?:namespace [0-9A-Za-z_\\\\]+ ?; ?)?' .
@@ -178,7 +124,34 @@ class JedcheckerRulesJexec extends JEDcheckerRule
 			'(\{((?>[^\{\}\'"]+)|\'(?:(?>[^\'\\\\]+)|\\\\.)*\'|"(?:(?>[^"\\\\]+)|\\\\.)*"|(?-2))*\})' .
 			' ?' .
 			')+' .
-			'$#',
-			$content);
+			'$#i',
+			$content))
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Prepare regexp aforehand
+	 *
+	 * @return void
+	 */
+	protected function init_jexec()
+	{
+		$defines = $this->params->get('constants');
+		$defines = explode(',', $defines);
+		foreach ($defines as $i => $define)
+		{
+			$defines[$i] = preg_quote(trim($define), '#');
+		}
+
+		$this->regex =
+			'#^' .
+			'<\?php\s+' .
+			'defined ?\( ?' .
+			'([\'"])(?:' . implode('|', $defines) . ')\1' .
+			' ?\) ?(?:or |\|\| ?)(?:die|exit)\b#i';
 	}
 }
