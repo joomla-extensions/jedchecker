@@ -112,10 +112,16 @@ class JedcheckerRulesJexec extends JEDcheckerRule
 			//  "or" may not be present depending on syntax
 			$pos_3 = stripos($line, 'die');
 
-			// Skip the line if "die" is not found
+			// Check for "exit"
 			if ($pos_3 === false)
 			{
-				continue;
+				$pos_3 = stripos($line, 'exit');
+
+				// Skip the line if "die" or "exit" is not found
+				if ($pos_3 === false)
+				{
+					continue;
+				}
 			}
 
 			// Search for the constant name
