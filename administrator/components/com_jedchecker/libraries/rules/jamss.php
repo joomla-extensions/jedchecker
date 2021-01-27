@@ -188,8 +188,8 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 						'Probably malicious PHP script that "calls home"',
 						'16',
 						'Detected script variations often used to inform the attackers about found vulnerable website.',),
-						array('(?:(?:eval|gzuncompress|gzinflate|base64_decode|str_rot13|strrev|strtr|preg_replace|rawurldecode|' .
-						'str_replace|assert|unpack|urldecode)[\s/\*\w\W\(]*){2,}',
+						array('(?:(?:eval|gzuncompress|gzinflate|base64_decode|str_rot13|strrev|strtr|rawurldecode|' .
+						'assert|unpack|urldecode)[\s/\*\w\W\(]*){2,}',
 						'PHP: multiple encoded, most probably obfuscated code found',
 						'17',
 						'This pattern could be used in highly encoded, malicious code hidden under a loop of code obfuscation function ' .
