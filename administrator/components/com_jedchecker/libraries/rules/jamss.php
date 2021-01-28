@@ -188,8 +188,8 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 						'Probably malicious PHP script that "calls home"',
 						'16',
 						'Detected script variations often used to inform the attackers about found vulnerable website.',),
-						array('(?:(?:eval|gzuncompress|gzinflate|base64_decode|str_rot13|strrev|strtr|preg_replace|rawurldecode|' .
-						'str_replace|assert|unpack|urldecode)[\s/\*\w\W\(]*){2,}',
+						array('(?:(?:eval|gzuncompress|gzinflate|base64_decode|str_rot13|strrev|strtr|rawurldecode|' .
+						'assert|unpack|urldecode)[\s/\*\w\W\(]*){2,}',
 						'PHP: multiple encoded, most probably obfuscated code found',
 						'17',
 						'This pattern could be used in highly encoded, malicious code hidden under a loop of code obfuscation function ' .
@@ -222,7 +222,7 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 						'22',
 						'Found the SourceCop encoded code. It is often used for malicious code ' .
 						'hiding, so go and check the code with some online SourceCop decoders'),
-						array('(?:exec|passthru|shell_exec|system|proc_|popen)[\w\W\s/\*]*\([\s/\*\#\'\"\w\W\-\_]*(?:\$_GET|\$_POST)',
+						array('\b(?:exec|passthru|shell_exec|system|proc_\w+|popen)\b[\w\W\s/\*]*\([\s/\*\#\'\"\w\W\-\_]*(?:\$_GET|\$_POST)',
 						'shell command execution from POST/GET variables',
 						'23',
 						'Found direct shell command execution getting variables from POST/GET, ' .

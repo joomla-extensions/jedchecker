@@ -1,0 +1,6 @@
+files:
+  - source: /administrator/components/com_jedchecker/language/en-GB/en-GB*.ini
+    translation: /administrator/components/com_jedchecker/language/%locale%/%locale%%original_file_name%
+    update_option: update_as_unapproved
+    translation_replace:
+      en-GB: ''
