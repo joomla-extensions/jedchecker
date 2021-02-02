@@ -23,7 +23,7 @@ require_once JPATH_COMPONENT_ADMINISTRATOR . '/models/rule.php';
  *
  * This class validates all xml manifestes
  *
- * @since  1.0
+ * @since  2.3
  */
 class JedcheckerRulesXMLManifest extends JEDcheckerRule
 {
