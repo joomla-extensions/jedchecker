@@ -133,19 +133,20 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 		$lookup_lang_dirs = array();
 		if (isset($xml->administration->files['folder']))
 		{
-			$lookup_lang_dirs[] = $xml->administration->files['folder'] . '/language/' . $lang_tag;
+			$lookup_lang_dirs[] = trim($xml->administration->files['folder'], '/') . '/language/' . $lang_tag;
 		}
 		if (isset($xml->files['folder']))
 		{
-			$lookup_lang_dirs[] = $xml->files['folder'] . '/language/' . $lang_tag;
+			$lookup_lang_dirs[] = trim($xml->files['folder'], '/') . '/language/' . $lang_tag;
 		}
+		$lookup_lang_dirs[] = 'language/' . $lang_tag;
 		if (isset($xml->administration->languages['folder']))
 		{
-			$lookup_lang_dirs[] = $xml->administration->languages['folder'];
+			$lookup_lang_dirs[] = trim($xml->administration->languages['folder'], '/');
 		}
 		if (isset($xml->languages['folder']))
 		{
-			$lookup_lang_dirs[] = $xml->languages['folder'];
+			$lookup_lang_dirs[] = trim($xml->languages['folder'], '/');
 		}
 		$lookup_lang_dirs[] = '';
 
