@@ -1,0 +1,118 @@
+{
+  "nodes": {
+    "extension": {
+      "name": "!",
+      "element": "?",
+      "creationDate": "=",
+      "author": "=",
+      "authorEmail": "=",
+      "authorUrl": "=",
+      "copyright": "=",
+      "version": "!",
+      "description": "=",
+      "license": "!",
+      "scriptfile": "?",
+      "install": "?",
+      "update": "?",
+      "uninstall": "?",
+      "files": "?",
+      "languages": "?",
+      "media": "?",
+      "updateservers": "!",
+      "config": "?",
+      "dlid": "?"
+    },
+    "files": {
+      "filename": "*",
+      "folder": "*"
+    },
+    "languages": {
+      "language": "*"
+    },
+    "media": {
+      "filename": "*",
+      "folder": "*"
+    },
+    "install": {
+      "sql": "*"
+    },
+    "update": {
+      "sql": "*",
+      "schemas": "*"
+    },
+    "uninstall": {
+      "sql": "*"
+    },
+    "sql": {
+      "file": "*"
+    },
+    "updateservers": {
+      "server": "*"
+    },
+    "config": {
+      "fields": "!"
+    },
+    "fields": {
+      "fieldset": "+"
+    },
+    "fieldset": {
+      "field": "+"
+    },
+    "field": {
+      "option": "*"
+    }
+  },
+  "attributes": {
+    "extension": [
+      "client",
+      "group",
+      "method",
+      "overwrite",
+      "type",
+      "version"
+    ],
+    "files": [
+      "folder"
+    ],
+    "filename": [
+      "plugin"
+    ],
+    "languages": [
+      "folder"
+    ],
+    "language": [
+      "client",
+      "tag"
+    ],
+    "media": [
+      "destination",
+      "folder"
+    ],
+    "file": [
+      "charset",
+      "driver"
+    ],
+    "server": [
+      "name",
+      "priority",
+      "type"
+    ],
+    "fields": [
+      "addfieldpath",
+      "name"
+    ],
+    "fieldset": [
+      "name"
+    ],
+    "field": [
+      "default",
+      "description",
+      "label",
+      "name",
+      "type"
+    ],
+    "option": [
+      "value"
+    ]
+  }
+}

@@ -1,0 +1,129 @@
+{
+  "nodes": {
+    "extension": {
+      "name": "!",
+      "element": "?",
+      "creationDate": "=",
+      "author": "=",
+      "authorEmail": "=",
+      "authorUrl": "=",
+      "copyright": "=",
+      "version": "!",
+      "description": "=",
+      "license": "!",
+      "scriptfile": "?",
+      "install": "?",
+      "update": "?",
+      "uninstall": "?",
+      "files": "?",
+      "languages": "?",
+      "media": "?",
+      "administration": "?",
+      "updateservers": "!",
+      "config": "?",
+      "dlid": "?"
+    },
+    "administration": {
+      "menu": "=",
+      "submenu": "?",
+      "files": "=",
+      "languages": "=",
+      "media": "?"
+    },
+    "files": {
+      "filename": "*",
+      "folder": "*"
+    },
+    "languages": {
+      "language": "*"
+    },
+    "media": {
+      "filename": "*",
+      "folder": "*"
+    },
+    "submenu": {
+      "menu": "*"
+    },
+    "install": {
+      "sql": "*"
+    },
+    "update": {
+      "sql": "*",
+      "schemas": "*"
+    },
+    "uninstall": {
+      "sql": "*"
+    },
+    "sql": {
+      "file": "*"
+    },
+    "schemas": {
+      "schemapath": "*"
+    },
+    "updateservers": {
+      "server": "*"
+    },
+    "config": {
+      "fields": "!"
+    },
+    "fields": {
+      "fieldset": "+"
+    },
+    "fieldset": {
+      "???": "*"
+    }
+  },
+  "attributes": {
+    "extension": [
+      "client",
+      "method",
+      "overwrite",
+      "type",
+      "version"
+    ],
+    "files": [
+      "folder"
+    ],
+    "languages": [
+      "folder"
+    ],
+    "language": [
+      "client",
+      "tag"
+    ],
+    "media": [
+      "destination",
+      "folder"
+    ],
+    "menu": [
+      "act",
+      "controller",
+      "hidden",
+      "img",
+      "layout",
+      "link",
+      "sub",
+      "task",
+      "view"
+    ],
+    "file": [
+      "charset",
+      "driver"
+    ],
+    "server": [
+      "name",
+      "priority",
+      "type"
+    ],
+    "params": [
+      "addParameterDir"
+    ],
+    "param": [
+      "addParameterDir"
+    ],
+    "dlid": [
+      "prefix",
+      "suffix"
+    ]
+  }
+}
