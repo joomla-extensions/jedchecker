@@ -65,13 +65,13 @@ class JedcheckerViewUploads extends JViewLegacy
 	{
 		if ($this->filesExist('unzipped'))
 		{
-			JToolbarHelper::custom('check', 'search', 'search', 'Check', false);
+			JToolbarHelper::custom('check', 'search', 'search', JText::_('COM_JEDCHECKER_TOOLBAR_CHECK'), false);
 		}
 
 		JToolbarHelper::title('JED checker');
 		if ( file_exists($this->path) )
 		{
-			JToolbarHelper::custom('uploads.clear', 'delete', 'delete', 'Clear', false);
+			JToolbarHelper::custom('uploads.clear', 'delete', 'delete', JText::_('COM_JEDCHECKER_TOOLBAR_CLEAR'), false);
 		}
 
 		if (JFactory::getUser()->authorise('core.admin', 'com_jedchecker'))
