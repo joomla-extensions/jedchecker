@@ -1,0 +1,64 @@
+{
+  "nodes": {
+    "extension": {
+      "name": "!",
+      "packagename": "!",
+      "creationDate": "=",
+      "author": "=",
+      "authorEmail": "=",
+      "authorUrl": "=",
+      "copyright": "=",
+      "version": "!",
+      "description": "=",
+      "license": "!",
+      "scriptfile": "?",
+      "update": "?",
+      "files": "?",
+      "languages": "?",
+      "updateservers": "!",
+      "dlid": "?",
+      "packager": "?",
+      "packagerurl": "?",
+      "blockChildUninstall": "?"
+    },
+    "files": {
+      "file": "*",
+      "folder": "*"
+    },
+    "languages": {
+      "language": "*"
+    },
+    "updateservers": {
+      "server": "*"
+    }
+  },
+  "attributes": {
+    "extension": [
+      "method",
+      "overwrite",
+      "type",
+      "version"
+    ],
+    "files": [
+      "folder"
+    ],
+    "file": [
+      "client",
+      "group",
+      "id",
+      "type"
+    ],
+    "languages": [
+      "folder"
+    ],
+    "language": [
+      "client",
+      "tag"
+    ],
+    "server": [
+      "name",
+      "priority",
+      "type"
+    ]
+  }
+}
