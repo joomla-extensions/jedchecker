@@ -54,7 +54,7 @@ class JedcheckerRulesJexec extends JEDcheckerRule
 	public function check()
 	{
 		// Find all php files of the extension
-		$files = JFolder::files($this->basedir, '.php$', true, true);
+		$files = JFolder::files($this->basedir, '\.php$', true, true);
 
 		// Iterate through all files
 		foreach ($files as $file)
