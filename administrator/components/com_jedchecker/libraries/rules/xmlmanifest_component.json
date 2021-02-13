@@ -64,15 +64,6 @@
     "updateservers": {
       "server": "*"
     },
-    "config": {
-      "fields": "!"
-    },
-    "fields": {
-      "fieldset": "+"
-    },
-    "fieldset": {
-      "???": "*"
-    }
   },
   "attributes": {
     "extension": [
@@ -118,12 +109,6 @@
     ],
     "namespace": [
       "path"
-    ],
-    "params": [
-      "addParameterDir"
-    ],
-    "param": [
-      "addParameterDir"
     ],
     "dlid": [
       "prefix",
