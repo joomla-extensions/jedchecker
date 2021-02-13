@@ -20,7 +20,8 @@
       "media": "?",
       "updateservers": "!",
       "config": "?",
-      "dlid": "?"
+      "dlid": "?",
+      "namespace": "?"
     },
     "files": {
       "filename": "*",
@@ -96,6 +97,9 @@
       "name",
       "priority",
       "type"
+    ],
+    "namespace": [
+      "path"
     ],
     "fields": [
       "addfieldpath",

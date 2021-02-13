@@ -111,7 +111,7 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 	 */
 	protected function find($file)
 	{
-		$xml = JFactory::getXml($file);
+		$xml = simplexml_load_file($file);
 
 		// Failed to parse the xml file.
 		// Assume that this is not a extension manifest

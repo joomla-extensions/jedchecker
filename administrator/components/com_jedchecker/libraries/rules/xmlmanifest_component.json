@@ -21,7 +21,8 @@
       "administration": "?",
       "updateservers": "!",
       "config": "?",
-      "dlid": "?"
+      "dlid": "?",
+      "namespace": "?"
     },
     "administration": {
       "menu": "=",
@@ -114,6 +115,9 @@
       "name",
       "priority",
       "type"
+    ],
+    "namespace": [
+      "path"
     ],
     "params": [
       "addParameterDir"
