@@ -93,7 +93,7 @@ class JedcheckerViewUploads extends JViewLegacy
 
 		if (JFolder::exists($path))
 		{
-			if (JFolder::folders($path, '.', false) || JFolder::files($path, '.', false))
+			if (JFolder::folders($path) || JFolder::files($path))
 			{
 				return true;
 			}
