@@ -11,28 +11,35 @@
 
 defined('_JEXEC') or die('Restricted access');
 
-JHtml::_('behavior.framework', true);
-JHtml::stylesheet('media/com_jedchecker/css/style.min.css');
-?>
-
-<script>
-function add_validation() {
-	// Fetch all the forms we want to apply custom Bootstrap validation styles to
-    var forms = document.getElementsByClassName('needs-validation');
-    // Loop over them and prevent submission
-    var validation = Array.prototype.filter.call(forms, function(form) {
-      form.addEventListener('submit', function(event) {
-        if (form.checkValidity() === false) {
-          event.preventDefault();
-          event.stopPropagation();
-        }
-        form.classList.add('was-validated');
-      }, false);
-    });
+if (version_compare(JVERSION, '3.3.0', '>='))
+{
+	JHtml::_('behavior.core');
 }
-</script>
+else
+{
+	JHtml::_('behavior.framework', true);
+}
 
-<script type="text/javascript">
+JHtml::stylesheet('media/com_jedchecker/css/style.min.css');
+
+$document = JFactory::getDocument();
+
+$options = json_encode($this->jsOptions);
+$document->addScriptDeclaration(<<<END
+	function add_validation() {
+		// Fetch all the forms we want to apply custom Bootstrap validation styles to
+		var forms = document.getElementsByClassName('needs-validation');
+		// Loop over them and prevent submission
+		var validation = Array.prototype.filter.call(forms, function(form) {
+			form.addEventListener('submit', function(event) {
+				if (form.checkValidity() === false) {
+					event.preventDefault();
+					event.stopPropagation();
+				}
+				form.classList.add('was-validated');
+			}, false);
+		});
+	}
 
 	function check(url,rule) {
 		jQuery.ajax({
@@ -45,7 +52,7 @@ function add_validation() {
 	}
 
 	Joomla.submitbutton = function (task) {
-		var options = <?php echo json_encode($this->jsOptions); ?>;
+		var options = $options;
 
 		if (task == 'check') {
 			jQuery("#police-check-result").empty();
@@ -60,9 +67,10 @@ function add_validation() {
 			Joomla.submitform(task);
 		}
 	}
-</script>
-	<?php
-	if ( version_compare(JVERSION, '3.20', 'lt') ) {
+END
+);
+
+	if ( version_compare(JVERSION, '3.20', '<') || version_compare(JVERSION, '4.0', '>=') ) {
 	?>
 	<!-- Styling of Bootstrap 4 core CSS-->
 	<link href="<?php echo JURI::root(); ?>media/com_jedchecker/css/j3-style.min.css" rel="stylesheet">
@@ -114,7 +122,7 @@ function add_validation() {
 				<div class="card-body">
 					<h5 class="card-title"><?php echo JText::_('COM_JEDCHECKER_PEOPLE_THAT_HAVE_HELPED_WITH_THE_DEVELOPMENT'); ?></h5>
 					<p class="card-text">
-						<a href="https://github.com/joomla-extensions/jedchecker/graphs/contributors" target="_blank" class="btn">
+						<a href="https://github.com/joomla-extensions/jedchecker/graphs/contributors" target="_blank" class="btn btn-light">
 						<?php echo JText::_('COM_JEDCHECKER_CONTRIBUTORS'); ?></a>
 					</p>
 				</div>

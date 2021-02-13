@@ -74,7 +74,7 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 	 */
 	protected function find($file)
 	{
-		$xml = JFactory::getXml($file);
+		$xml = simplexml_load_file($file);
 
 		// Get all the info about the file
 		$folder_info = pathinfo($file);
