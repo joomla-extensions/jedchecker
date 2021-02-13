@@ -105,14 +105,26 @@
       "name"
     ],
     "fieldset": [
+      "description",
+      "label",
       "name"
     ],
     "field": [
+      "class",
+      "cols",
       "default",
       "description",
+      "filter",
+      "id",
       "label",
+      "maxLength",
       "name",
-      "type"
+      "required",
+      "rows",
+      "size",
+      "step",
+      "type",
+      "validate"
     ],
     "option": [
       "value"
