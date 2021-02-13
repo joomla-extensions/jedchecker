@@ -104,11 +104,13 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 		$basedir = dirname($file) . '/';
 
 		// check: files[folder] (filename|folder)*
+		// for package: files[folder] (file|folder)*
 		if (isset($xml->files))
 		{
 			$node = $xml->files;
 			$dir = $basedir . (isset($node['folder']) ? $node['folder'] . '/' : '');
 			$this->checkFiles($node->filename, $dir);
+			$this->checkFiles($node->file, $dir); // for packages
 			$this->checkFolders($node->folder, $dir);
 		}
 
