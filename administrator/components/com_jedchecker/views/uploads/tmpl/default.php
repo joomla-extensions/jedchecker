@@ -87,7 +87,7 @@ function add_validation() {
 						<div class="form-row">
 							<div class="col-md-6 mb-3">
 								<div class="custom-file">
-									<input type="file" class="custom-file-input" name="extension" id="extension" required>
+									<input type="file" class="custom-file-input" name="extension" id="extension" required accept="application/zip,application/x-gzip,application/x-compressed,application/x-tar">
 									<label class="custom-file-label" for="extension"><?php echo JText::_('COM_JEDCHECKER_UPLOAD_FILE'); ?></label>
 									<div class="invalid-feedback"><?php echo JText::_('COM_JEDCHECKER_EMPTY_UPLOAD_FIELD'); ?></div>
 								</div>
