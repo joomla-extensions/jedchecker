@@ -63,7 +63,7 @@
     },
     "updateservers": {
       "server": "*"
-    },
+    }
   },
   "attributes": {
     "extension": [
