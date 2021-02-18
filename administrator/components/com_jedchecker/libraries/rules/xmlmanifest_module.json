@@ -100,16 +100,21 @@
     "namespace": [
       "path"
     ],
+    "config": [
+      "addfieldpath"
+    ],
     "fields": [
       "addfieldpath",
       "name"
     ],
     "fieldset": [
+      "addfieldpath",
       "description",
       "label",
       "name"
     ],
     "field": [
+      "addfieldpath",
       "class",
       "cols",
       "default",
