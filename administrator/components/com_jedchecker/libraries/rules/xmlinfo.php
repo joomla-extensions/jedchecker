@@ -142,11 +142,11 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 		$lookup_lang_dirs[] = 'language/' . $lang_tag;
 		if (isset($xml->administration->languages['folder']))
 		{
-			$lookup_lang_dirs[] = trim($xml->administration->languages['folder'], '/');
+			$lookup_lang_dirs[] = trim($xml->administration->languages['folder'], '/') . '/' . $lang_tag;
 		}
 		if (isset($xml->languages['folder']))
 		{
-			$lookup_lang_dirs[] = trim($xml->languages['folder'], '/');
+			$lookup_lang_dirs[] = trim($xml->languages['folder'], '/') . '/' . $lang_tag;
 		}
 		$lookup_lang_dirs[] = '';
 
@@ -154,7 +154,7 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 		{
 			$lang_sys_file =
 				$lang_dir . '/' .
-				($dir === '' ? '' : trim($dir, '/') . '/') .
+				($dir === '' ? '' : $dir . '/') .
 				$lang_tag. '.' . $extension . '.sys.ini';
 			if (is_file($lang_sys_file))
 			{
