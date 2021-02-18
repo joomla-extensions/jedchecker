@@ -202,10 +202,17 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 	{
 		foreach ($files as $file)
 		{
-			if (!is_file($dir . $file))
+			$filename = $dir . $file;
+			if (is_file($filename))
 			{
-				$this->errors[] = JText::sprintf('COM_JEDCHECKER_XML_FILES_FILE_NOT_FOUND', (string)$file);
+				continue;
 			}
+			// extra check for unzipped files
+			if (preg_match('/^(.*)\.(zip|tar\.gz)$/', $filename, $matches) && is_dir($matches[1]))
+			{
+				continue;
+			}
+			$this->errors[] = JText::sprintf('COM_JEDCHECKER_XML_FILES_FILE_NOT_FOUND', (string)$file);
 		}
 	}
 
