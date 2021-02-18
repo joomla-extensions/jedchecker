@@ -223,7 +223,7 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 			$extension_name_group = isset($parts[1]) ? strtolower(preg_replace('/\s/', '', $parts[0])) : false;
 			if ($extension_name_group !== (string) $xml['group'])
 			{
-				$this->report->addWarning($file, JText::_('COM_JEDCHECKER_INFO_XML_NAME_PLUGIN_FORMAT'));
+				$this->report->addWarning($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_PLUGIN_FORMAT', $extension_name));
 			}
 		}
 
