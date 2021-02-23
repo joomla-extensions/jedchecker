@@ -191,6 +191,9 @@ class JedcheckerRulesGpl extends JEDcheckerRule
 
 		$content = file_get_contents($file);
 
+		// Remove leading "*" characters from phpDoc-like comments
+		$content = preg_replace('/^\s*\*/m', '', $content);
+
 		if (preg_match($this->regex_gpl_licenses, $content, $match, PREG_OFFSET_CAPTURE))
 		{
 			$line_no = substr_count($content, "\n", 0, $match[0][1]) + 1;
