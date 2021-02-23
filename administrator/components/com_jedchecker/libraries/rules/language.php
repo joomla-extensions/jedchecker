@@ -145,6 +145,7 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 				continue;
 			}
 
+			$value = trim($matches[1]);
 			// Check for empty value
 			if ($value === '""')
 			{
@@ -152,6 +153,7 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 				continue;
 			}
 
+			if (strlen($value) < 2 || $value[0] !== '"' || substr($value, -1) !== '"')
 			// Remove quotes around
 			$value = substr($value, 1, -1);
 
@@ -159,6 +161,17 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 			if (strpos($value, '"_QQ_"') !== false)
 			{
 				$this->report->addInfo($file, JText::_('COM_JEDCHECKER_LANG_QQ_DEPRECATED'), $lineno, $line);
+			}
+
+			// Count %... formats in the string
+			$count1 = preg_match_all('/(?<=^|[^%])%(?=[-+0 ]?\w)/', $value);
+
+			// Count %n$... (argnum) formats in the string
+			$count2 = preg_match_all('/(?<=^|[^%])%\d+\$/', $value);
+
+			if ($count1 > 1 && $count2 < $count1) {
+				// @todo It's not mentioned in docs
+				$this->report->addInfo($file, JText::_('COM_JEDCHECKER_LANG_RECOMMEND_ARGNUM'), $startLineno, $line);
 			}
 		}
 
