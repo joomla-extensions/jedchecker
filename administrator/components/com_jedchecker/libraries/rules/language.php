@@ -77,6 +77,11 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 		foreach ($lines as $lineno => $line)
 		{
 			$line = trim($line);
+			if ($lineno === 0 && strncmp($line, "\xEF\xBB\xBF", 3) === 0)
+			{
+				$this->report->addError($file, JText::_('COM_JEDCHECKER_LANG_BOM_FOUND'), 1);
+				$line = substr($line, 3);
+			}
 			if ($line === '' || $line[0] === ';' || $line[0] === '[')
 			{
 				continue;
