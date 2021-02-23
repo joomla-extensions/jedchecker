@@ -10,7 +10,7 @@
       "copyright": "=",
       "version": "!",
       "description": "=",
-      "license": "!",
+      "license": "?",
       "scriptfile": "?",
       "install": "?",
       "update": "?",
@@ -19,7 +19,7 @@
       "languages": "?",
       "media": "?",
       "administration": "?",
-      "updateservers": "!",
+      "updateservers": "?",
       "config": "?",
       "dlid": "?",
       "namespace": "?"
