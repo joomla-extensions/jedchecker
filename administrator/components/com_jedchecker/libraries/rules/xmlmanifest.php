@@ -133,7 +133,7 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 		}
 
 		// load DTD-like data for this extension type
-		$json_filename = __DIR__ . '/xmlmanifest_' . $type . '.json';
+		$json_filename = __DIR__ . '/xmlmanifest/dtd_' . $type . '.json';
 		if (!is_file($json_filename))
 		{
 			$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_TYPE_NOT_ACCEPTED', $type));
