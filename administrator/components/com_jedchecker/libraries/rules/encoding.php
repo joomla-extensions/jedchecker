@@ -61,8 +61,7 @@ class JedcheckerRulesEncoding extends JEDcheckerRule
 			// Try to find the base64 use in the file
 			if ($this->find($file))
 			{
-				// Add as error to the report if it was not found
-				$this->report->addError($file, JText::_('COM_JEDCHECKER_ERROR_ENCODING'));
+				// The error has been added by the find() method
 			}
 		}
 	}
@@ -82,22 +81,29 @@ class JedcheckerRulesEncoding extends JEDcheckerRule
 		// Get the functions to look for
 		$encodings = explode(',', $this->params->get('encodings'));
 
-		foreach ($encodings as $encoding)
+		foreach ($encodings as $i => $encoding)
 		{
-			$encoding = trim($encoding);
+			$encodings[$i] = trim($encoding);
+		}
 
-			foreach ($content AS $line)
+		$found = false;
+
+		foreach ($content as $i => $line)
+		{
+			foreach ($encodings as $encoding)
 			{
 				// Search for "base64"
 				$pos_1 = stripos($line, $encoding);
 
 				if ($pos_1 !== false)
 				{
-					return true;
+					$found = true;
+					$this->report->addError($file, JText::_('COM_JEDCHECKER_ERROR_ENCODING'), $i + 1, $line);
+					break;
 				}
 			}
 		}
 
-		return false;
+		return $found;
 	}
 }
