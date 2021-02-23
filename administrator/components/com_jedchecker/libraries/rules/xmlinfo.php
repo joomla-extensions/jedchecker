@@ -48,6 +48,18 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 	protected $description = 'COM_JEDCHECKER_INFO_XML_DESC';
 
 	/**
+	 * Mapping of the plugin title prefix to the plugin group
+	 *
+	 * @var    string[]
+	 */
+	protected $pluginsGroupMap = array(
+		'button' => 'editors-xtd',
+		'editor' => 'editors',
+		'smartsearch' => 'finder',
+		'twofactorauthentication' => 'twofactorauth'
+	);
+
+	/**
 	 * Initiates the search and check
 	 *
 	 * @return    void
@@ -253,7 +265,11 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 		{
 			$parts = explode(' - ', $extension_name, 2);
 			$extension_name_group = isset($parts[1]) ? strtolower(preg_replace('/\s/', '', $parts[0])) : false;
-			if ($extension_name_group !== (string) $xml['group'])
+			$group = (string) $xml['group'];
+
+			if ($extension_name_group !== $group && $extension_name_group !== str_replace('-', '', $group)
+				&& !(isset($this->pluginsGroupMap[$extension_name_group]) && $this->pluginsGroupMap[$extension_name_group] === $group)
+			)
 			{
 				$this->report->addWarning($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_PLUGIN_FORMAT', $extension_name));
 			}
