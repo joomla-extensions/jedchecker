@@ -109,11 +109,14 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 		else
 		{
 			$extension = (string) $xml->name;
-			foreach ($xml->files->children as $child)
+			if (isset($xml->files))
 			{
-				if (isset($child[$type]))
+				foreach ($xml->files->children() as $child)
 				{
-					$extension = (string) $child[$type];
+					if (isset($child[$type]))
+					{
+						$extension = (string) $child[$type];
+					}
 				}
 			}
 		}
