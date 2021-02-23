@@ -143,6 +143,16 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 				continue;
 			}
 
+			if (preg_match('/[\x00-\x1F\x80-\xFF]/', $key))
+			{
+				$this->report->addWarning($file, JText::_('COM_JEDCHECKER_LANG_KEY_NOT_ASCII'), $startLineno, $line);
+			}
+
+			if ($key !== strtoupper($key))
+			{
+				$this->report->addWarning($file, JText::_('COM_JEDCHECKER_LANG_KEY_NOT_UPPERCASE'), $startLineno, $line);
+			}
+
 			if (isset($keys[$key]))
 			{
 				$this->report->addWarning($file, JText::sprintf('COM_JEDCHECKER_LANG_KEY_DUPLICATED', $keys[$key]), $startLineno, $line);
