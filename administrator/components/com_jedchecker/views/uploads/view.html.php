@@ -20,6 +20,9 @@ jimport('joomla.application.component.viewlegacy');
  */
 class JedcheckerViewUploads extends JViewLegacy
 {
+	/** @var array */
+	protected $jsOptions;
+
 	/**
 	 * Display method
 	 *
@@ -44,13 +47,33 @@ class JedcheckerViewUploads extends JViewLegacy
 	 */
 	public function getRules()
 	{
-		$rules = array();
-		$files = JFolder::files(JPATH_COMPONENT_ADMINISTRATOR . '/libraries/rules', '\.php$', false, false);
+		$existingRules = array(
+			'xmlinfo',
+			'xmllicense',
+			'xmlmanifest',
+			'xmlfiles',
+			'xmlupdateserver',
+			'gpl',
+			'jexec',
+			'errorreporting',
+			'framework',
+			'encoding',
+			'jamss',
+			'language'
+		);
+
 		JLoader::discover('jedcheckerRules', JPATH_COMPONENT_ADMINISTRATOR . '/libraries/rules/');
 
-		foreach ($files as $file)
+		$rules = array();
+
+		foreach ($existingRules as $rule)
 		{
-			$rules[] = substr($file, 0, -4);
+			$class = 'jedcheckerRules' . ucfirst($rule);
+
+			if (class_exists($class))
+			{
+				$rules[] = $rule;
+			}
 		}
 
 		return $rules;

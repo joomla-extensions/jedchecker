@@ -1,64 +1,74 @@
-#adminForm {
-	background: #FFF;
+/* BS5 spinner */
+@-webkit-keyframes spinner-border {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-#police-check-result {
-	padding: 0;
+@keyframes spinner-border {
+  to {
+    transform: rotate(360deg);
+  }
+}
+#jedchecker .spinner-border {
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+  vertical-align: text-bottom;
+  border: 0.25em solid currentColor;
+  border-right-color: transparent;
+  border-radius: 50%;
+  -webkit-animation: 0.75s linear infinite spinner-border;
+  animation: 0.75s linear infinite spinner-border;
 }
 
-#police-check-result>div {
-	border-top: 1px solid #ccc;
-	padding: 5px 10px;
+#jedchecker .spinner-border-sm {
+  width: 1rem;
+  height: 1rem;
+  border-width: 0.2em;
 }
 
-#police-check-result .alert {
-	margin: 5px 0;
+#jedchecker .spinner-border.hidden {
+  display: none;
 }
 
-.copyright {
-	line-height: 160%;
-	margin: 10px;
-	text-align: center;
+/* Style overrides */
+#jedchecker .list-group-item-action.list-group-item-action.active {
+  color: #fff;
+  background-color: #132f53 !important;
+  border-color: #132f53 !important;
 }
 
-.rule {
-	font-weight: bold;
+#jedchecker .badge {
+  border: none !important;
+  padding: 0.3rem 0.45rem !important;
+}
+#jedchecker .badge.bg-info {
+  background-color: #2a69b8 !important;
+  color: #fff;
+}
+#jedchecker .alert.alert-warning {
+  color: #664808;
+  background-color: #fff0d0;
+  border-color: #ffe9b9;
+}
+#jedchecker .alert.alert-info {
+  color: #193f6e;
+  background-color: #d4e1f1;
+  border-color: #bfcbd9;
+}
+#jedchecker .alert pre {
+	margin-bottom: 0;
+	white-space: pre;
 }
 
-small {
-	font-size: 110%;
-	padding: 0 0 0 30px;
-	white-space: nowrap;
-
+/* fixes for Joomla! 3.x */
+#jedchecker input[type="file"] {
+	height: auto;
 }
-
-#police-check-result li {
-	margin-bottom: 0.7em;
-	overflow: hidden;
+#jedchecker .fade.show {
+	opacity: 1;
 }
-
-#police-check-result ul li pre {
-	background: white none repeat scroll 0 0;
-	border: 1px solid #ccc;
-	display: block;
-	margin: 0;
-	overflow: hidden;
-	padding: 2px 6px;
-	text-overflow: ellipsis;
-	vertical-align: middle;
-	white-space: nowrap;
-}
-
-.jamss_tooltip {
-	background-color: blue;
-	color: white;
-	border-radius: 20px;
-}
-
-.jamss_tooltip.code {
-	background-color: #C03020;
-}
-
-.btn {
-	white-space: normal !important;
+#jedchecker .collapse {
+	height: inherit;
 }

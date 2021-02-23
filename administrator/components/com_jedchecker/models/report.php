@@ -174,7 +174,7 @@ class JEDcheckerReport extends JObject
 	{
 		$html = array();
 
-		if ($this->data['count']->total == 0)
+		if ($this->data['count']->total === 0)
 		{
 			// No errors or compatibility issues found
 			$html[] = '<div class="alert alert-success">';
@@ -183,63 +183,26 @@ class JEDcheckerReport extends JObject
 		}
 		else
 		{
-			$error_count = $this->data['count']->errors;
-			$compat_count = $this->data['count']->compat;
-			$info_count = $this->data['count']->info;
-			$warning_count = $this->data['count']->warning;
-
 			// Go through the error list
-			if ($error_count > 0)
+			if ($this->data['count']->errors > 0)
 			{
-				$collapseID = uniqid('error_');
-
-				$html[] = '<div class="alert alert-danger" data-toggle="collapse" data-target="#' . $collapseID . '"><strong>' . $error_count . ' ' . JText::_('COM_JEDCHECKER_ERRORS') . '</strong> - ' . JText::_('COM_JEDCHECKER_CLICK_TO_VIEW_DETAILS') . '</div>';
-				$html[] = '<div id="' . $collapseID . '" class="collapse"><ul class="alert alert-danger">';
-
-				$html[] = $this->formatItems($this->data['errors']);
-
-				$html[] = '</ul></div>';
+				$html[] = $this->formatItems($this->data['errors'], 'danger');
 			}
-
-			// Go through the compat list
-			if ($compat_count > 0)
-			{
-
-				$collapseID = uniqid('compat_');
-
-				$html[] = '<div class="alert alert-warning" data-toggle="collapse" data-target="#' . $collapseID . '"><strong>' . $compat_count . ' ' . JText::_('COM_JEDCHECKER_COMPAT_ISSUES') . '</strong> - ' . JText::_('COM_JEDCHECKER_CLICK_TO_VIEW_DETAILS') . '</div>';
-				$html[] = '<div id="' . $collapseID . '" class="collapse"><ul class="alert alert-warning">';
-
-				$html[] = $this->formatItems($this->data['compat']);
-
-				$html[] = '</ul></div>';
-			}
-
-			// Go through the compat list
-			if ($info_count > 0)
-			{
-
-				$collapseID = uniqid('info_');
-
-				$html[] = '<div class="alert alert-info" data-toggle="collapse" data-target="#' . $collapseID . '"><strong>' . $info_count . ' ' . JText::_('COM_JEDCHECKER_INFO') . '</strong> - ' . JText::_('COM_JEDCHECKER_CLICK_TO_VIEW_DETAILS') . '</div>';
-				$html[] = '<div id="' . $collapseID . '" class="collapse"><ul class="alert alert-info">';
-
-				$html[] = $this->formatItems($this->data['info']);
-
-				$html[] = '</ul></div>';
-			}
-
 			// Go through the warning list
-			if ($warning_count > 0)
+			if ($this->data['count']->warning > 0)
 			{
-				$collapseID = uniqid('warning_');
+				$html[] = $this->formatItems($this->data['warning'], 'warning');
 
-				$html[] = '<div class="alert alert-warning" data-toggle="collapse" data-target="#' . $collapseID . '"><strong>' . $warning_count . ' ' . JText::_('COM_JEDCHECKER_WARNING') . '</strong> - ' . JText::_('COM_JEDCHECKER_CLICK_TO_VIEW_DETAILS') . '</div>';
-				$html[] = '<div id="' . $collapseID . '" class="collapse"><ul class="alert alert-warning">';
+			// Go through the compat list
+			if ($this->data['count']->compat > 0)
+			{
+				$html[] = $this->formatItems($this->data['compat'], 'secondary');
+			}
 
-				$html[] = $this->formatItems($this->data['warning']);
-
-				$html[] = '</ul></div>';
+			// Go through the info list
+			if ($this->data['count']->info > 0)
+			{
+				$html[] = $this->formatItems($this->data['info'], 'info');
 			}
 		}
 
@@ -279,10 +242,11 @@ class JEDcheckerReport extends JObject
 	 * Converts an item to the string representation
 	 *
 	 * @param   array   $items       List or reports
+	 * @param   string  $alertStyle  Type of alert blocks
 	 *
 	 * @return  string
 	 */
-	protected function formatItems($items)
+	protected function formatItems($items, $alertStyle)
 	{
 		$html = array();
 
@@ -290,8 +254,10 @@ class JEDcheckerReport extends JObject
 		{
 			$num = $i + 1;
 
+			$html[] = '<div class="alert alert-' . $alertStyle . '">';
+
 			// Add count number
-			$html[] = '<li><strong>#' . str_pad($num, 3, '0', STR_PAD_LEFT) . '</strong> ';
+			$html[] = '<strong>#' . str_pad($num, 3, '0', STR_PAD_LEFT) . '</strong> ';
 			$html[] = $item->location;
 
 			// Add line information if given
@@ -316,7 +282,7 @@ class JEDcheckerReport extends JObject
 				$html[] = '</small>';
 			}
 
-			$html[] = '</li>';
+			$html[] = '</div>';
 		}
 
 		return implode('', $html);
