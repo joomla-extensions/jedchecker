@@ -20,11 +20,13 @@ Zero-Clause BSD / Free Public License v1.0.0
 1-clause BSD License (BSD-1-Clause)
 BSD 1-Clause License
 2-clause BSD License (BSD-2-Clause)
+BSD v2 (BSDv2)
 BSD 2-Clause "Simplified" License
 BSD-2-Clause Plus Patent License (BSD-2-Clause-Patent)
 BSD+Patent
 FreeBSD License
 3-clause BSD License (BSD-3-Clause)
+BSD v3 (BSDv3)
 BSD 3-Clause "New" or "Revised" License
 Lawrence Berkeley National Labs BSD variant License (BSD-3-Clause-LBNL)
 Modified BSD License
