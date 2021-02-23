@@ -193,7 +193,9 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 			{
 				$this->warnings[] = JText::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_CHILDREN', $name);
 			}
-		} else {
+		}
+		elseif (!isset($this->DTDNodeRules[$name]['*']))
+		{
 			$DTDchildren = $this->DTDNodeRules[$name];
 
 			// 1) check required single elements
