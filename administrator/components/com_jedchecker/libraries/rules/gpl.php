@@ -91,10 +91,10 @@ class JedcheckerRulesGpl extends JEDcheckerRule
 	 */
 	protected function init()
 	{
-		$gpl_licenses = (array) file(__DIR__ . '/gpl_gnu.txt');
+		$gpl_licenses = (array) file(__DIR__ . '/gpl/gnu.txt');
 		$this->regex_gpl_licenses = $this->generate_regexp($gpl_licenses);
 
-		$compat_licenses = (array) file(__DIR__ . '/gpl_compat.txt');
+		$compat_licenses = (array) file(__DIR__ . '/gpl/compat.txt');
 
 		$extra_licenses = $this->params->get('constants');
 		$extra_licenses = explode(',', $extra_licenses);
