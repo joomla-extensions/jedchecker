@@ -104,13 +104,13 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 		$jamssStrings .= 'phpremoteview|directmail|bash_history|multiviews|cwings|vandal|bitchx|';
 		$jamssStrings .= 'eggdrop|guardservices|psybnc|dalnet|undernet|vulnscan|spymeta|raslan58|';
 		$jamssStrings .= 'Webshell|str_rot13|FilesMan|FilesTools|Web Shell|ifrm|bckdrprm|';
-		$jamssStrings .= 'hackmeplz|wrgggthhd|WSOsetcookie|Hmei7|Inbox Mass Mailer|HackTeam|Hackeado';
+		$jamssStrings .= 'hackmeplz|wrgggthhd|WSOsetcookie|Hmei7|Inbox Mass Mailer|HackTeam|Hackeado|';
 		$jamssStrings .= 'Janissaries|Miyachung|ccteam|Adminer|OOO000000|$GLOBALS|findsysfolder';
 
 		// These patterns will be used if GET parameter ?deepscan=1 is set while calling jamss.php file
 		$jamssDeepSearchStrings = 'eval|base64_decode|base64_encode|gzdecode|gzdeflate|';
 		$jamssDeepSearchStrings .= 'gzuncompress|gzcompress|readgzfile|zlib_decode|zlib_encode|';
-		$jamssDeepSearchStrings .= 'gzfile|gzget|gzpassthru|iframe|strrev|lzw_decompress|strtr';
+		$jamssDeepSearchStrings .= 'gzfile|gzget|gzpassthru|iframe|strrev|lzw_decompress|strtr|';
 		$jamssDeepSearchStrings .= 'exec|passthru|shell_exec|system|proc_|popen';
 
 		// The patterns to search for
