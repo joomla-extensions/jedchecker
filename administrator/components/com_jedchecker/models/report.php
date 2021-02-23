@@ -84,15 +84,17 @@ class JEDcheckerReport extends JObject
 	 * @param   string   $text      - An optional description of the error.
 	 * @param   integer  $line      - If $location is a file, you may specify the line where the
 	 *                                   error occurred.
+	 * @param   string   $code      - Code at that location (to be displayed below the description)
 	 *
 	 * @return    void
 	 */
-	public function addError($location, $text = null, $line = 0)
+	public function addError($location, $text = null, $line = 0, $code = null)
 	{
 		$item = new stdClass;
 		$item->location = $location;
 		$item->line = $line;
 		$item->text = $text;
+		$item->code = $code;
 
 		$this->addItem($item, 'errors');
 	}
@@ -104,15 +106,17 @@ class JEDcheckerReport extends JObject
 	 * @param   string   $text      - An optional description of the error.
 	 * @param   integer  $line      - If $location is a file, you may specify the line where the
 	 *                                   error occurred.
+	 * @param   string   $code      - Code at that location (to be displayed below the description)
 	 *
 	 * @return    void
 	 */
-	public function addInfo($location, $text = null, $line = 0)
+	public function addInfo($location, $text = null, $line = 0, $code = null)
 	{
 		$item = new stdClass;
 		$item->location = $location;
 		$item->line = $line;
 		$item->text = $text;
+		$item->code = $code;
 
 		$this->addItem($item, 'info');
 	}
@@ -124,15 +128,17 @@ class JEDcheckerReport extends JObject
 	 * @param   string   $text      - An optional description of the issue
 	 * @param   integer  $line      - If $location is a file, you may specify the line where the
 	 *                                   issue occurred.
+	 * @param   string   $code      - Code at that location (to be displayed below the description)
 	 *
 	 * @return    void
 	 */
-	public function addCompat($location, $text = null, $line = 0)
+	public function addCompat($location, $text = null, $line = 0, $code = null)
 	{
 		$item = new stdClass;
 		$item->location = $location;
 		$item->line = $line;
 		$item->text = $text;
+		$item->code = $code;
 
 		$this->addItem($item, 'compat');
 	}
@@ -144,15 +150,17 @@ class JEDcheckerReport extends JObject
 	 * @param   string   $text      - An optional description of the issue
 	 * @param   integer  $line      - If $location is a file, you may specify the line where the
 	 *                                   issue occurred.
+	 * @param   string   $code      - Code at that location (to be displayed below the description)
 	 *
 	 * @return    void
 	 */
-	public function addWarning($location, $text = null, $line = 0)
+	public function addWarning($location, $text = null, $line = 0, $code = null)
 	{
 		$item = new stdClass;
 		$item->location = $location;
 		$item->line = $line;
 		$item->text = $text;
+		$item->code = $code;
 
 		$this->addItem($item, 'warning');
 	}
@@ -297,7 +305,15 @@ class JEDcheckerReport extends JObject
 			// Add text if given
 			if (!empty($item->text))
 			{
-				$html[] = '<small>' . $item->text . '</small>';
+				$html[] = '<small>' . $item->text;
+
+				// Add code if given
+				if (!empty($item->code))
+				{
+					$html[] = '<pre>' . htmlspecialchars(rtrim($item->code)) . '</pre>';
+				}
+
+				$html[] = '</small>';
 			}
 
 			$html[] = '</li>';
