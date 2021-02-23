@@ -72,14 +72,18 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 	protected function find($file)
 	{
 		$lines = file($file);
-		foreach ($lines as $lineno => $line)
+		$nLines = count($lines);
+
+		for ($lineno = 0; $lineno < $nLines; $lineno++)
 		{
-			$line = trim($line);
+			$startLineno = $lineno + 1;
+			$line = trim($lines[$lineno]);
+
 
 			// Check for BOM sequence
 			if ($lineno === 0 && strncmp($line, "\xEF\xBB\xBF", 3) === 0)
 			{
-				$this->report->addError($file, JText::_('COM_JEDCHECKER_LANG_BOM_FOUND'), 1);
+				$this->report->addError($file, JText::_('COM_JEDCHECKER_LANG_BOM_FOUND'), $startLineno);
 				// Romeve BOM for further checks
 				$line = substr($line, 3);
 			}
@@ -93,74 +97,96 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 			// Report incorrect comment character
 			if ($line[0] === '#')
 			{
-				$this->report->addError($file, JText::_('COM_JEDCHECKER_LANG_INCORRECT_COMMENT'), $lineno, $line);
+				$this->report->addError($file, JText::_('COM_JEDCHECKER_LANG_INCORRECT_COMMENT'), $startLineno, $line);
 				continue;
 			}
 
 			// Check for "=" character in the line
 			if (strpos($line, '=') === false)
 			{
-				$this->report->addError($file, JText::_('COM_JEDCHECKER_LANG_WRONG_LINE'), $lineno, $line);
+				$this->report->addError($file, JText::_('COM_JEDCHECKER_LANG_WRONG_LINE'), $startLineno, $line);
 				continue;
 			}
 
 			// Extract key and value
 			list ($key, $value) = explode('=', $line, 2);
 
+			// Validate key
 			$key = rtrim($key);
 
 			// Check for empty key
 			if ($key === '')
 			{
-				$this->report->addError($file, JText::_('COM_JEDCHECKER_LANG_KEY_EMPTY'), $lineno, $line);
+				$this->report->addError($file, JText::_('COM_JEDCHECKER_LANG_KEY_EMPTY'), $startLineno, $line);
 				continue;
 			}
 
 			// Check for spaces in the key name
 			if (strpos($key, ' ') !== false)
 			{
-				$this->report->addError($file, JText::_('COM_JEDCHECKER_LANG_KEY_WHITESPACE'), $lineno, $line);
+				$this->report->addError($file, JText::_('COM_JEDCHECKER_LANG_KEY_WHITESPACE'), $startLineno, $line);
 				continue;
 			}
 
 			// Check for invalid characters (see https://www.php.net/manual/en/function.parse-ini-file.php)
 			if (strpbrk($key, '{}|&~![()^"') !== false)
 			{
-				$this->report->addError($file, JText::_('COM_JEDCHECKER_LANG_KEY_INVALID_CHARACTER'), $lineno, $line);
+				$this->report->addError($file, JText::_('COM_JEDCHECKER_LANG_KEY_INVALID_CHARACTER'), $startLineno, $line);
 				continue;
 			}
 
 			// Check for invalid key names (see https://www.php.net/manual/en/function.parse-ini-file.php)
 			if (in_array($key, array('null', 'yes', 'no', 'true', 'false', 'on', 'off', 'none'), true))
 			{
-				$this->report->addError($file, JText::_('COM_JEDCHECKER_LANG_KEY_RESERVED'), $lineno, $line);
+				$this->report->addError($file, JText::_('COM_JEDCHECKER_LANG_KEY_RESERVED'), $startLineno, $line);
 				continue;
 			}
 
+			// Validate value
 			$value = ltrim($value);
 
-			if (strlen($value) <2 || $value[0] !== '"' || substr($value, -1) !== '"')
+			// Parse multiline values
+			while (!preg_match('/^((?>\'(?>[^\'\\\\]+|\\\\.)*\'|"(?>[^"\\\\]+|\\\\.)*"|[^\'";]+)*)(;.*)?$/', $value, $matches))
 			{
-				$this->report->addError($file, JText::_('COM_JEDCHECKER_LANG_TRANSLATION_QUOTES'), $lineno, $line);
+				if ($lineno + 1 >= $nLines)
+				{
+					break;
+				}
+
+				$lineno++;
+				$chunk = "\n" . trim($lines[$lineno]);
+				$line .= $chunk;
+				$value .= $chunk;
+			}
+
+			if (!isset($matches[0]))
+			{
+				$this->report->addWarning($file, JText::_('COM_JEDCHECKER_LANG_TRANSLATION_ERROR'), $startLineno, $line);
 				continue;
 			}
 
 			$value = trim($matches[1]);
+
 			// Check for empty value
 			if ($value === '""')
 			{
-				$this->report->addWarning($file, JText::_('COM_JEDCHECKER_LANG_TRANSLATION_EMPTY'), $lineno, $line);
+				$this->report->addWarning($file, JText::_('COM_JEDCHECKER_LANG_TRANSLATION_EMPTY'), $startLineno, $line);
 				continue;
 			}
 
 			if (strlen($value) < 2 || $value[0] !== '"' || substr($value, -1) !== '"')
-			// Remove quotes around
+			{
+				$this->report->addError($file, JText::_('COM_JEDCHECKER_LANG_TRANSLATION_QUOTES'), $startLineno, $line);
+				continue;
+			}
+
+			// // Remove quotes around
 			$value = substr($value, 1, -1);
 
 			// Check for legacy "_QQ_" code (deprecated since Joomla! 3.9 if favor of escaped double quote \"; removed in Joomla! 4)
 			if (strpos($value, '"_QQ_"') !== false)
 			{
-				$this->report->addInfo($file, JText::_('COM_JEDCHECKER_LANG_QQ_DEPRECATED'), $lineno, $line);
+				$this->report->addInfo($file, JText::_('COM_JEDCHECKER_LANG_QQ_DEPRECATED'), $startLineno, $line);
 			}
 
 			// Count %... formats in the string
