@@ -23,6 +23,7 @@
     },
     "files": {
       "file": "*",
+      "filename": "*",
       "folder": "*"
     },
     "languages": {
@@ -43,6 +44,12 @@
       "folder"
     ],
     "file": [
+      "client",
+      "group",
+      "id",
+      "type"
+    ],
+    "filename": [
       "client",
       "group",
       "id",
