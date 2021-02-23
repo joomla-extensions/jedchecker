@@ -47,12 +47,21 @@ class JedcheckerRulesJexec extends JEDcheckerRule
 	protected $description = 'COM_JEDCHECKER_RULE_PH2_DESC';
 
 	/**
+	 * Regexp to match _JEXEC-like guard
+	 *
+	 * @var    string
+	 */
+	protected $regex;
+
+	/**
 	 * Initiates the file search and check
 	 *
 	 * @return    void
 	 */
 	public function check()
 	{
+		$this->init_jexec();
+
 		// Find all php files of the extension
 		$files = JFolder::files($this->basedir, '\.php$', true, true);
 
@@ -86,79 +95,36 @@ class JedcheckerRulesJexec extends JEDcheckerRule
 			return true;
 		}
 
-		$content = preg_split('/(?:\r\n|\n|\r)(?!$)/', $content);
+		// check guards
+		if (preg_match($this->regex, $content))
+		{
+			return true;
+		}
 
-		// Get the constants to look for
+		return false;
+	}
+
+	/**
+	 * Prepare regexp aforehand
+	 *
+	 * @return void
+	 */
+	protected function init_jexec()
+	{
 		$defines = $this->params->get('constants');
 		$defines = explode(',', $defines);
 
-		$hascode = 0;
-
-		foreach ($content AS $line)
+		foreach ($defines as $i => $define)
 		{
-			$tline = trim($line);
-
-			if ($tline == '' || $tline == '<?php' || $tline == '?>')
-			{
-				continue;
-			}
-
-			if ($tline['0'] != '/' && $tline['0'] != '*')
-			{
-				$hascode = 1;
-			}
-
-			// Search for "defined"
-			$pos_1 = stripos($line, 'defined');
-
-			// Skip the line if "defined" is not found
-			if ($pos_1 === false)
-			{
-				continue;
-			}
-
-			// Search for "die".
-			//  "or" may not be present depending on syntax
-			$pos_3 = stripos($line, 'die');
-
-			// Check for "exit"
-			if ($pos_3 === false)
-			{
-				$pos_3 = stripos($line, 'exit');
-
-				// Skip the line if "die" or "exit" is not found
-				if ($pos_3 === false)
-				{
-					continue;
-				}
-			}
-
-			// Search for the constant name
-			foreach ($defines AS $define)
-			{
-				$define = trim($define);
-
-				// Search for the define
-				$pos_2 = strpos($line, $define);
-
-				// Skip the line if the define is not found
-				if ($pos_2 === false)
-				{
-					continue;
-				}
-
-				// Check the position of the words
-				if ($pos_2 > $pos_1 && $pos_3 > $pos_2)
-				{
-					unset($content);
-
-					return true;
-				}
-			}
+			$defines[$i] = preg_quote(trim($define), '#');
 		}
 
-		unset($content);
-
-		return $hascode ? false : true;
+		$this->regex
+			= '#^' // at the beginning of the file
+			. '<\?php\s+' // there is an opening php tag
+			. 'defined ?\( ?' // followed by defined test
+			. '([\'"])(?:' . implode('|', $defines) . ')\1' // of any of given constant
+			. ' ?\) ?(?:or |\|\| ?)(?:die|exit)\b' // or exit
+			. '#i'; // (case insensitive)
 	}
 }
