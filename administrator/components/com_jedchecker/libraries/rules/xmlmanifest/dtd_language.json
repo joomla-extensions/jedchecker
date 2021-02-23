@@ -1,0 +1,60 @@
+{
+  "nodes": {
+    "extension": {
+      "name": "!",
+      "tag": "!",
+      "creationDate": "=",
+      "author": "=",
+      "authorEmail": "=",
+      "authorUrl": "=",
+      "copyright": "=",
+      "version": "!",
+      "description": "=",
+      "license": "?",
+      "files": "!",
+      "media": "?",
+      "fonts": "?",
+      "update": "?",
+      "updateservers": "?"
+    },
+    "files": {
+      "filename": "*",
+      "folder": "*"
+    },
+    "media": {
+      "filename": "*",
+      "folder": "*"
+    },
+    "fonts": {
+      "filename": "*",
+      "folder": "*"
+    },
+    "updateservers": {
+      "server": "*"
+    }
+  },
+  "attributes": {
+    "extension": [
+      "client",
+      "method",
+      "overwrite",
+      "type",
+      "version"
+    ],
+    "files": [
+      "folder"
+    ],
+    "media": [
+      "destination",
+      "folder"
+    ],
+    "fonts": [
+      "folder"
+    ],
+    "server": [
+      "name",
+      "priority",
+      "type"
+    ]
+  }
+}
