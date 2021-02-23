@@ -77,7 +77,16 @@ class JedcheckerRulesJexec extends JEDcheckerRule
 	 */
 	protected function find($file)
 	{
-		$content = (array) file($file);
+		// load file and strip comments
+		$content = php_strip_whitespace($file);
+
+		// skip empty files
+		if ($content === '' || preg_match('#^<\?php\s+$#', $content))
+		{
+			return true;
+		}
+
+		$content = preg_split('/(?:\r\n|\n|\r)(?!$)/', $content);
 
 		// Get the constants to look for
 		$defines = $this->params->get('constants');
