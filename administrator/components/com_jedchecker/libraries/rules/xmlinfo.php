@@ -247,8 +247,19 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 		if (stripos($url, 'joom') !== false)
 		{
 			$domain = (strpos($url, '//') === false) ? $url : parse_url(trim($url), PHP_URL_HOST);
-			if (stripos($domain, 'joom') !== false) {
-				$this->report->addWarning($file, JText::_('COM_JEDCHECKER_INFO_XML_URL_JOOMLA_DERIVATIVE'));
+
+			if (stripos($domain, 'joom') !== false)
+			{
+				// Remove "www." subdomain prefix
+				$domain = preg_replace('/^www\./', '', $domain);
+
+				// Approved domains from https://tm.joomla.org/approved-domains.html
+				$approvedDomains = file(__DIR__ . '/xmlinfo/approved-domains.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+
+				if (!in_array($domain, $approvedDomains, true))
+				{
+					$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_URL_JOOMLA_DERIVATIVE', $url));
+				}
 			}
 		}
 
