@@ -112,7 +112,7 @@ class JedcheckerControllerPolice extends JControllerLegacy
 
 		if (JFile::exists($local))
 		{
-			$content = JFile::read($local);
+			$content = file_get_contents($local);
 
 			if (!empty($content))
 			{
