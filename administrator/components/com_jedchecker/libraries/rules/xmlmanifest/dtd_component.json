@@ -25,10 +25,10 @@
       "namespace": "?"
     },
     "administration": {
-      "menu": "=",
+      "menu": "?",
       "submenu": "?",
       "files": "=",
-      "languages": "=",
+      "languages": "?",
       "media": "?"
     },
     "files": {
