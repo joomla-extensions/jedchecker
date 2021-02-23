@@ -126,6 +126,11 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 			$extension = 'com_' . $extension;
 		}
 
+		if ($type === 'plugin' && isset($xml['group']))
+		{
+			$extension = 'plg_' . $xml['group'] . '_' . $extension;
+		}
+
 		// Load the language of the extension (if any)
 		$lang = JFactory::getLanguage();
 
@@ -134,24 +139,48 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 		$lang_tag = 'en-GB'; // $lang->getDefault();
 
 		$lookup_lang_dirs = array();
+
 		if (isset($xml->administration->files['folder']))
 		{
 			$lookup_lang_dirs[] = trim($xml->administration->files['folder'], '/') . '/language/' . $lang_tag;
 		}
+
 		if (isset($xml->files['folder']))
 		{
 			$lookup_lang_dirs[] = trim($xml->files['folder'], '/') . '/language/' . $lang_tag;
 		}
+
 		$lookup_lang_dirs[] = 'language/' . $lang_tag;
-		if (isset($xml->administration->languages['folder']))
+
+		if (isset($xml->administration->languages))
 		{
-			$lookup_lang_dirs[] = trim($xml->administration->languages['folder'], '/') . '/' . $lang_tag;
+			$folder = trim($xml->administration->languages['folder'], '/');
+
+			foreach ($xml->administration->languages->language as $language)
+			{
+				if (trim($language['tag']) === $lang_tag)
+				{
+					$lookup_lang_dirs[] = trim($folder . '/' . dirname($language), '/');
+				}
+			}
 		}
-		if (isset($xml->languages['folder']))
+
+		if (isset($xml->languages))
 		{
-			$lookup_lang_dirs[] = trim($xml->languages['folder'], '/') . '/' . $lang_tag;
+			$folder = trim($xml->languages['folder'], '/');
+
+			foreach ($xml->languages->language as $language)
+			{
+				if (trim($language['tag']) === $lang_tag)
+				{
+					$lookup_lang_dirs[] = trim($folder . '/' . dirname($language), '/');
+				}
+			}
 		}
+
 		$lookup_lang_dirs[] = '';
+
+		$lookup_lang_dirs = array_unique($lookup_lang_dirs);
 
 		foreach ($lookup_lang_dirs as $dir)
 		{
