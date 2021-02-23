@@ -129,13 +129,15 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 			$this->checkFiles($node->language, $dir);
 		}
 
+		$admindir = $basedir;
+
 		// check: administration files[folder] (filename|folder)*
 		if (isset($xml->administration->files))
 		{
 			$node = $xml->administration->files;
-			$dir = $basedir . (isset($node['folder']) ? $node['folder'] . '/' : '');
-			$this->checkFiles($node->filename, $dir);
-			$this->checkFolders($node->folder, $dir);
+			$admindir = $basedir . (isset($node['folder']) ? $node['folder'] . '/' : '');
+			$this->checkFiles($node->filename, $admindir);
+			$this->checkFolders($node->folder, $admindir);
 		}
 
 		// check: administration media[folder] (filename|folder)*
@@ -164,19 +166,19 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 		// check files: install sql file*
 		if (isset($xml->install->sql->file))
 		{
-			$this->checkFiles($xml->install->sql->file, $basedir);
+			$this->checkFiles($xml->install->sql->file, $admindir);
 		}
 
 		// check files: uninstall sql file*
 		if (isset($xml->uninstall->sql->file))
 		{
-			$this->checkFiles($xml->uninstall->sql->file, $basedir);
+			$this->checkFiles($xml->uninstall->sql->file, $admindir);
 		}
 
 		// check folders: update schemas schemapath*
 		if (isset($xml->update->schemas->schemapath))
 		{
-			$this->checkFolders($xml->update->schemas->schemapath, $basedir);
+			$this->checkFolders($xml->update->schemas->schemapath, $admindir);
 		}
 
 		if (count($this->errors))
