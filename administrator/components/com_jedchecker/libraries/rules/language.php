@@ -209,6 +209,18 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 				$this->report->addCompat($file, JText::_('COM_JEDCHECKER_LANG_QQ_DEPRECATED'), $startLineno, $line);
 			}
 
+			$value = str_replace('"_QQ_"', '\"', $value);
+
+			if (preg_match('/[^\\\\]"/', $value))
+			{
+				$this->report->addWarning($file, JText::_('COM_JEDCHECKER_LANG_UNESCAPED_QUOTE'), $startLineno, $line);
+			}
+
+			if (strpos($value, '${') !== false)
+			{
+				$this->report->addWarning($file, JText::_('COM_JEDCHECKER_LANG_VARIABLE_REF'), $startLineno, $line);
+			}
+
 			// Count %... formats in the string
 			$count1 = preg_match_all('/(?<=^|[^%])%(?=[-+0 ]?\w)/', $value);
 
