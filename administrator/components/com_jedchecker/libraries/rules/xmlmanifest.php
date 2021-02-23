@@ -171,12 +171,17 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 	{
 		// Check attributes
 		$DTDattributes = isset($this->DTDAttrRules[$name]) ? $this->DTDAttrRules[$name] : array();
-		foreach ($node->attributes() as $attr)
+
+		if (isset($DTDattributes[0]) && $DTDattributes[0] !== '*')
 		{
-			$attr_name = (string)$attr->getName();
-			if (!in_array($attr_name, $DTDattributes, true))
+			foreach ($node->attributes() as $attr)
 			{
-				$this->warnings[] = JText::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_ATTRIBUTE', $name, $attr_name);
+				$attr_name = (string)$attr->getName();
+
+				if (!in_array($attr_name, $DTDattributes, true))
+				{
+					$this->warnings[] = JText::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_ATTRIBUTE', $name, $attr_name);
+				}
 			}
 		}
 
