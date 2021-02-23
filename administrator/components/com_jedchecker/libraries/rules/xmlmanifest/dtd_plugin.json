@@ -60,7 +60,7 @@
       "field": "+"
     },
     "field": {
-      "option": "*"
+      "*": "*"
     }
   },
   "attributes": {
@@ -102,38 +102,35 @@
       "path"
     ],
     "config": [
-      "addfieldpath"
+      "addfieldpath",
+      "addfieldprefix",
+      "addformpath",
+      "addformprefix",
+      "addrulepath",
+      "addruleprefix"
     ],
     "fields": [
       "addfieldpath",
+      "addfieldprefix",
+      "addformpath",
+      "addformprefix",
+      "addrulepath",
+      "addruleprefix",
       "name"
     ],
     "fieldset": [
       "addfieldpath",
+      "addfieldprefix",
+      "addformpath",
+      "addformprefix",
+      "addrulepath",
+      "addruleprefix",
       "description",
       "label",
       "name"
     ],
     "field": [
-      "addfieldpath",
-      "class",
-      "cols",
-      "default",
-      "description",
-      "filter",
-      "id",
-      "label",
-      "maxLength",
-      "name",
-      "required",
-      "rows",
-      "size",
-      "step",
-      "type",
-      "validate"
-    ],
-    "option": [
-      "value"
+      "*"
     ]
   }
 }
