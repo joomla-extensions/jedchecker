@@ -180,7 +180,7 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 			// Check for empty value
 			if ($value === '""')
 			{
-				$this->report->addWarning($file, JText::_('COM_JEDCHECKER_LANG_TRANSLATION_EMPTY'), $startLineno, $line);
+				$this->report->addInfo($file, JText::_('COM_JEDCHECKER_LANG_TRANSLATION_EMPTY'), $startLineno, $line);
 				continue;
 			}
 
@@ -196,7 +196,7 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 			// Check for legacy "_QQ_" code (deprecated since Joomla! 3.9 if favor of escaped double quote \"; removed in Joomla! 4)
 			if (strpos($value, '"_QQ_"') !== false)
 			{
-				$this->report->addInfo($file, JText::_('COM_JEDCHECKER_LANG_QQ_DEPRECATED'), $startLineno, $line);
+				$this->report->addCompat($file, JText::_('COM_JEDCHECKER_LANG_QQ_DEPRECATED'), $startLineno, $line);
 			}
 
 			// Count %... formats in the string
