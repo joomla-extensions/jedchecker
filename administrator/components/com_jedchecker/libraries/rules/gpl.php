@@ -184,6 +184,7 @@ class JedcheckerRulesGpl extends JEDcheckerRule
 	{
 		// check the file is empty (i.e. comments-only)
 		$content = php_strip_whitespace($file);
+
 		if (preg_match('#^<\?php\s+$#', $content))
 		{
 			return true;
@@ -199,9 +200,11 @@ class JedcheckerRulesGpl extends JEDcheckerRule
 			$line_no = substr_count($content, "\n", 0, $match[0][1]) + 1;
 			$this->report->addInfo(
 				$file,
-				JText::_('COM_JEDCHECKER_PH1_LICENSE_FOUND') . ':' . '<strong>' . $match[0][0] . '</strong>',
-				$line_no
+				JText::_('COM_JEDCHECKER_PH1_LICENSE_FOUND'),
+				$line_no,
+				$match[0][0]
 			);
+
 			return true;
 		}
 
@@ -210,9 +213,11 @@ class JedcheckerRulesGpl extends JEDcheckerRule
 			$line_no = substr_count($content, "\n", 0, $match[0][1]) + 1;
 			$this->report->addInfo(
 				$file,
-				JText::_('COM_JEDCHECKER_GPL_COMPATIBLE_LICENSE_WAS_FOUND') . ':' . '<strong>' . $match[0][0] . '</strong>',
-				$line_no
+				JText::_('COM_JEDCHECKER_GPL_COMPATIBLE_LICENSE_WAS_FOUND'),
+				$line_no,
+				$match[0][0]
 			);
+
 			return true;
 		}
 
