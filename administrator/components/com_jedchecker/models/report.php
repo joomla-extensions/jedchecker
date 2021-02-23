@@ -188,28 +188,7 @@ class JEDcheckerReport extends JObject
 				$html[] = '<div class="alert alert-danger" data-toggle="collapse" data-target="#' . $collapseID . '"><strong>' . $error_count . ' ' . JText::_('COM_JEDCHECKER_ERRORS') . '</strong> - Click to View Details</div>';
 				$html[] = '<div id="' . $collapseID . '" class="collapse"><ul class="alert alert-danger">';
 
-				foreach ($this->data['errors'] AS $i => $item)
-				{
-					$num = $i + 1;
-
-					// Add the error count number
-					$html[] = '<li><strong>#' . str_pad($num, 3, '0', STR_PAD_LEFT) . ':</strong>&nbsp;';
-					$html[] = $item->location;
-
-					// Add line information if given
-					if ($item->line > 0)
-					{
-						$html[] = ' ' . JText::_('COM_JEDCHECKER_IN_LINE') . ': <strong>' . $item->line . '</strong>';
-					}
-
-					// Add text if given
-					if (!empty($item->text))
-					{
-						$html[] = '<br /><small>' . $item->text . '</small>';
-					}
-
-					$html[] = '</li>';
-				}
+				$html[] = $this->formatItems($this->data['errors']);
 
 				$html[] = '</ul></div>';
 			}
@@ -223,30 +202,7 @@ class JEDcheckerReport extends JObject
 				$html[] = '<div class="alert alert-warning" data-toggle="collapse" data-target="#' . $collapseID . '"><strong>' . $compat_count . ' ' . JText::_('COM_JEDCHECKER_COMPAT_ISSUES') . '</strong> - Click to View Details</div>';
 				$html[] = '<div id="' . $collapseID . '" class="collapse"><ul class="alert alert-warning">';
 
-				foreach ($this->data['compat'] AS $i => $item)
-				{
-					$num = $i + 1;
-
-					// Add the error count number
-					$html[] = '<li><strong>#' . str_pad($num, 3, '0', STR_PAD_LEFT) . '</strong> ';
-					$html[] = $item->location;
-
-					// Add line information if given
-					if ($item->line > 0)
-					{
-						$html[] = ' ' . JText::_('COM_JEDCHECKER_IN_LINE') . ': <strong>' . $item->line . '</strong>';
-					}
-
-					$html[] = '<br />';
-
-					// Add text if given
-					if (!empty($item->text))
-					{
-						$html[] = '<small>' . $item->text . '</small>';
-					}
-
-					$html[] = '</li>';
-				}
+				$html[] = $this->formatItems($this->data['compat']);
 
 				$html[] = '</ul></div>';
 			}
@@ -260,30 +216,7 @@ class JEDcheckerReport extends JObject
 				$html[] = '<div class="alert alert-info" data-toggle="collapse" data-target="#' . $collapseID . '"><strong>' . $info_count . ' ' . JText::_('COM_JEDCHECKER_INFO') . '</strong> - Click to View Details</div>';
 				$html[] = '<div id="' . $collapseID . '" class="collapse"><ul class="alert alert-info">';
 
-				foreach ($this->data['info'] AS $i => $item)
-				{
-					$num = $i + 1;
-
-					// Add the error count number
-					$html[] = '<li><strong>#' . str_pad($num, 3, '0', STR_PAD_LEFT) . '</strong> ';
-					$html[] = $item->location;
-
-					// Add line information if given
-					if ($item->line > 0)
-					{
-						$html[] = ' ' . JText::_('COM_JEDCHECKER_IN_LINE') . ': <strong>' . $item->line . '</strong>';
-					}
-
-					$html[] = '<br />';
-
-					// Add text if given
-					if (!empty($item->text))
-					{
-						$html[] = '<small>' . $item->text . '</small>';
-					}
-
-					$html[] = '</li>';
-				}
+				$html[] = $this->formatItems($this->data['info']);
 
 				$html[] = '</ul></div>';
 			}
@@ -296,30 +229,7 @@ class JEDcheckerReport extends JObject
 				$html[] = '<div class="alert alert-warning" data-toggle="collapse" data-target="#' . $collapseID . '"><strong>' . $warning_count . ' ' . JText::_('COM_JEDCHECKER_WARNING') . '</strong> - Click to View Details</div>';
 				$html[] = '<div id="' . $collapseID . '" class="collapse"><ul class="alert alert-warning">';
 
-				foreach ($this->data['warning'] AS $i => $item)
-				{
-					$num = $i + 1;
-
-					// Add the warning count number
-					$html[] = '<li><strong>#' . str_pad($num, 3, '0', STR_PAD_LEFT) . '</strong> ';
-					$html[] = $item->location;
-
-					// Add line information if given
-					if ($item->line > 0)
-					{
-						$html[] = ' ' . JText::_('COM_JEDCHECKER_IN_LINE') . ': <strong>' . $item->line . '</strong>';
-					}
-
-					$html[] = '<br />';
-
-					// Add text if given
-					if (!empty($item->text))
-					{
-						$html[] = '<small>' . $item->text . '</small>';
-					}
-
-					$html[] = '</li>';
-				}
+				$html[] = $this->formatItems($this->data['warning']);
 
 				$html[] = '</ul></div>';
 			}
@@ -355,5 +265,44 @@ class JEDcheckerReport extends JObject
 
 		$this->data['count']->total++;
 		$this->data['count']->$type++;
+	}
+
+	/**
+	 * Converts an item to the string representation
+	 *
+	 * @param   array   $items       List or reports
+	 *
+	 * @return  string
+	 */
+	protected function formatItems($items)
+	{
+		$html = array();
+
+		foreach ($items as $i => $item)
+		{
+			$num = $i + 1;
+
+			// Add count number
+			$html[] = '<li><strong>#' . str_pad($num, 3, '0', STR_PAD_LEFT) . '</strong> ';
+			$html[] = $item->location;
+
+			// Add line information if given
+			if ($item->line > 0)
+			{
+				$html[] = ' ' . JText::_('COM_JEDCHECKER_IN_LINE') . ': <strong>' . $item->line . '</strong>';
+			}
+
+			$html[] = '<br />';
+
+			// Add text if given
+			if (!empty($item->text))
+			{
+				$html[] = '<small>' . $item->text . '</small>';
+			}
+
+			$html[] = '</li>';
+		}
+
+		return implode('', $html);
 	}
 }
