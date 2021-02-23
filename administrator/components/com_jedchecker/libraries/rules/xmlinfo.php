@@ -221,26 +221,26 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 		// NM3 - Listing name contains “module” or “plugin”
 		if (preg_match('/\b(?:module|plugin)\b/i', $extension_name))
 		{
-			$this->report->addError($file, JText::_('COM_JEDCHECKER_INFO_XML_NAME_MODULE_PLUGIN'));
+			$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_MODULE_PLUGIN', $extension_name));
 		}
 		if (stripos($extension_name, 'template') !== false)
 		{
-			$this->report->addWarning($file, JText::_('COM_JEDCHECKER_INFO_XML_NAME_RESERVED_KEYWORDS'));
+			$this->report->addWarning($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_RESERVED_KEYWORDS', $extension_name));
 		}
 
 		// NM5 - Version in name/title
 		if (preg_match('/(?:\bversion\b|\d\.\d)/i', $extension_name))
 		{
-			$this->report->addError($file, JText::_('COM_JEDCHECKER_INFO_XML_NAME_VERSION'));
+			$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_VERSION', $extension_name));
 		}
 
 		if (stripos($extension_name, 'joomla') === 0)
 		{
-			$this->report->addError($file, JText::_('COM_JEDCHECKER_INFO_XML_NAME_JOOMLA'));
+			$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_JOOMLA', $extension_name));
 		}
 		elseif (stripos($extension_name, 'joom') !== false)
 		{
-			$this->report->addWarning($file, JText::_('COM_JEDCHECKER_INFO_XML_NAME_JOOMLA_DERIVATIVE'));
+			$this->report->addWarning($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_JOOMLA_DERIVATIVE', $extension_name));
 		}
 
 		$url = (string)$xml->authorUrl;
