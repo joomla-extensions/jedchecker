@@ -54,8 +54,26 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 	 */
 	public function check()
 	{
+		// Warn about code versioning files included
+		$leftover_folders = $this->params->get('leftover_folders');
+		$regex_leftover_folders = '(?:' . str_replace(',', '|', preg_quote($leftover_folders, '/')) . ')$';
+
+		$folders = JFolder::folders($this->basedir, $regex_leftover_folders, true, true, array(), array());
+		$files = JFolder::files($this->basedir, $regex_leftover_folders, true, true, array(), array());
+
+		foreach ($folders as $folder)
+		{
+			$this->report->addWarning($folder, JText::_("COM_JEDCHECKER_ERROR_FRAMEWORK_LEFTOVER_FOLDER"));
+		}
+
+		foreach ($files as $file)
+		{
+			$this->report->addWarning($file, JText::_("COM_JEDCHECKER_ERROR_FRAMEWORK_LEFTOVER_FILE"));
+		}
+
+		$this->leftover_folders = explode(',', $leftover_folders);
+
 		$files = JFolder::files($this->basedir, '\.php$', true, true);
-		$this->leftover_folders = explode(',', $this->params->get('leftover_folders'));
 
 		foreach ($files as $file)
 		{
@@ -71,7 +89,7 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 	}
 
 	/**
-	 * Check if the given resource is a leftover folder
+	 * Check if the given resource is inside of a leftover folder
 	 *
 	 * @param   string  $file  The file name to test
 	 *
@@ -79,20 +97,15 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 	 */
 	private function excludeResource($file)
 	{
-		// Warn about code versioning files included
-		$result = false;
-
 		foreach ($this->leftover_folders as $leftover_folder)
 		{
-			if (strpos($file, $leftover_folder) !== false)
+			if (strpos($file, '/' . $leftover_folder . '/') !== false)
 			{
-				$error_message = JText::_("COM_JEDCHECKER_ERROR_FRAMEWORK_GIT") . ":";
-				$this->report->addWarning($file, $error_message, 0);
-				$result = true;
+				return true;
 			}
 		}
 
-		return $result;
+		return false;
 	}
 
 	/**
