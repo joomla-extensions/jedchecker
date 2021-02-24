@@ -278,6 +278,15 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 					}
 				}
 			}
+
+			// 3) check empty elements
+			foreach ($node as $child)
+			{
+				if ($child->count() === 0 && (string) $child === '')
+				{
+					$this->infos[] = JText::sprintf('COM_JEDCHECKER_MANIFEST_EMPTY_CHILD', $child->getName());
+				}
+			}
 		}
 
 		// Extra checks (if exist)
