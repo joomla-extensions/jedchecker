@@ -19,7 +19,7 @@ require_once JPATH_COMPONENT_ADMINISTRATOR . '/models/rule.php';
  *
  * This class validates language ini file
  *
- * @since  2.3
+ * @since  3.0
  */
 class JedcheckerRulesLanguage extends JEDcheckerRule
 {
@@ -84,7 +84,15 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 			// Check for BOM sequence
 			if ($lineno === 0 && strncmp($line, "\xEF\xBB\xBF", 3) === 0)
 			{
-				$this->report->addError($file, JText::_('COM_JEDCHECKER_LANG_BOM_FOUND'), $startLineno);
+				if (isset($line[3]) && strpos(";\n\r", $line[3]) === false)
+				{
+					$this->report->addError($file, JText::_('COM_JEDCHECKER_LANG_BOM_FOUND'), $startLineno);
+				}
+				else
+				{
+					$this->report->addWarning($file, JText::_('COM_JEDCHECKER_LANG_BOM_FOUND'), $startLineno);
+				}
+
 				// Romeve BOM for further checks
 				$line = substr($line, 3);
 			}
@@ -227,7 +235,8 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 			// Count %n$... (argnum) formats in the string
 			$countArgnum = preg_match_all('/(?<=^|[^%])%\d+\$/', $value);
 
-			if ($countAll > 1 && $countArgnum < $countAll) {
+			if ($countAll > 1 && $countArgnum < $countAll)
+			{
 				// @todo It's not mentioned in docs
 				$this->report->addInfo($file, JText::_('COM_JEDCHECKER_LANG_RECOMMEND_ARGNUM'), $startLineno, $line);
 			}
