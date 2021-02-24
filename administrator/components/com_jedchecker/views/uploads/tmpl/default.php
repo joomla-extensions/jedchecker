@@ -36,7 +36,7 @@ else
 	JHtml::script('media/com_jedchecker/js/bootstrap.min.js');
 }
 
-JHtml::stylesheet('media/com_jedchecker/css/style.css');
+JHtml::stylesheet('media/com_jedchecker/css/style.min.css');
 JHtml::script('media/com_jedchecker/js/script.js');
 
 // List of rules
