@@ -119,6 +119,15 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 			$this->checkFolders($node->folder, $dir);
 		}
 
+		// Check: fonts[folder] (filename|folder)*
+		if (isset($xml->fonts))
+		{
+			$node = $xml->fonts;
+			$dir = $basedir . (isset($node['folder']) ? $node['folder'] . '/' : '');
+			$this->checkFiles($node->filename, $dir);
+			$this->checkFolders($node->folder, $dir);
+		}
+
 		// Check files: languages[folder] language*
 		if (isset($xml->languages))
 		{
