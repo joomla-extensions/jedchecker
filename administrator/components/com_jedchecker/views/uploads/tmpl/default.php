@@ -159,7 +159,7 @@ Note: iOS Safari doesn't support file extensions in the accept attribute, so MIM
 				$rule = new $class;
 				?>
 				<div role="tabpanel" class="tab-pane fade<?php echo $i === 0 ? ' show active' : ''; ?>" id="jedtab-<?php echo $rulename; ?>">
-				<div class="card">
+				<div class="card bg-light">
 					<div class="card-header" id="heading<?php echo $rule->get('id'); ?>">
 						<?php echo JText::_($rule->get('title')); ?>
 					</div>
