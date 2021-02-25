@@ -86,11 +86,12 @@ Note: iOS Safari doesn't support file extensions in the accept attribute, so MIM
 									accept="application/zip,application/x-gzip,application/x-compressed,application/x-tar"
 									aria-describedby="extension-upload" aria-label="<?php echo JText::_('COM_JEDCHECKER_UPLOAD_FILE'); ?>">
 							<button class="btn btn-success" type="button" id="extension-upload"
-									onclick="add_validation(); Joomla.submitbutton('uploads.upload')">
+									onclick="add_validation(); jQuery('#jed_uploading_spinner').removeClass('hidden'); Joomla.submitbutton('uploads.upload')">
 								<span class="icon-upload "></span> <?php echo JText::_('JSUBMIT'); ?>
 							</button>
 							<div class="invalid-feedback"><?php echo JText::_('COM_JEDCHECKER_EMPTY_UPLOAD_FIELD'); ?></div>
 						</div>
+						<div id="jed_uploading_spinner" class="text-center text-info mt-3 hidden"><span class="spinner spinner-border"></span></div>
 						<input type="hidden" name="task" value=""/>
 						<?php echo JHtml::_('form.token'); ?>
 					</form>
