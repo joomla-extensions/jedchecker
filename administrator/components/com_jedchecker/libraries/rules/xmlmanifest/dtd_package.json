@@ -17,6 +17,7 @@
       "languages": "?",
       "updateservers": "?",
       "dlid": "?",
+      "url": "?",
       "packager": "?",
       "packagerurl": "?",
       "blockChildUninstall": "?"
