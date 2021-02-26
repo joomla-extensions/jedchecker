@@ -15,7 +15,8 @@
       "media": "?",
       "fonts": "?",
       "update": "?",
-      "updateservers": "?"
+      "updateservers": "?",
+      "dlid": "?"
     },
     "files": {
       "filename": "*",
@@ -55,6 +56,10 @@
       "name",
       "priority",
       "type"
+    ],
+    "dlid": [
+      "prefix",
+      "suffix"
     ]
   }
 }

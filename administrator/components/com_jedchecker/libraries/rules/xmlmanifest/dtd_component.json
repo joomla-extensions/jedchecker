@@ -20,8 +20,8 @@
       "media": "?",
       "administration": "?",
       "updateservers": "?",
-      "config": "?",
       "dlid": "?",
+      "config": "?",
       "namespace": "?"
     },
     "administration": {

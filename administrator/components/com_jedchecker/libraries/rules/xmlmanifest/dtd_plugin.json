@@ -19,8 +19,8 @@
       "languages": "?",
       "media": "?",
       "updateservers": "?",
-      "config": "?",
       "dlid": "?",
+      "config": "?",
       "namespace": "?"
     },
     "files": {
@@ -131,6 +131,10 @@
     ],
     "field": [
       "*"
+    ],
+    "dlid": [
+      "prefix",
+      "suffix"
     ]
   }
 }

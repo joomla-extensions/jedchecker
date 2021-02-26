@@ -67,6 +67,10 @@
       "name",
       "priority",
       "type"
+    ],
+    "dlid": [
+      "prefix",
+      "suffix"
     ]
   }
 }
