@@ -1,0 +1,91 @@
+{
+  "nodes": {
+    "extension": {
+      "name": "!",
+      "libraryname": "!",
+      "creationDate": "=",
+      "author": "=",
+      "authorEmail": "=",
+      "authorUrl": "=",
+      "copyright": "=",
+      "version": "!",
+      "description": "=",
+      "license": "?",
+      "scriptfile": "?",
+      "install": "?",
+      "update": "?",
+      "uninstall": "?",
+      "files": "?",
+      "languages": "?",
+      "media": "?",
+      "updateservers": "?",
+      "dlid": "?"
+    },
+    "files": {
+      "filename": "*",
+      "folder": "*"
+    },
+    "languages": {
+      "language": "*"
+    },
+    "media": {
+      "filename": "*",
+      "folder": "*"
+    },
+    "install": {
+      "sql": "*"
+    },
+    "update": {
+      "sql": "*",
+      "schemas": "*"
+    },
+    "uninstall": {
+      "sql": "*"
+    },
+    "sql": {
+      "file": "*"
+    },
+    "schemas": {
+      "schemapath": "*"
+    },
+    "updateservers": {
+      "server": "*"
+    }
+  },
+  "attributes": {
+    "extension": [
+      "client",
+      "method",
+      "overwrite",
+      "type",
+      "version"
+    ],
+    "files": [
+      "folder"
+    ],
+    "languages": [
+      "folder"
+    ],
+    "language": [
+      "client",
+      "tag"
+    ],
+    "media": [
+      "destination",
+      "folder"
+    ],
+    "file": [
+      "charset",
+      "driver"
+    ],
+    "server": [
+      "name",
+      "priority",
+      "type"
+    ],
+    "dlid": [
+      "prefix",
+      "suffix"
+    ]
+  }
+}
