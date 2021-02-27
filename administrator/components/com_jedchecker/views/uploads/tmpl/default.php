@@ -24,6 +24,8 @@ else
 // Load jQuery
 JHtml::_('jquery.framework');
 
+$cssSuffix = JDEBUG ? '.css' : '.min.css';
+
 // Load Bootstrap
 if (version_compare(JVERSION, '4.0', '>='))
 {
@@ -32,11 +34,11 @@ if (version_compare(JVERSION, '4.0', '>='))
 }
 else
 {
-	JHtml::stylesheet('media/com_jedchecker/css/j4-style.min.css');
+	JHtml::stylesheet('media/com_jedchecker/css/j4-style' . $cssSuffix);
 	JHtml::script('media/com_jedchecker/js/bootstrap.min.js');
 }
 
-JHtml::stylesheet('media/com_jedchecker/css/style.min.css');
+JHtml::stylesheet('media/com_jedchecker/css/style' . $cssSuffix);
 JHtml::script('media/com_jedchecker/js/script.js');
 
 // List of rules
