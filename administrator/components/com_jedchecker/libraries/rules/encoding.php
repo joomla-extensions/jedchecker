@@ -80,11 +80,7 @@ class JedcheckerRulesEncoding extends JEDcheckerRule
 
 		// Get the functions to look for
 		$encodings = explode(',', $this->params->get('encodings'));
-
-		foreach ($encodings as $i => $encoding)
-		{
-			$encodings[$i] = trim($encoding);
-		}
+		$encodings = array_map('trim', $encodings);
 
 		$found = false;
 
