@@ -229,16 +229,28 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 				$this->report->addWarning($file, JText::_('COM_JEDCHECKER_LANG_VARIABLE_REF'), $startLineno, $line);
 			}
 
-			// Count %... formats in the string
-			$countAll = preg_match_all('/(?<=^|[^%])%(?=[-+0 ]?\w)/', $value);
+			// The code below detects incorrect format of numbered placeholders (e.g. "%1s" instead of "%1$s")
 
-			// Count %n$... (argnum) formats in the string
-			$countArgnum = preg_match_all('/(?<=^|[^%])%\d+\$/', $value);
+			// Count numbered placeholders in the string (e.g. "%1s")
+			$count = preg_match_all('/(?<=^|[^%])%(\d+)\w/', $value, $matches);
 
-			if ($countAll > 1 && $countArgnum < $countAll)
+			if ($count)
 			{
-				// @todo It's not mentioned in docs
-				$this->report->addInfo($file, JText::_('COM_JEDCHECKER_LANG_RECOMMEND_ARGNUM'), $startLineno, $line);
+				// To avoid false-positives (e.g. %10s for a ten-characters-wide output string in a CLI),
+				// we check that placeholder numbers form a sequence from 1 to N.
+
+				$maxNumber = 0;
+
+				foreach ($matches as $match)
+				{
+					$maxNumber = max($maxNumber, (int) $match[1]);
+				}
+
+				// If placeholder numbers form a sequence, the maximal value is equal to the number of elements
+				if ($maxNumber === $count)
+				{
+					$this->report->addWarning($file, JText::_('COM_JEDCHECKER_LANG_INCORRECT_ARGNUM'), $startLineno, $line);
+				}
 			}
 		}
 
