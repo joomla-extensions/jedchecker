@@ -81,20 +81,16 @@ class JedcheckerRulesErrorreporting extends JEDcheckerRule
 		$content = (array) file($file);
 
 		// Get the functions to look for
-		$encodings = explode(',', $this->params->get('errorreportings'));
-
-		foreach ($encodings as $i => $encoding)
-		{
-			$encodings[$i] = trim($encoding);
-		}
+		$errorreportings = explode(',', $this->params->get('errorreportings'));
+		$errorreportings = array_map('trim', $errorreportings);
 
 		$found = false;
 
 		foreach ($content as $i => $line)
 		{
-			foreach ($encodings as $encoding)
+			foreach ($errorreportings as $errorreporting)
 			{
-				$pos_1 = stripos($line, $encoding);
+				$pos_1 = stripos($line, $errorreporting);
 
 				if ($pos_1 !== false)
 				{
