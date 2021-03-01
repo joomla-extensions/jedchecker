@@ -98,9 +98,7 @@
 #jedchecker ::-webkit-search-decoration {
   -webkit-appearance: none;
 }
-#jedchecker ::file-selector-button {
-  font: inherit;
-}
+#jedchecker ::file-selector-button,
 #jedchecker ::-webkit-file-upload-button {
   font: inherit;
   -webkit-appearance: button;
@@ -209,24 +207,7 @@
   background-color: #e8e8e8;
   opacity: 1;
 }
-#jedchecker .form-control::file-selector-button {
-  padding: 0.6rem 1rem;
-  margin: -0.6rem -1rem;
-  -webkit-margin-end: 1rem;
-  margin-inline-end: 1rem;
-  color: #fff;
-  background-color: #132f53;
-  pointer-events: none;
-  border-color: inherit;
-  border-style: solid;
-  border-width: 0;
-  border-inline-end-width: 1px;
-  border-radius: 0;
-  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
-}
-#jedchecker .form-control:hover:not(:disabled):not([readonly])::file-selector-button {
-  background-color: #122d4f;
-}
+#jedchecker .form-control::file-selector-button,
 #jedchecker .form-control::-webkit-file-upload-button {
   padding: 0.6rem 1rem;
   margin: -0.6rem -1rem;
@@ -243,6 +224,7 @@
   -webkit-transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
   transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
 }
+#jedchecker .form-control:hover:not(:disabled):not([readonly])::file-selector-button,
 #jedchecker .form-control:hover:not(:disabled):not([readonly])::-webkit-file-upload-button {
   background-color: #122d4f;
 }
