@@ -393,14 +393,19 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 	/**
 	 * Calculates the line number where pattern match was found
 	 *
-	 * @param   int  $offset        The offset position of found pattern match
-	 * @param   string  $file_content  The file content in string format
+	 * @param   int       $length          The maximum length after the specified offset to search for the line breaks
+	 * @param   string    $fileContent     The file content in string format
+	 * @param   int       $offset          The offset where to start counting (default 0)
 	 *
 	 * @return  int  Returns        line number where the subject code was found
 	 */
-	private function calculate_line_number($offset, $file_content)
+	private function calculate_line_number($length, $fileContent, $offset = 0)
 	{
-		return substr_count($file_content, "\n", 0, $offset) + 1;
+		// We are counting the number of line breaks between 
+		// the offset, and length in the file content.
+		// Then we add one since we get a zero
+		// based return value from substr_count function.
+		return substr_count($fileContent, "\n", $offset, $length) + 1;
 	}
 
 	/**
