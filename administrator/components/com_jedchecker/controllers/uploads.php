@@ -25,10 +25,9 @@ use Joomla\Archive\Archive;
  */
 class JedcheckerControllerUploads extends JControllerlegacy
 {
-
-var $path         = null;
-var $pathArchive  = null;
-var $pathUnzipped = null;
+	public $path;
+	public $pathArchive;
+	public $pathUnzipped;
 
 	/**
 	 * Constructor.
