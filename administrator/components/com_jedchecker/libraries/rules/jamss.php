@@ -400,11 +400,7 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 	 */
 	private function calculate_line_number($offset, $file_content)
 	{
-		// Fetches all the text before the match
-		list($first_part) = str_split($file_content, $offset);
-		$line_nr = strlen($first_part) - strlen(str_replace("\n", "", $first_part)) + 1;
-
-		return $line_nr;
+		return substr_count($file_content, "\n", 0, $offset) + 1;
 	}
 
 	/**
