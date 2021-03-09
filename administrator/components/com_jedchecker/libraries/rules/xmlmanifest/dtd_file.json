@@ -20,10 +20,11 @@
       "dlid": "?"
     },
     "fileset": {
-      "files": "="
+      "files": "*"
     },
     "files": {
       "filename": "*",
+      "files:file": "*",
       "folder": "*"
     },
     "languages": {
