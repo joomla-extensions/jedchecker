@@ -23,8 +23,8 @@
       "blockChildUninstall": "?"
     },
     "files": {
-      "file": "*",
       "filename": "*",
+      "files:file": "*",
       "folder": "*"
     },
     "languages": {
@@ -44,7 +44,7 @@
     "files": [
       "folder"
     ],
-    "file": [
+    "files:file": [
       "client",
       "group",
       "id",

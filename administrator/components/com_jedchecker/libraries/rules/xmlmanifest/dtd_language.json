@@ -20,14 +20,17 @@
     },
     "files": {
       "filename": "*",
+      "files:file": "*",
       "folder": "*"
     },
     "media": {
       "filename": "*",
+      "media:file": "*",
       "folder": "*"
     },
     "fonts": {
       "filename": "*",
+      "fonts:file": "*",
       "folder": "*"
     },
     "updateservers": {

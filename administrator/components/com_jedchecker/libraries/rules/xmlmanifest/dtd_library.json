@@ -23,6 +23,7 @@
     },
     "files": {
       "filename": "*",
+      "files:file": "*",
       "folder": "*"
     },
     "languages": {
@@ -30,6 +31,7 @@
     },
     "media": {
       "filename": "*",
+      "media:file": "*",
       "folder": "*"
     },
     "install": {

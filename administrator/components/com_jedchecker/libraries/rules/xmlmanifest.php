@@ -219,17 +219,28 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 	}
 
 	/**
-	 * @param   SimpleXMLElement  $node  XML node object
-	 * @param   string            $name  XML node name
+	 * @param   SimpleXMLElement  $node        XML node object
+	 * @param   string            $ruleset     rulest name in the DTD array
 	 *
 	 * @return  void
 	 */
-	protected function validateXml($node, $name)
+	protected function validateXml($node, $ruleset)
 	{
-		// Check attributes
-		$DTDattributes = isset($this->DTDAttrRules[$name]) ? $this->DTDAttrRules[$name] : array();
+		// Get node name
+		$name = $node->getName();
 
-		if (isset($DTDattributes[0]) && $DTDattributes[0] !== '*')
+		// Check attributes
+		$DTDattributes = isset($this->DTDAttrRules[$ruleset]) ? $this->DTDAttrRules[$ruleset] : array();
+
+		if (count($DTDattributes) === 0)
+		{
+			// No known attributes for this node
+			foreach ($node->attributes() as $attr)
+			{
+				$this->infos[] = JText::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_ATTRIBUTE', $name, (string) $attr->getName());
+			}
+		}
+		elseif ($DTDattributes[0] !== '*') // Skip node with arbitrary attributes (e.g. "field")
 		{
 			foreach ($node->attributes() as $attr)
 			{
@@ -244,22 +255,35 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 		}
 
 		// Check children nodes
-		if (!isset($this->DTDNodeRules[$name]))
+		$DTDchildRules = isset($this->DTDNodeRules[$ruleset]) ? $this->DTDNodeRules[$ruleset] : array();
+
+		// Child node name to ruleset name mapping
+		$DTDchildToRule = array();
+
+		if (count($DTDchildRules) === 0)
 		{
-			// No children
+			// No known children for this node
 			if ($node->count() > 0)
 			{
 				$this->infos[] = JText::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_CHILDREN', $name);
 			}
 		}
-		elseif (!isset($this->DTDNodeRules[$name]['*']))
+		elseif (!isset($DTDchildRules['*'])) // Skip node with arbitrary children
 		{
-			$DTDchildren = $this->DTDNodeRules[$name];
-
 			// 1) check required single elements
-
-			foreach ($DTDchildren as $child => $mode)
+			foreach ($DTDchildRules as $childRuleset => $mode)
 			{
+				$child = $childRuleset;
+
+				if (strpos($child, ':') !== false)
+				{
+					// Split ruleset name into a prefix and the child node name
+					list ($prefix, $child) = explode(':', $child, 2);
+				}
+
+				// Populate node-to-ruleset mapping
+				$DTDchildToRule[$child] = $childRuleset;
+
 				$count = $node->$child->count();
 
 				switch ($mode)
@@ -300,14 +324,16 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 
 			foreach ($childNames as $child)
 			{
-				if (!isset($DTDchildren[$child]))
+				if (!isset($DTDchildToRule[$child]))
 				{
+					// The node contains unknown child element
 					$this->infos[] = JText::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_CHILD', $name, $child);
 				}
 				else
 				{
-					if ($DTDchildren[$child] === '?' && $node->$child->count() > 1)
+					if ($DTDchildRules[$DTDchildToRule[$child]] === '?' && $node->$child->count() > 1)
 					{
+						// The node contains multiple child elements when single only is expected
 						$this->errors[] = JText::sprintf('COM_JEDCHECKER_MANIFEST_MULTIPLE_FOUND', $name, $child);
 					}
 				}
@@ -336,9 +362,9 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 		{
 			$childName = $child->getName();
 
-			if (isset($this->DTDNodeRules[$childName]))
+			if (isset($DTDchildToRule[$childName]))
 			{
-				$this->validateXml($child, $childName);
+				$this->validateXml($child, $DTDchildToRule[$childName]);
 			}
 		}
 	}
