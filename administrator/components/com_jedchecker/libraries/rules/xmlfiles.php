@@ -304,6 +304,17 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 			}
 		}
 
+		// Check /namespace[path] directory exists (Joomla!4)
+		if (isset($xml->namespace['path']))
+		{
+			$folder = (string) $xml->namespace['path'];
+
+			if (!is_dir($admindir . $folder) && !is_dir($sitedir . $folder))
+			{
+				$this->errors[] = JText::sprintf('COM_JEDCHECKER_XML_FILES_FOLDER_NOT_FOUND', $folder);
+			}
+		}
+
 		if (count($this->errors))
 		{
 			$this->report->addError($file, implode('<br />', $this->errors));
