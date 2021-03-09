@@ -122,6 +122,9 @@ class JedcheckerRulesJexec extends JEDcheckerRule
 		$this->regex
 			= '#^' // at the beginning of the file
 			. '<\?php\s+' // there is an opening php tag
+			. '(?:declare ?\(strict_types ?= ?1 ?\) ?; ?)?' // optionally followed by declare(strict_types=1) directive
+			. '(?:namespace [0-9A-Za-z_\\\\]+ ?; ?)?' // optionally followed by namespace directive
+			. '(?:use [0-9A-Za-z_\\\\]+ ?(?:as [0-9A-Za-z_]+ ?)?; ?)*' // optionally followed by use directives
 			. 'defined ?\( ?' // followed by defined test
 			. '([\'"])(?:' . implode('|', $defines) . ')\1' // of any of given constant
 			. ' ?\) ?(?:or |\|\| ?)(?:die|exit)\b' // or exit
