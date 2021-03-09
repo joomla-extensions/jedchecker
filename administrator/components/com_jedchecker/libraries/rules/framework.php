@@ -62,14 +62,22 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 		$folders = JFolder::folders($this->basedir, $regex_leftover_folders, true, true, array(), array());
 		$files = JFolder::files($this->basedir, $regex_leftover_folders, true, true, array(), array());
 
-		foreach ($folders as $folder)
+		if ($folders !== false)
 		{
-			$this->report->addWarning($folder, JText::_("COM_JEDCHECKER_ERROR_FRAMEWORK_LEFTOVER_FOLDER"));
+			// Warn on leftover folders found
+			foreach ($folders as $folder)
+			{
+				$this->report->addWarning($folder, JText::_("COM_JEDCHECKER_ERROR_FRAMEWORK_LEFTOVER_FOLDER"));
+			}
 		}
 
-		foreach ($files as $file)
+		if ($files !== false)
 		{
-			$this->report->addWarning($file, JText::_("COM_JEDCHECKER_ERROR_FRAMEWORK_LEFTOVER_FILE"));
+			// Warn on leftover filess found
+			foreach ($files as $file)
+			{
+				$this->report->addWarning($file, JText::_("COM_JEDCHECKER_ERROR_FRAMEWORK_LEFTOVER_FILE"));
+			}
 		}
 
 		$this->leftover_folders = explode(',', $leftover_folders);
