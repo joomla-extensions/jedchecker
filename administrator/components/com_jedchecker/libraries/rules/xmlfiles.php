@@ -199,6 +199,111 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 			$this->checkFolders($xml->update->schemas->schemapath, $admindir);
 		}
 
+		// Check: config [add...path] directories exist
+		if (isset($xml->config))
+		{
+			$attributes = array('addfieldpath', 'addformpath', 'addrulepath');
+
+			$extensionPath = false;
+
+			// @TODO move element name extraction into a helper (similar code is used in XMLinfo rule)
+			switch ((string) $xml['type'])
+			{
+				case 'module':
+					if (isset($xml->element))
+					{
+						$element = (string) $xml->element;
+					}
+					else
+					{
+						$element = (string) $xml->name;
+
+						if (isset($xml->files))
+						{
+							foreach ($xml->files->children() as $child)
+							{
+								if (isset($child['module']))
+								{
+									$element = (string) $child['module'];
+									break;
+								}
+							}
+						}
+					}
+
+					$element = strtolower(JFilterInput::getInstance()->clean($element, 'cmd'));
+
+					$extensionPath = 'modules/' . $element . '/';
+					break;
+
+				case 'plugin':
+					if (isset($xml->element))
+					{
+						$element = (string) $xml->element;
+					}
+					else
+					{
+						$element = (string) $xml->name;
+
+						if (isset($xml->files))
+						{
+							foreach ($xml->files->children() as $child)
+							{
+								if (isset($child['plugin']))
+								{
+									$element = (string) $child['plugin'];
+									break;
+								}
+							}
+						}
+					}
+
+					$element = strtolower(JFilterInput::getInstance()->clean($element, 'cmd'));
+
+					$group = (string) $xml['group'];
+
+					$extensionPath = 'plugins/' . $group . '/' . $element . '/';
+					break;
+
+				case 'template':
+					if (isset($xml->element))
+					{
+						$element = (string) $xml->element;
+					}
+					else
+					{
+						$element = (string) $xml->name;
+					}
+
+					$element = strtolower(JFilterInput::getInstance()->clean($element, 'cmd'));
+
+					$extensionPath = 'templates/' . $element . '/';
+			}
+
+			if ($extensionPath !== false)
+			{
+				foreach ($attributes as $attribute)
+				{
+					foreach ($xml->config->xpath('//*[@' . $attribute . ']') as $node)
+					{
+						$attrPath = (string) $node[$attribute];
+						$folder = ltrim($attrPath, '/');
+
+						// Convert absolute path to relative (if matches extension path)
+						if (strpos($folder, $extensionPath) === 0)
+						{
+							$folder = $sitedir . substr($folder, strlen($extensionPath));
+
+							if (!is_dir($folder))
+							{
+								$this->errors[] = JText::sprintf('COM_JEDCHECKER_XML_FILES_FOLDER_NOT_FOUND', $attrPath);
+							}
+						}
+					}
+				}
+			}
+		}
+
 		if (count($this->errors))
 		{
 			$this->report->addError($file, implode('<br />', $this->errors));
