@@ -20,7 +20,7 @@
       "css": "?",
       "languages": "?",
       "media": "?",
-      "positions": "!",
+      "positions": "=",
       "updateservers": "?",
       "dlid": "?",
       "config": "?"
@@ -30,14 +30,17 @@
     },
     "files": {
       "filename": "*",
+      "files:file": "*",
       "folder": "*"
     },
     "images": {
       "filename": "*",
+      "images:file": "*",
       "folder": "*"
     },
     "css": {
       "filename": "*",
+      "css:file": "*",
       "folder": "*"
     },
     "languages": {
@@ -45,6 +48,7 @@
     },
     "media": {
       "filename": "*",
+      "media:file": "*",
       "folder": "*"
     },
     "install": {
