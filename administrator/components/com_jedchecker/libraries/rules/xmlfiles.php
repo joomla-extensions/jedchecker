@@ -164,6 +164,17 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 			$this->checkFiles($node->language, $dir);
 		}
 
+		// For type="file" extensions:
+		// Check files: fileset files[folder] (filename|file|folder)*
+		if (isset($xml->fileset->files))
+		{
+			$node = $xml->fileset->files;
+			$dir = $basedir . (isset($node['folder']) ? $node['folder'] . '/' : '');
+			$this->checkFiles($node->filename, $dir);
+			$this->checkFiles($node->file, $dir);
+			$this->checkFolders($node->folder, $dir);
+		}
+
 		// Check file: scriptfile
 		if (isset($xml->scriptfile))
 		{
