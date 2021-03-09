@@ -228,7 +228,7 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 			}
 
 			// Extra check for unzipped files
-			if (preg_match('/^(.*)\.(zip|tar\.gz)$/', $filename, $matches) && is_dir($matches[1]))
+			if (preg_match('/^(.*)\.(zip|tgz|tar\.gz)$/', $filename, $matches) && is_dir($matches[1]))
 			{
 				continue;
 			}
