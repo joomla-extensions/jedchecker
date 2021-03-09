@@ -79,6 +79,19 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 	 */
 	protected function find($file, $tag)
 	{
+		$content = file_get_contents($file);
+
+		if ($content === false)
+		{
+			return false;
+		}
+
+		// Check EOL format is \n (not \r or \n\r)
+		if (strpos($content, "\r") !== false)
+		{
+			$this->report->addWarning($file, JText::_('COM_JEDCHECKER_LANG_INCORRECT_EOL'));
+		}
+
 		$lines = file($file);
 		$nLines = count($lines);
 		$keys = array();
