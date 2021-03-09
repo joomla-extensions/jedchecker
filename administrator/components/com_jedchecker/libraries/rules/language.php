@@ -161,7 +161,7 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 			}
 
 			// Check for spaces in the key name
-			if (strpos($key, ' ') !== false)
+			if (preg_match('/\s/', $key))
 			{
 				$this->report->addError($file, JText::_('COM_JEDCHECKER_LANG_KEY_WHITESPACE'), $startLineno, $line);
 				continue;
