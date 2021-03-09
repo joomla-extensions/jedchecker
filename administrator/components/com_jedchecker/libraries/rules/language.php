@@ -299,6 +299,16 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 					$this->report->addWarning($file, JText::_('COM_JEDCHECKER_LANG_INCORRECT_ARGNUM'), $startLineno, $line);
 				}
 			}
+
+			// Some extra checks for en-GB only (to don't duplicate false-positives)
+			if ($tag === 'en-GB')
+			{
+				// Check spaces around (but allow trailing space after colon)
+				if (preg_match('/^\s|[^:]\s+$/', $value))
+				{
+					$this->report->addInfo($file, JText::_('COM_JEDCHECKER_LANG_SPACES_AROUND'), $startLineno, $line);
+				}
+			}
 		}
 
 		// All checks passed. Return true
