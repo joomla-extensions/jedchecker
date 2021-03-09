@@ -96,6 +96,9 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 		$nLines = count($lines);
 		$keys = array();
 
+		// Use mb_check_encoding (if exists) to validate UTF-8
+		$mbExists = function_exists('mb_check_encoding');
+
 		for ($lineno = 0; $lineno < $nLines; $lineno++)
 		{
 			$startLineno = $lineno + 1;
@@ -221,6 +224,14 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 			{
 				$this->report->addInfo($file, JText::_('COM_JEDCHECKER_LANG_TRANSLATION_EMPTY'), $startLineno, $line);
 				continue;
+			}
+
+			// Check it's a valid UTF-8 string
+			$validUTF8 = $mbExists ? mb_check_encoding($value, 'UTF-8') : preg_match('//u', $value);
+
+			if (!$validUTF8)
+			{
+				$this->report->addWarning($file, JText::_('COM_JEDCHECKER_LANG_INVALID_UTF8'), $startLineno, $line);
 			}
 
 			if (strlen($value) < 2 || $value[0] !== '"' || substr($value, -1) !== '"')
