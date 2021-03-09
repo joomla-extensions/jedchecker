@@ -99,32 +99,41 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 
 		$basedir = dirname($file) . '/';
 
+		$sitedir = $basedir;
+
 		// Check: files[folder] (filename|folder)*
 		// ( for package: files[folder] (file|folder)* )
 		if (isset($xml->files))
 		{
 			$node = $xml->files;
+
+			// Get path to site files from "folder" attribute
+			$sitedir = $basedir . (isset($node['folder']) ? $node['folder'] . '/' : '');
+
+			$this->checkFiles($node->filename, $sitedir);
+			$this->checkFiles($node->file, $sitedir);
+			$this->checkFolders($node->folder, $sitedir);
+		}
+
+		// Check: media[folder] (filename|file|folder)*
+		if (isset($xml->media))
+		{
+			$node = $xml->media;
 			$dir = $basedir . (isset($node['folder']) ? $node['folder'] . '/' : '');
+
 			$this->checkFiles($node->filename, $dir);
 			$this->checkFiles($node->file, $dir);
 			$this->checkFolders($node->folder, $dir);
 		}
 
-		// Check: media[folder] (filename|folder)*
-		if (isset($xml->media))
-		{
-			$node = $xml->media;
-			$dir = $basedir . (isset($node['folder']) ? $node['folder'] . '/' : '');
-			$this->checkFiles($node->filename, $dir);
-			$this->checkFolders($node->folder, $dir);
-		}
-
-		// Check: fonts[folder] (filename|folder)*
+		// Check: fonts[folder] (filename|file|folder)*
 		if (isset($xml->fonts))
 		{
 			$node = $xml->fonts;
 			$dir = $basedir . (isset($node['folder']) ? $node['folder'] . '/' : '');
+
 			$this->checkFiles($node->filename, $dir);
+			$this->checkFiles($node->file, $dir);
 			$this->checkFolders($node->folder, $dir);
 		}
 
@@ -133,26 +142,33 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 		{
 			$node = $xml->languages;
 			$dir = $basedir . (isset($node['folder']) ? $node['folder'] . '/' : '');
+
 			$this->checkFiles($node->language, $dir);
 		}
 
 		$admindir = $basedir;
 
-		// Check: administration files[folder] (filename|folder)*
+		// Check: administration files[folder] (filename|file|folder)*
 		if (isset($xml->administration->files))
 		{
 			$node = $xml->administration->files;
+
+			// Get path to admin files from "folder" attribute
 			$admindir = $basedir . (isset($node['folder']) ? $node['folder'] . '/' : '');
+
 			$this->checkFiles($node->filename, $admindir);
+			$this->checkFiles($node->file, $admindir);
 			$this->checkFolders($node->folder, $admindir);
 		}
 
-		// Check: administration media[folder] (filename|folder)*
+		// Check: administration media[folder] (filename|file|folder)*
 		if (isset($xml->administration->media))
 		{
 			$node = $xml->administration->media;
 			$dir = $basedir . (isset($node['folder']) ? $node['folder'] . '/' : '');
+
 			$this->checkFiles($node->filename, $dir);
+			$this->checkFiles($node->file, $dir);
 			$this->checkFolders($node->folder, $dir);
 		}
 
@@ -161,6 +177,7 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 		{
 			$node = $xml->administration->languages;
 			$dir = $basedir . (isset($node['folder']) ? $node['folder'] . '/' : '');
+
 			$this->checkFiles($node->language, $dir);
 		}
 
@@ -170,6 +187,7 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 		{
 			$node = $xml->fileset->files;
 			$dir = $basedir . (isset($node['folder']) ? $node['folder'] . '/' : '');
+
 			$this->checkFiles($node->filename, $dir);
 			$this->checkFiles($node->file, $dir);
 			$this->checkFolders($node->folder, $dir);
