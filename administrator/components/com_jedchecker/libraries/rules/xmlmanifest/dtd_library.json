@@ -11,6 +11,8 @@
       "version": "!",
       "description": "=",
       "license": "?",
+      "packager": "?",
+      "packagerurl": "?",
       "scriptfile": "?",
       "install": "?",
       "update": "?",
