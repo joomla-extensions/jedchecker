@@ -24,28 +24,19 @@ function check(url, rule) {
 			target.html(result);
 
 			var error = target.find('.alert-danger').length;
-			if (error) {
-				sidebar.find('.badge.bg-danger').text(error);
-			}
+			sidebar.find('.badge.bg-danger').text(error || '');
 
 			var warning = target.find('.alert-warning').length;
-			if (warning) {
-				sidebar.find('.badge.bg-warning').text(warning);
-			}
+			sidebar.find('.badge.bg-warning').text(warning || '');
 
 			var compat = target.find('.alert-secondary').length;
-			if (compat) {
-				sidebar.find('.badge.bg-secondary').text(compat);
-			}
+			sidebar.find('.badge.bg-secondary').text(compat || '');
 
 			var info = target.find('.alert-info').length;
-			if (info) {
-				sidebar.find('.badge.bg-info').text(info);
-			}
+			sidebar.find('.badge.bg-info').text(info || '');
 
-			if (target.find('.alert-success').length) {
-				sidebar.find('.badge.bg-success').removeClass("hidden");
-			}
+			var success = target.find('.alert-success').length;
+			sidebar.find('.badge.bg-success').toggleClass('hidden', !success);
 
 			sidebar.find('.spinner-border').addClass('hidden');
 		}
