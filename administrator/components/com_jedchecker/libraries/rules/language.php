@@ -51,14 +51,21 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 	 */
 	public function check()
 	{
-		// Find all INI files of the extension (in the format tag.extension.ini or tag.extension.sys.ini)
-		$files = JFolder::files($this->basedir, '^[a-z]{2,3}-[A-Z]{2}\.\w+(?:\.sys)?\.ini$', true, true);
+		// Find all INI files of the extension
+		$files = JFolder::files($this->basedir, '\.ini$', true, true);
 
 		// Iterate through all the ini files
 		foreach ($files as $file)
 		{
-			// Try to validate the file
-			$this->find($file);
+			/* Language file format is either tag.extension.ini or tag.extension.sys.ini
+			   (where "tag" is a language code, e.g. en-GB, and "extension" is the extension element name, e.g. com_content)
+			   Joomla!4 allows to skip tag prefix inside of the tag directory
+			   (i.e. to name files as extension.ini and extension.sys.ini) */
+			if (preg_match('#(?:^|/)([a-z]{2,3}-[A-Z]{2})[./]\w+(?:\.sys)?\.ini$#', $file, $match))
+			{
+				// Try to validate the file
+				$this->find($file, $match[1]);
+			}
 		}
 	}
 
@@ -66,10 +73,11 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 	 * Reads and validates an ini file
 	 *
 	 * @param   string  $file  - The path to the file
+	 * @param   string  $tag   - Language tag code
 	 *
 	 * @return boolean True on success, otherwise False.
 	 */
-	protected function find($file)
+	protected function find($file, $tag)
 	{
 		$lines = file($file);
 		$nLines = count($lines);
