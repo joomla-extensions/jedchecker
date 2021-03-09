@@ -54,6 +54,20 @@ class JedcheckerRulesJexec extends JEDcheckerRule
 	protected $regex;
 
 	/**
+	 * Regexp to match directories to skip
+	 *
+	 * @var    string
+	 */
+	protected $regexExcludeFolders;
+
+	/**
+	 * List of files related to libraries
+	 *
+	 * @var    array
+	 */
+	protected $libFiles;
+
+	/**
 	 * Initiates the file search and check
 	 *
 	 * @return    void
@@ -63,7 +77,7 @@ class JedcheckerRulesJexec extends JEDcheckerRule
 		$this->init_jexec();
 
 		// Find all php files of the extension
-		$files = JFolder::files($this->basedir, '\.php$', true, true);
+		$files = $this->files($this->basedir);
 
 		// Iterate through all files
 		foreach ($files as $file)
@@ -129,5 +143,71 @@ class JedcheckerRulesJexec extends JEDcheckerRule
 			. '([\'"])(?:' . implode('|', $defines) . ')\1' // of any of given constant
 			. ' ?\) ?(?:or |\|\| ?)(?:die|exit)\b' // or exit
 			. '#i'; // (case insensitive)
+
+		// Generate regular expression to match excluded directories
+		$libfolders = $this->params->get('libfolders');
+		$libfolders = explode(',', $libfolders);
+
+		foreach ($libfolders as &$libfolder)
+		{
+			$libfolder = preg_quote(trim($libfolder), '#');
+		}
+
+		// Prepend libFolders with default Joomla's exclude list
+		$this->regexExcludeFolders = '#^(?:\.svn|CVS|\.DS_Store|__MACOSX|' . implode('|', $libfolders) . ')$#';
+
+		// Generate list of libraries fingerprint files
+		$libFiles = $this->params->get('libfiles');
+		$this->libFiles = array_map('trim', explode(',', $libFiles));
+	}
+
+	/**
+	 * Collect php files to check (excluding external library directories)
+	 *
+	 * @param   string $path The path of the folder to read.
+	 *
+	 * @return array
+	 * @since 3.0
+	 */
+	protected function files($path)
+	{
+		$path = JPath::clean($path);
+		$arr = array();
+
+		// Read the source directory
+		if ($handle = @opendir($path))
+		{
+			while (($file = readdir($handle)) !== false)
+			{
+				// Skip excluded directories
+				if ($file !== '.' && $file !== '..' && !preg_match($this->regexExcludeFolders, $file))
+				{
+					$fullpath = $path . '/' . $file;
+
+					if (is_dir($fullpath))
+					{
+						// Detect and skip external library directories
+						foreach ($this->libFiles as $libFile)
+						{
+							if (is_file($fullpath . '/' . $libFile))
+							{
+								// Skip processing of this directory
+								continue 2;
+							}
+						}
+
+						$arr = array_merge($arr, $this->files($fullpath));
+					}
+					elseif (preg_match('/\.php$/', $file))
+					{
+						$arr[] = $fullpath;
+					}
+				}
+			}
+
+			closedir($handle);
+		}
+
+		return $arr;
 	}
 }
