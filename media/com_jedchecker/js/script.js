@@ -39,6 +39,18 @@ function check(url, rule) {
 			sidebar.find('.badge.bg-success').toggleClass('hidden', !success);
 
 			sidebar.find('.spinner-border').addClass('hidden');
+		},
+		error: function(xhr, status){
+			var sidebar = jQuery('#jed-' + rule);
+			var target = jQuery('#police-check-result-' + rule);
+
+			target.html('<span class="text-danger"><b>' + status + ':</b> ' + xhr.status + ' ' + xhr.statusText + '</span>');
+
+			sidebar.find('.badge.bg-danger').text('?');
+			sidebar.find('.badge.bg-warning,.badge.bg-secondary,.badge.bg-info').text('');
+			sidebar.find('.badge.bg-success').addClass('hidden');
+
+			sidebar.find('.spinner-border').addClass('hidden');
 		}
 	});
 }
