@@ -113,6 +113,7 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 		}
 
 		// Get extension name (element)
+
 		$type = (string) $xml['type'];
 		if (isset($xml->element))
 		{
@@ -194,6 +195,7 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 
 		$lookup_lang_dirs = array_unique($lookup_lang_dirs);
 
+		// Looking for language file in specified directories
 		foreach ($lookup_lang_dirs as $dir)
 		{
 			$lang_sys_file =
@@ -223,6 +225,8 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 		{
 			$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_MODULE_PLUGIN', $extension_name));
 		}
+
+		// The "template" is reserved keyword
 		if (stripos($extension_name, 'template') !== false)
 		{
 			$this->report->addWarning($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_RESERVED_KEYWORDS', $extension_name));
