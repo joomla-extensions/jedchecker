@@ -112,15 +112,19 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 			return false;
 		}
 
-		// Get extension name (element)
-
+		// Get extension type
 		$type = (string) $xml['type'];
+
+		// Get extension's element name (simulates work of Joomla's installer)
+
+		// Firstly, check for <element> node
 		if (isset($xml->element))
 		{
 			$extension = (string) $xml->element;
 		}
 		else
 		{
+			// Otherwise, use <name> node or plugin/module attribute in the <files> section
 			$extension = (string) $xml->name;
 			if (isset($xml->files))
 			{
@@ -133,13 +137,18 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 				}
 			}
 		}
+
+		// Filter extension's element name
 		$extension = strtolower(JFilterInput::getInstance()->clean($extension, 'cmd'));
+
+		// Component's element name starts with com_
 		if ($type === 'component' && strpos($extension, 'com_') !== 0)
 		{
 			$extension = 'com_' . $extension;
 		}
 
-		if ($type === 'plugin' && isset($xml['group']))
+		// Plugin's element name starts with com_
+		if ($type === 'plugin' && isset($xml['group']) && strpos($extension, 'plg_') !== 0)
 		{
 			$extension = 'plg_' . $xml['group'] . '_' . $extension;
 		}
@@ -151,6 +160,7 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 		$lang_dir = dirname($file);
 		$lang_tag = 'en-GB'; // $lang->getDefault();
 
+		// Populate list of directories to look for
 		$lookup_lang_dirs = array();
 
 		if (isset($xml->administration->files['folder']))
@@ -240,10 +250,12 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 
 		if (stripos($extension_name, 'joomla') === 0)
 		{
+			// An extension name can't start with the word "Joomla"
 			$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_JOOMLA', $extension_name));
 		}
 		elseif (stripos($extension_name, 'joom') !== false)
 		{
+			// Extensions that use "Joomla" or a derivative of Joomla in the extension name need to be licensed by OSM
 			$this->report->addWarning($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_JOOMLA_DERIVATIVE', $extension_name));
 		}
 
@@ -262,6 +274,7 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 
 				if (!in_array($domain, $approvedDomains, true))
 				{
+					// Extensions that use "Joomla" or a derivative of Joomla in the domain name need to be licensed by OSM
 					$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_URL_JOOMLA_DERIVATIVE', $url));
 				}
 			}
@@ -270,6 +283,7 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 		if ($type === 'component' && isset($xml->administration->menu))
 		{
 			$menu_name = $lang->_((string) $xml->administration->menu);
+			// Do name the Component's admin menu the same as the extension name
 			if ($extension_name !== $menu_name)
 			{
 				$this->report->addWarning($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_ADMIN_MENU', $menu_name, $extension_name));
@@ -278,6 +292,7 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 
 		if ($type === 'plugin')
 		{
+			// The name of your plugin must comply with the JED naming conventions - plugins in the form “{Type} - {Extension Name}”.
 			$parts = explode(' - ', $extension_name, 2);
 			$extension_name_group = isset($parts[1]) ? strtolower(preg_replace('/\s/', '', $parts[0])) : false;
 			$group = (string) $xml['group'];
