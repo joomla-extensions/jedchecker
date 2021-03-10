@@ -4,9 +4,7 @@
  *
  * @copyright  Copyright (C) 2017 - 2021 Open Source Matters, Inc. All rights reserved.
  *             Copyright (C) 2008 - 2016 compojoom.com . All rights reserved.
- * @author     Daniel Dimitrov <daniel@compojoom.com>
- *             eaxs <support@projectfork.net>
- *             Denis Ryabov <denis@mobilejoomla.com>
+ * @author     Denis Ryabov <denis@mobilejoomla.com>
  *
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
