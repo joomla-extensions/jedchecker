@@ -77,61 +77,84 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 		foreach ($lines as $lineno => $line)
 		{
 			$line = trim($line);
+
+			// Check for BOM sequence
 			if ($lineno === 0 && strncmp($line, "\xEF\xBB\xBF", 3) === 0)
 			{
 				$this->report->addError($file, JText::_('COM_JEDCHECKER_LANG_BOM_FOUND'), 1);
+				// Romeve BOM for further checks
 				$line = substr($line, 3);
 			}
+
+			// Skip empty lines, comments, and section names
 			if ($line === '' || $line[0] === ';' || $line[0] === '[')
 			{
 				continue;
 			}
+
+			// Report incorrect comment character
 			if ($line[0] === '#')
 			{
 				$this->report->addError($file, JText::_('COM_JEDCHECKER_LANG_INCORRECT_COMMENT') .
 					'<br>' . htmlspecialchars($line), $lineno);
 				continue;
 			}
+
+			// Check for "=" character in the line
 			if (strpos($line, '=') === false)
 			{
 				$this->report->addError($file, JText::_('COM_JEDCHECKER_LANG_WRONG_LINE') .
 					'<br>' . htmlspecialchars($line), $lineno);
 				continue;
 			}
+
+			// Extract key and value
 			list ($key, $value) = explode('=', $line, 2);
 
 			$key = rtrim($key);
+
+			// Check for empty key
 			if ($key === '')
 			{
 				$this->report->addError($file, JText::_('COM_JEDCHECKER_LANG_KEY_EMPTY') .
 					'<br>' . htmlspecialchars($line), $lineno);
 				continue;
 			}
+
+			// Check for spaces in the key name
 			if (strpos($key, ' ') !== false)
 			{
 				$this->report->addError($file, JText::_('COM_JEDCHECKER_LANG_KEY_WHITESPACE') .
 					'<br>' . htmlspecialchars($line), $lineno);
 				continue;
 			}
+
+			// Check for invalid characters (see https://www.php.net/manual/en/function.parse-ini-file.php)
 			if (strpbrk($key, '{}|&~![()^"') !== false)
 			{
 				$this->report->addError($file, JText::_('COM_JEDCHECKER_LANG_KEY_INVALID_CHARACTER') .
 					'<br>' . htmlspecialchars($line), $lineno);
 				continue;
 			}
+
+			// Check for invalid key names (see https://www.php.net/manual/en/function.parse-ini-file.php)
 			if (in_array($key, array('null', 'yes', 'no', 'true', 'false', 'on', 'off', 'none'), true))
 			{
 				$this->report->addError($file, JText::_('COM_JEDCHECKER_LANG_KEY_RESERVED') .
 					'<br>' . htmlspecialchars($line), $lineno);
 				continue;
 			}
+
 			$value = ltrim($value);
+
 			if (strlen($value) <2 || $value[0] !== '"' || substr($value, -1) !== '"')
 			{
 				$this->report->addError($file, JText::_('COM_JEDCHECKER_LANG_TRANSLATION_QUOTES') .
 					'<br>' . htmlspecialchars($line), $lineno);
 				continue;
 			}
+
+			// Check for empty value
 			if ($value === '""')
 			{
 				$this->report->addWarning($file, JText::_('COM_JEDCHECKER_LANG_TRANSLATION_EMPTY') .
@@ -139,7 +162,10 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 				continue;
 			}
 
+			// Remove quotes around
 			$value = substr($value, 1, -1);
+
+			// Check for legacy "_QQ_" code (deprecated since Joomla! 3.9 if favor of escaped double quote \"; removed in Joomla! 4)
 			if (strpos($value, '"_QQ_"') !== false)
 			{
 				$this->report->addInfo($file, JText::_('COM_JEDCHECKER_LANG_QQ_DEPRECATED') .
