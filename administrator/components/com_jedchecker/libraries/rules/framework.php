@@ -257,14 +257,16 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 			{
 				$regex = preg_quote($singleTest, '/');
 
+				// Add word boundary check for rules staring/ending with a letter (to avoid false-positives because of partial match)
+
 				if (ctype_alpha($singleTest[0]))
 				{
-					$regex = '(?<=\W|^)' . $regex;
+					$regex = '\b' . $regex;
 				}
 
 				if (ctype_alpha($singleTest[strlen($singleTest) - 1]))
 				{
-					$regex .= '(?=\W|$)';
+					$regex .= '\b';
 				}
 
 				if (preg_match('/' . $regex . '/i', $line))
