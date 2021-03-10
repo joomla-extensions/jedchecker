@@ -180,6 +180,7 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 
 				if (!in_array($attr_name, $DTDattributes, true))
 				{
+					// The node has unknown attribute
 					$this->warnings[] = JText::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_ATTRIBUTE', $name, $attr_name);
 				}
 			}
@@ -276,6 +277,7 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 	{
 		if (isset($node['link']))
 		{
+			// The "link" attribute overrides any other link-related attributes (warn if they present)
 			$skip_attrs = array('act', 'controller', 'layout', 'sub', 'task', 'view');
 			foreach ($node->attributes() as $attr)
 			{
