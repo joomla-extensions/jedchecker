@@ -145,14 +145,6 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 				$this->report->addInfo($file, JText::_('COM_JEDCHECKER_LANG_QQ_DEPRECATED') .
 					'<br>' . htmlspecialchars($line), $lineno);
 			}
-
-			$count1 = preg_match_all('/(?<=^|[^%])%(?=[-+0 ]?\w)/', $value);
-			$count2 = preg_match_all('/(?<=^|[^%])%\d+\$/', $value);
-			if ($count1 > 1 && $count2 < $count1) {
-				// @todo It's not mentioned in docs
-				$this->report->addInfo($file, JText::_('COM_JEDCHECKER_LANG_RECOMMEND_ARGNUM') .
-					'<br>' . htmlspecialchars($line), $lineno);
-			}
 		}
 
 		// All checks passed. Return true
