@@ -87,9 +87,18 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 	 *
 	 * @var string[]
 	 */
-	protected $types = array(
+	protected $joomlaTypes = array(
 		'component', 'file', 'language', 'library',
 		'module', 'package', 'plugin', 'template'
+	);
+
+	/**
+	 * List of JED extension types
+	 *
+	 * @var string[]
+	 */
+	protected $jedTypes = array(
+		'component', 'module', 'package', 'plugin'
 	);
 
 	/**
@@ -137,11 +146,17 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 		// Check extension type
 		$type = (string) $xml['type'];
 
-		if (!in_array($type, $this->types, true))
+		if (!in_array($type, $this->joomlaTypes, true))
 		{
 			$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_TYPE', $type));
 
 			return true;
+		}
+
+		// JED allows components, modules, plugins, and packages (as a container) only
+		if (!in_array($type, $this->jedTypes, true))
+		{
+			$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_TYPE_NOT_ACCEPTED', $type));
 		}
 
 		// Load DTD-like data for this extension type
@@ -149,8 +164,6 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 
 		if (!is_file($json_filename))
 		{
-			$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_TYPE_NOT_ACCEPTED', $type));
-
 			return true;
 		}
 
