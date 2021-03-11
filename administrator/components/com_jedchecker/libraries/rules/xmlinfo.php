@@ -266,17 +266,8 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 
 			if (stripos($domain, 'joom') !== false)
 			{
-				// Remove "www." subdomain prefix
-				$domain = preg_replace('/^www\./', '', $domain);
-
-				// Approved domains from https://tm.joomla.org/approved-domains.html
-				$approvedDomains = file(__DIR__ . '/xmlinfo/approved-domains.txt', FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-
-				if (!in_array($domain, $approvedDomains, true))
-				{
-					// Extensions that use "Joomla" or a derivative of Joomla in the domain name need to be licensed by OSM
-					$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_URL_JOOMLA_DERIVATIVE', $url));
-				}
+				// Extensions that use "Joomla" or a derivative of Joomla in the domain name need to be licensed by OSM
+				$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_URL_JOOMLA_DERIVATIVE', $url, 'https://tm.joomla.org/approved-domains.html'));
 			}
 		}
 
