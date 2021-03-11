@@ -2,8 +2,7 @@
 /**
  * @package    Joomla.JEDChecker
  *
- * @copyright  Copyright (C) 2017 - 2021 Open Source Matters, Inc. All rights reserved.
- *             Copyright (C) 2008 - 2016 compojoom.com . All rights reserved.
+ * @copyright  Copyright (C) 2021 Open Source Matters, Inc. All rights reserved.
  *
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
