@@ -20,6 +20,9 @@ else
 	JHtml::_('behavior.framework', true);
 }
 
+// Load jQuery
+JHtml::_('jquery.framework');
+
 JHtml::stylesheet('media/com_jedchecker/css/style.min.css');
 
 $document = JFactory::getDocument();
