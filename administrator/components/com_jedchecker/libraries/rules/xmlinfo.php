@@ -147,7 +147,7 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 			$extension = 'com_' . $extension;
 		}
 
-		// Plugin's element name starts with com_
+		// Plugin's element name starts with plg_
 		if ($type === 'plugin' && isset($xml['group']) && strpos($extension, 'plg_') !== 0)
 		{
 			$extension = 'plg_' . $xml['group'] . '_' . $extension;
