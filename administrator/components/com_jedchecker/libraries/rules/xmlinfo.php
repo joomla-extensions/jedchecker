@@ -231,7 +231,7 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 		$this->report->addInfo($file, implode('<br />', $info));
 
 		// NM3 - Listing name contains “module” or “plugin”
-		if (preg_match('/\b(?:module|plugin)\b/i', $extension_name))
+		if (preg_match('/(?:module|plugin)/i', $extension_name))
 		{
 			$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_MODULE_PLUGIN', $extension_name));
 		}
