@@ -65,7 +65,7 @@ class JedcheckerControllerPolice extends JControllerLegacy
 	protected function police($class, $folder)
 	{
 		// Prepare rule properties
-		$properties = array('basedir' => $folder);
+		$properties = array('basedir' => JPath::clean($folder));
 
 		// Create instance of the rule
 		$police = new $class($properties);
