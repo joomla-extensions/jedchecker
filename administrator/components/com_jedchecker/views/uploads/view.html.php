@@ -45,7 +45,7 @@ class JedcheckerViewUploads extends JViewLegacy
 	public function getRules()
 	{
 		$rules = array();
-		$files = JFolder::files(JPATH_COMPONENT_ADMINISTRATOR . '/libraries/rules', '.php$', false, false);
+		$files = JFolder::files(JPATH_COMPONENT_ADMINISTRATOR . '/libraries/rules', '\.php$', false, false);
 		JLoader::discover('jedcheckerRules', JPATH_COMPONENT_ADMINISTRATOR . '/libraries/rules/');
 
 		foreach ($files as $file)
@@ -93,7 +93,7 @@ class JedcheckerViewUploads extends JViewLegacy
 
 		if (JFolder::exists($path))
 		{
-			if (JFolder::folders($path, '.', false) || JFolder::files($path, '.', false))
+			if (JFolder::folders($path) || JFolder::files($path))
 			{
 				return true;
 			}

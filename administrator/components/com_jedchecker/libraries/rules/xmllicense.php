@@ -53,7 +53,7 @@ class JedcheckerRulesXMLlicense extends JEDcheckerRule
 	public function check()
 	{
 		// Find all XML files of the extension
-		$files = JFolder::files($this->basedir, '.xml$', true, true);
+		$files = JFolder::files($this->basedir, '\.xml$', true, true);
 
 		// Iterate through all the xml files
 		foreach ($files as $file)

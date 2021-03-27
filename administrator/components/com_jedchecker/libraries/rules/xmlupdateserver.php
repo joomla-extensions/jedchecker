@@ -53,7 +53,7 @@ class JedcheckerRulesXMLUpdateServer extends JEDcheckerRule
 	public function check()
 	{
 		// Find all XML files of the extension
-		$files = JFolder::files($this->basedir, '.xml$', true, true);
+		$files = JFolder::files($this->basedir, '\.xml$', true, true);
 
 		// Find XML package file
 		$packageFile = $this->checkPackageXML($files);

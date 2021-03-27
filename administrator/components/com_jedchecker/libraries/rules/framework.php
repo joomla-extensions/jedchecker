@@ -54,7 +54,7 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 	 */
 	public function check()
 	{
-		$files = JFolder::files($this->basedir, '.php$', true, true);
+		$files = JFolder::files($this->basedir, '\.php$', true, true);
 		$this->leftover_folders = explode(',', $this->params->get('leftover_folders'));
 
 		foreach ($files as $file)
