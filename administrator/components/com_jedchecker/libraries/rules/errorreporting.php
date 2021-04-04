@@ -69,7 +69,7 @@ class JedcheckerRulesErrorreporting extends JEDcheckerRule
 	}
 
 	/**
-	 * Reads a file and searches for any encoding function defined in the params
+	 * Reads a file and searches for any function defined in the params
 	 * Not a very clever way of doing this, but it should be fine for now
 	 *
 	 * @param   string  $file  - The path to the file
