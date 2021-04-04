@@ -74,7 +74,7 @@ class JedcheckerRulesJexec extends JEDcheckerRule
 	 */
 	public function check()
 	{
-		$this->init_jexec();
+		$this->initJexec();
 
 		// Find all php files of the extension
 		$files = $this->files($this->basedir);
@@ -100,16 +100,16 @@ class JedcheckerRulesJexec extends JEDcheckerRule
 	 */
 	protected function find($file)
 	{
-		// load file and strip comments
+		// Load file and strip comments
 		$content = php_strip_whitespace($file);
 
-		// skip empty files
+		// Skip empty files
 		if ($content === '' || preg_match('#^<\?php\s+$#', $content))
 		{
 			return true;
 		}
 
-		// check guards
+		// Check guards
 		if (preg_match($this->regex, $content))
 		{
 			return true;
@@ -119,11 +119,11 @@ class JedcheckerRulesJexec extends JEDcheckerRule
 	}
 
 	/**
-	 * Prepare regexp aforehand
+	 * Prepare regexps aforehand
 	 *
 	 * @return void
 	 */
-	protected function init_jexec()
+	protected function initJexec()
 	{
 		// Generate regular expression to match JEXEC quard
 		$defines = $this->params->get('constants');
