@@ -20,7 +20,7 @@ require_once JPATH_COMPONENT_ADMINISTRATOR . '/models/rule.php';
 /**
  * class JedcheckerRulesXMLinfo
  *
- * This class searches all xml manifestes for specific tags
+ * This class searches all xml manifests for specific tags
  *
  * @since  1.0
  */
@@ -126,6 +126,7 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 		{
 			// Otherwise, use <name> node or plugin/module attribute in the <files> section
 			$extension = (string) $xml->name;
+
 			if (isset($xml->files))
 			{
 				foreach ($xml->files->children() as $child)
@@ -156,24 +157,24 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 		// Load the language of the extension (if any)
 		$lang = JFactory::getLanguage();
 
-		// search for .sys.ini translation file
-		$lang_dir = dirname($file);
-		$lang_tag = 'en-GB'; // $lang->getDefault();
+		// Search for .sys.ini translation file
+		$langDir = dirname($file);
+		$langTag = 'en-GB'; // $lang->getDefault();
 
 		// Populate list of directories to look for
-		$lookup_lang_dirs = array();
+		$lookupLangDirs = array();
 
 		if (isset($xml->administration->files['folder']))
 		{
-			$lookup_lang_dirs[] = trim($xml->administration->files['folder'], '/') . '/language/' . $lang_tag;
+			$lookupLangDirs[] = trim($xml->administration->files['folder'], '/') . '/language/' . $langTag;
 		}
 
 		if (isset($xml->files['folder']))
 		{
-			$lookup_lang_dirs[] = trim($xml->files['folder'], '/') . '/language/' . $lang_tag;
+			$lookupLangDirs[] = trim($xml->files['folder'], '/') . '/language/' . $langTag;
 		}
 
-		$lookup_lang_dirs[] = 'language/' . $lang_tag;
+		$lookupLangDirs[] = 'language/' . $langTag;
 
 		if (isset($xml->administration->languages))
 		{
@@ -181,9 +182,9 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 
 			foreach ($xml->administration->languages->language as $language)
 			{
-				if (trim($language['tag']) === $lang_tag)
+				if (trim($language['tag']) === $langTag)
 				{
-					$lookup_lang_dirs[] = trim($folder . '/' . dirname($language), '/');
+					$lookupLangDirs[] = trim($folder . '/' . dirname($language), '/');
 				}
 			}
 		}
@@ -194,72 +195,73 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 
 			foreach ($xml->languages->language as $language)
 			{
-				if (trim($language['tag']) === $lang_tag)
+				if (trim($language['tag']) === $langTag)
 				{
-					$lookup_lang_dirs[] = trim($folder . '/' . dirname($language), '/');
+					$lookupLangDirs[] = trim($folder . '/' . dirname($language), '/');
 				}
 			}
 		}
 
-		$lookup_lang_dirs[] = '';
+		$lookupLangDirs[] = '';
 
-		$lookup_lang_dirs = array_unique($lookup_lang_dirs);
+		$lookupLangDirs = array_unique($lookupLangDirs);
 
 		// Looking for language file in specified directories
-		foreach ($lookup_lang_dirs as $dir)
+		foreach ($lookupLangDirs as $dir)
 		{
-			$lang_sys_file =
-				$lang_dir . '/' .
+			$langSysFile =
+				$langDir . '/' .
 				($dir === '' ? '' : $dir . '/') .
-				$lang_tag. '.' . $extension . '.sys.ini';
-			if (is_file($lang_sys_file))
+				$langTag. '.' . $extension . '.sys.ini';
+			if (is_file($langSysFile))
 			{
 				$loadLanguage = new ReflectionMethod($lang, 'loadLanguage');
 				$loadLanguage->setAccessible(true);
-				$loadLanguage->invoke($lang, $lang_sys_file, $extension);
+				$loadLanguage->invoke($lang, $langSysFile, $extension);
 				break;
 			}
 		}
 
 		// Get the real extension's name now that the language has been loaded
-		$extension_name = $lang->_((string) $xml->name);
+		$extensionName = $lang->_((string) $xml->name);
 
-		$info[] = JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_XML', $extension_name);
+		$info[] = JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_XML', $extensionName);
 		$info[] = JText::sprintf('COM_JEDCHECKER_INFO_XML_VERSION_XML', (string) $xml->version);
 		$info[] = JText::sprintf('COM_JEDCHECKER_INFO_XML_CREATIONDATE_XML', (string) $xml->creationDate);
 
 		$this->report->addInfo($file, implode('<br />', $info));
 
 		// NM3 - Listing name contains “module” or “plugin”
-		if (preg_match('/module|plugin/i', $extension_name))
+		if (preg_match('/module|plugin/i', $extensionName))
 		{
-			$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_MODULE_PLUGIN', $extension_name));
+			$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_MODULE_PLUGIN', $extensionName));
 		}
 
 		// The "template" is reserved keyword
-		if (stripos($extension_name, 'template') !== false)
+		if (stripos($extensionName, 'template') !== false)
 		{
-			$this->report->addWarning($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_RESERVED_KEYWORDS', $extension_name));
+			$this->report->addWarning($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_RESERVED_KEYWORDS', $extensionName));
 		}
 
 		// NM5 - Version in name/title
-		if (preg_match('/(?:\bversion\b|\d\.\d)/i', $extension_name))
+		if (preg_match('/(?:\bversion\b|\d\.\d)/i', $extensionName))
 		{
-			$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_VERSION', $extension_name));
+			$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_VERSION', $extensionName));
 		}
 
-		if (stripos($extension_name, 'joomla') === 0)
+		if (stripos($extensionName, 'joomla') === 0)
 		{
 			// An extension name can't start with the word "Joomla"
-			$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_JOOMLA', $extension_name));
+			$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_JOOMLA', $extensionName));
 		}
-		elseif (stripos($extension_name, 'joom') !== false)
+		elseif (stripos($extensionName, 'joom') !== false)
 		{
 			// Extensions that use "Joomla" or a derivative of Joomla in the extension name need to be licensed by OSM
-			$this->report->addWarning($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_JOOMLA_DERIVATIVE', $extension_name));
+			$this->report->addWarning($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_JOOMLA_DERIVATIVE', $extensionName));
 		}
 
-		$url = (string)$xml->authorUrl;
+		$url = (string) $xml->authorUrl;
+
 		if (stripos($url, 'joom') !== false)
 		{
 			$domain = (strpos($url, '//') === false) ? $url : parse_url(trim($url), PHP_URL_HOST);
@@ -273,26 +275,26 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 
 		if ($type === 'component' && isset($xml->administration->menu))
 		{
-			$menu_name = $lang->_((string) $xml->administration->menu);
+			$menuName = $lang->_((string) $xml->administration->menu);
 			// Do name the Component's admin menu the same as the extension name
-			if ($extension_name !== $menu_name)
+			if ($extensionName !== $menuName)
 			{
-				$this->report->addWarning($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_ADMIN_MENU', $menu_name, $extension_name));
+				$this->report->addWarning($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_ADMIN_MENU', $menuName, $extensionName));
 			}
 		}
 
 		if ($type === 'plugin')
 		{
 			// The name of your plugin must comply with the JED naming conventions - plugins in the form “{Type} - {Extension Name}”.
-			$parts = explode(' - ', $extension_name, 2);
-			$extension_name_group = isset($parts[1]) ? strtolower(preg_replace('/\s/', '', $parts[0])) : false;
+			$parts = explode(' - ', $extensionName, 2);
+			$extensionNameGroup = isset($parts[1]) ? strtolower(preg_replace('/\s/', '', $parts[0])) : false;
 			$group = (string) $xml['group'];
 
-			if ($extension_name_group !== $group && $extension_name_group !== str_replace('-', '', $group)
-				&& !(isset($this->pluginsGroupMap[$extension_name_group]) && $this->pluginsGroupMap[$extension_name_group] === $group)
+			if ($extensionNameGroup !== $group && $extensionNameGroup !== str_replace('-', '', $group)
+				&& !(isset($this->pluginsGroupMap[$extensionNameGroup]) && $this->pluginsGroupMap[$extensionNameGroup] === $group)
 			)
 			{
-				$this->report->addWarning($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_PLUGIN_FORMAT', $extension_name));
+				$this->report->addWarning($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_PLUGIN_FORMAT', $extensionName));
 			}
 		}
 
