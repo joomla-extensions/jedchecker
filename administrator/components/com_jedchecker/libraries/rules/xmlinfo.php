@@ -260,17 +260,11 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 			$this->report->addWarning($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_JOOMLA_DERIVATIVE', $extensionName));
 		}
 
-		$url = (string) $xml->authorUrl;
+		$this->validateDomain($file, (string) $xml->authorUrl);
 
-		if (stripos($url, 'joom') !== false)
+		if ($type === 'package' && (string) $xml->packagerurl !== (string) $xml->authorUrl)
 		{
-			$domain = (strpos($url, '//') === false) ? $url : parse_url(trim($url), PHP_URL_HOST);
-
-			if (stripos($domain, 'joom') !== false)
-			{
-				// Extensions that use "Joomla" or a derivative of Joomla in the domain name need to be licensed by OSM
-				$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_URL_JOOMLA_DERIVATIVE', $url, 'https://tm.joomla.org/approved-domains.html'));
-			}
+			$this->validateDomain($file, (string) $xml->packagerurl);
 		}
 
 		if ($type === 'component' && isset($xml->administration->menu))
@@ -300,5 +294,22 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 
 		// All checks passed. Return true
 		return true;
+	}
+
+	/**
+	 * Check domain name contains "Joomla"/derivative
+	 *
+	 * @param   string $file Current file name
+	 * @param   string $url  URL to validate
+	 */
+	protected function validateDomain($file, $url)
+	{
+		$domain = (strpos($url, '//') === false) ? $url : parse_url(trim($url), PHP_URL_HOST);
+
+		if (stripos($domain, 'joom') !== false)
+		{
+			// Extensions that use "Joomla" or a derivative of Joomla in the domain name need to be licensed by OSM
+			$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_URL_JOOMLA_DERIVATIVE', $url, 'https://tm.joomla.org/approved-domains.html'));
+		}
 	}
 }
