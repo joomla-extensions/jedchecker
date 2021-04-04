@@ -67,7 +67,7 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 	 *
 	 * @param   string  $file  - The path to the file
 	 *
-	 * @return bool True on success, otherwise False.
+	 * @return boolean True on success, otherwise False.
 	 */
 	protected function find($file)
 	{
