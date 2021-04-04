@@ -17,7 +17,7 @@ require_once JPATH_COMPONENT_ADMINISTRATOR . '/models/rule.php';
 /**
  * class JedcheckerRulesXMLFiles
  *
- * This class searches all xml manifestes for valid files declarations
+ * This class searches all xml manifests for valid files declarations
  *
  * @since  2.3
  */
@@ -95,22 +95,22 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 
 		$this->errors = array();
 
-		// check declared files and folders do exist
+		// Check declared files and folders do exist
 
 		$basedir = dirname($file) . '/';
 
-		// check: files[folder] (filename|folder)*
-		// for package: files[folder] (file|folder)*
+		// Check: files[folder] (filename|folder)*
+		// ( for package: files[folder] (file|folder)* )
 		if (isset($xml->files))
 		{
 			$node = $xml->files;
 			$dir = $basedir . (isset($node['folder']) ? $node['folder'] . '/' : '');
 			$this->checkFiles($node->filename, $dir);
-			$this->checkFiles($node->file, $dir); // for packages
+			$this->checkFiles($node->file, $dir);
 			$this->checkFolders($node->folder, $dir);
 		}
 
-		// check: media[folder] (filename|folder)*
+		// Check: media[folder] (filename|folder)*
 		if (isset($xml->media))
 		{
 			$node = $xml->media;
@@ -119,7 +119,7 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 			$this->checkFolders($node->folder, $dir);
 		}
 
-		// check files: languages[folder] language*
+		// Check files: languages[folder] language*
 		if (isset($xml->languages))
 		{
 			$node = $xml->languages;
@@ -129,7 +129,7 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 
 		$admindir = $basedir;
 
-		// check: administration files[folder] (filename|folder)*
+		// Check: administration files[folder] (filename|folder)*
 		if (isset($xml->administration->files))
 		{
 			$node = $xml->administration->files;
@@ -138,7 +138,7 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 			$this->checkFolders($node->folder, $admindir);
 		}
 
-		// check: administration media[folder] (filename|folder)*
+		// Check: administration media[folder] (filename|folder)*
 		if (isset($xml->administration->media))
 		{
 			$node = $xml->administration->media;
@@ -147,7 +147,7 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 			$this->checkFolders($node->folder, $dir);
 		}
 
-		// check files: administration languages[folder] language*
+		// Check files: administration languages[folder] language*
 		if (isset($xml->administration->languages))
 		{
 			$node = $xml->administration->languages;
@@ -155,25 +155,25 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 			$this->checkFiles($node->language, $dir);
 		}
 
-		// check file: scriptfile
+		// Check file: scriptfile
 		if (isset($xml->scriptfile))
 		{
 			$this->checkFiles($xml->scriptfile, $basedir);
 		}
 
-		// check files: install sql file*
+		// Check files: install sql file*
 		if (isset($xml->install->sql->file))
 		{
 			$this->checkFiles($xml->install->sql->file, $admindir);
 		}
 
-		// check files: uninstall sql file*
+		// Check files: uninstall sql file*
 		if (isset($xml->uninstall->sql->file))
 		{
 			$this->checkFiles($xml->uninstall->sql->file, $admindir);
 		}
 
-		// check folders: update schemas schemapath*
+		// Check folders: update schemas schemapath*
 		if (isset($xml->update->schemas->schemapath))
 		{
 			$this->checkFolders($xml->update->schemas->schemapath, $admindir);
@@ -191,36 +191,39 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 	/**
 	 * Check files exist
 	 *
-	 * @param JXMLElement $files  Files to check
-	 * @param string      $dir    Base directory
+	 * @param   SimpleXMLElement  $files  Files to check
+	 * @param   string            $dir    Base directory
 	 *
-	 * @return void
+	 * @return  void
 	 */
 	protected function checkFiles($files, $dir)
 	{
 		foreach ($files as $file)
 		{
 			$filename = $dir . $file;
+
 			if (is_file($filename))
 			{
 				continue;
 			}
-			// extra check for unzipped files
+
+			// Extra check for unzipped files
 			if (preg_match('/^(.*)\.(zip|tar\.gz)$/', $filename, $matches) && is_dir($matches[1]))
 			{
 				continue;
 			}
-			$this->errors[] = JText::sprintf('COM_JEDCHECKER_XML_FILES_FILE_NOT_FOUND', (string)$file);
+
+			$this->errors[] = JText::sprintf('COM_JEDCHECKER_XML_FILES_FILE_NOT_FOUND', (string) $file);
 		}
 	}
 
 	/**
 	 * Check folders exist
 	 *
-	 * @param JXMLElement $folders  Directories to check
-	 * @param string      $dir      Base directory
+	 * @param   SimpleXMLElement  $folders  Directories to check
+	 * @param   string            $dir      Base directory
 	 *
-	 * @return void
+	 * @return  void
 	 */
 	protected function checkFolders($folders, $dir)
 	{
@@ -228,7 +231,7 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 		{
 			if (!is_dir($dir . $folder))
 			{
-				$this->errors[] = JText::sprintf('COM_JEDCHECKER_XML_FILES_FOLDER_NOT_FOUND', (string)$folder);
+				$this->errors[] = JText::sprintf('COM_JEDCHECKER_XML_FILES_FOLDER_NOT_FOUND', (string) $folder);
 			}
 		}
 	}
