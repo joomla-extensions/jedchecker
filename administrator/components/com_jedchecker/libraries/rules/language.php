@@ -104,15 +104,15 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 			$startLineno = $lineno + 1;
 			$line = trim($lines[$lineno]);
 
-
 			// Check for BOM sequence
 			if ($lineno === 0 && strncmp($line, "\xEF\xBB\xBF", 3) === 0)
 			{
+				// Report as an error if BOM is directly followed by key name (and become a part of the name)
 				if (isset($line[3]) && strpos(";\n\r", $line[3]) === false)
 				{
 					$this->report->addError($file, JText::_('COM_JEDCHECKER_LANG_BOM_FOUND'), $startLineno);
 				}
-				else
+				else // Otherwise report a warning
 				{
 					$this->report->addWarning($file, JText::_('COM_JEDCHECKER_LANG_BOM_FOUND'), $startLineno);
 				}
@@ -175,16 +175,19 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 				continue;
 			}
 
+			// Check key contains ASCII characters only
 			if (preg_match('/[\x00-\x1F\x80-\xFF]/', $key))
 			{
 				$this->report->addWarning($file, JText::_('COM_JEDCHECKER_LANG_KEY_NOT_ASCII'), $startLineno, $line);
 			}
 
+			// Check key is uppercase
 			if ($key !== strtoupper($key))
 			{
 				$this->report->addWarning($file, JText::_('COM_JEDCHECKER_LANG_KEY_NOT_UPPERCASE'), $startLineno, $line);
 			}
 
+			// Check for duplicated keys
 			if (isset($keys[$key]))
 			{
 				$this->report->addWarning($file, JText::sprintf('COM_JEDCHECKER_LANG_KEY_DUPLICATED', $keys[$key]), $startLineno, $line);
@@ -211,12 +214,14 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 				$value .= $chunk;
 			}
 
+			// The value doesn't match INI format
 			if (!isset($matches[0]))
 			{
 				$this->report->addWarning($file, JText::_('COM_JEDCHECKER_LANG_TRANSLATION_ERROR'), $startLineno, $line);
 				continue;
 			}
 
+			// Get value w/o comment
 			$value = trim($matches[1]);
 
 			// Check for empty value
@@ -255,22 +260,25 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 				continue;
 			}
 
-			// // Remove quotes around
+			// Remove quotes around
 			$value = substr($value, 1, -1);
 
-			// Check for legacy "_QQ_" code (deprecated since Joomla! 3.9 if favor of escaped double quote \"; removed in Joomla! 4)
+			// Check for legacy "_QQ_" code (deprecated since Joomla! 3.9 in favour of escaped double quote \"; removed in Joomla! 4)
 			if (strpos($value, '"_QQ_"') !== false)
 			{
 				$this->report->addCompat($file, JText::_('COM_JEDCHECKER_LANG_QQ_DEPRECATED'), $startLineno, $line);
 			}
 
+			// Convert "_QQ_" to escaped quotes for further analysis
 			$value = str_replace('"_QQ_"', '\"', $value);
 
+			// Check for unescaped quote
 			if (preg_match('/[^\\\\]"/', $value))
 			{
 				$this->report->addWarning($file, JText::_('COM_JEDCHECKER_LANG_UNESCAPED_QUOTE'), $startLineno, $line);
 			}
 
+			// Check for value interpolation (see https://www.php.net/manual/en/function.parse-ini-file.php for details)
 			if (strpos($value, '${') !== false)
 			{
 				$this->report->addWarning($file, JText::_('COM_JEDCHECKER_LANG_VARIABLE_REF'), $startLineno, $line);
