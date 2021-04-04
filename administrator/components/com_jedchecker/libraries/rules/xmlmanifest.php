@@ -167,6 +167,12 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 			return true;
 		}
 
+		// warn if method="upgrade" attribute is not found
+		if ((string) $xml['method'] !== 'upgrade')
+		{
+			$this->report->addWarning($file, JText::_('COM_JEDCHECKER_MANIFEST_MISSED_METHOD_UPGRADE'));
+		}
+
 		$data = json_decode(file_get_contents($json_filename), true);
 		$this->DTDNodeRules = $data['nodes'];
 		$this->DTDAttrRules = $data['attributes'];
