@@ -430,7 +430,7 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 	 */
 	private function jamssWarning($path, $title, $info, $code, $line)
 	{
-		$info = !empty($info)?sprintf($this->params->get('info'), htmlentities($info, ENT_QUOTES)):"";
+		$info = !empty($info) ? sprintf($this->params->get('info'), htmlentities($info, ENT_QUOTES)) : '';
 		$this->report->addWarning($path, $info . $title, $line, $code);
 	}
 
