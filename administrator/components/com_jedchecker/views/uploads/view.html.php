@@ -34,6 +34,9 @@ class JedcheckerViewUploads extends JViewLegacy
 	{
 		$this->path         = JFactory::getConfig()->get('tmp_path') . '/jed_checker';
 
+		// Load translation for "JED Checker" title from sys.ini file
+		JFactory::getLanguage()->load('com_jedchecker.sys', JPATH_ADMINISTRATOR);
+
 		$this->setToolbar();
 		$this->jsOptions['url'] = JUri::base();
 		$this->jsOptions['rules'] = $this->getRules();
@@ -91,7 +94,8 @@ class JedcheckerViewUploads extends JViewLegacy
 			JToolbarHelper::custom('check', 'search', 'search', JText::_('COM_JEDCHECKER_TOOLBAR_CHECK'), false);
 		}
 
-		JToolbarHelper::title('JED checker');
+		JToolbarHelper::title(JText::_('COM_JEDCHECKER'));
+
 		if ( file_exists($this->path) )
 		{
 			JToolbarHelper::custom('uploads.clear', 'delete', 'delete', JText::_('COM_JEDCHECKER_TOOLBAR_CLEAR'), false);

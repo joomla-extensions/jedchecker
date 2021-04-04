@@ -47,9 +47,6 @@ JHtml::script('media/com_jedchecker/js/script.js');
 $options = json_encode($this->jsOptions);
 JFactory::getDocument()->addScriptDeclaration("var jed_options = $options;");
 
-// Load translation for "JED Checker" title from sys.ini file
-JFactory::getLanguage()->load('com_jedchecker.sys', JPATH_ADMINISTRATOR);
-
 ?>
 <div id="jedchecker">
 	<div class="row g-3">
