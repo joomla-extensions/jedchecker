@@ -301,6 +301,8 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 	 *
 	 * @param   string $file Current file name
 	 * @param   string $url  URL to validate
+	 *
+	 * @return  void
 	 */
 	protected function validateDomain($file, $url)
 	{
