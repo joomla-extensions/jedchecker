@@ -289,25 +289,33 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 				switch ($mode)
 				{
 					case '!':
-						$errors =& $this->errors;
+						if ($count === 0)
+						{
+							// The node doesn't contain required child element
+							$this->errors[] = JText::sprintf('COM_JEDCHECKER_MANIFEST_MISSED_REQUIRED', $name, $child);
+						}
+						elseif ($count > 1)
+						{
+							// The node contains multiple child elements when single only is expected
+							$this->errors[] = JText::sprintf('COM_JEDCHECKER_MANIFEST_MULTIPLE_FOUND', $name, $child);
+						}
+
 						break;
+
 					case '=':
-						$errors =& $this->warnings;
+						if ($count === 0)
+						{
+							// The node doesn't contain optional child element
+							$this->infos[] = JText::sprintf('COM_JEDCHECKER_MANIFEST_MISSED_OPTIONAL', $name, $child);
+						}
+						elseif ($count > 1)
+						{
+							// The node contains multiple child elements when single only is expected
+							$this->warnings[] = JText::sprintf('COM_JEDCHECKER_MANIFEST_MULTIPLE_FOUND', $name, $child);
+						}
+
 						break;
-					default:
-						continue 2;
 				}
-
-				if ($count === 0)
-				{
-					$errors[] = JText::sprintf('COM_JEDCHECKER_MANIFEST_MISSED_REQUIRED', $name, $child);
-				}
-				elseif ($count > 1)
-				{
-					$errors[] = JText::sprintf('COM_JEDCHECKER_MANIFEST_MULTIPLE_FOUND', $name, $child);
-				}
-
-				unset($errors);
 			}
 
 			// 2) check unknown/multiple elements
