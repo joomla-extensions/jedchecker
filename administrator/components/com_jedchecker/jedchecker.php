@@ -18,14 +18,14 @@ if (!JFactory::getUser()->authorise('core.manage', 'com_jedchecker'))
 	throw new Exception(JText::_('JERROR_ALERTNOAUTHOR'));
 }
 
-// We'll need jfile and JFolder all through the compoenent so let us load them here
+// We'll need JFile and JFolder all through the component so let us load them here
 jimport('joomla.filesystem.folder');
 jimport('joomla.filesystem.file');
 
 $input = JFactory::getApplication()->input;
 $view = $input->getCmd('view', '');
 
-if ($view == '' && $input->getCmd('task', '') == '')
+if ($view === '' && $input->getCmd('task', '') === '')
 {
 	$input->set('view', 'uploads');
 }

@@ -25,8 +25,8 @@ class JEDcheckerReport extends JObject
 	/**
 	 * Contains the report data.
 	 *
-	 * @see    reset
 	 * @var    array
+	 * @see    reset
 	 */
 	protected $data;
 
@@ -262,7 +262,7 @@ class JEDcheckerReport extends JObject
 		{
 			$item->location = str_replace($this->basedir, '', $item->location);
 
-			if ($item->location == '')
+			if ($item->location === '')
 			{
 				$item->location = '/';
 			}

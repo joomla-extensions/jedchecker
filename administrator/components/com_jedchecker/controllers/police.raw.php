@@ -26,11 +26,11 @@ class JedcheckerControllerPolice extends JControllerLegacy
 	/**
 	 * Runs all the rules on the given directory
 	 *
-	 * @return bool
+	 * @return boolean
 	 */
 	public function check()
 	{
-		$rule = JFactory::getApplication()->input->get('rule', null);
+		$rule = JFactory::getApplication()->input->get('rule');
 
 		JLoader::discover('jedcheckerRules', JPATH_COMPONENT_ADMINISTRATOR . '/libraries/rules/');
 
@@ -57,7 +57,7 @@ class JedcheckerControllerPolice extends JControllerLegacy
 	/**
 	 * Run each rule and echo the result
 	 *
-	 * @param   string  $class   - the class anme
+	 * @param   string  $class   - the class name
 	 * @param   string  $folder  - the folder where the component is located
 	 *
 	 * @return void

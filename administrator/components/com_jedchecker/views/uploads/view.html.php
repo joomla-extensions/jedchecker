@@ -20,6 +20,9 @@ jimport('joomla.application.component.viewlegacy');
  */
 class JedcheckerViewUploads extends JViewLegacy
 {
+	/** @var string */
+	protected $path;
+
 	/**
 	 * Display method
 	 *
@@ -29,7 +32,7 @@ class JedcheckerViewUploads extends JViewLegacy
 	 */
 	public function display($tpl = null)
 	{
-		$this->path         = JFactory::getConfig()->get('tmp_path') . '/jed_checker';
+		$this->path = JFactory::getConfig()->get('tmp_path') . '/jed_checker';
 
 		$this->setToolbar();
 		$this->jsOptions['url'] = JUri::base();
@@ -69,7 +72,8 @@ class JedcheckerViewUploads extends JViewLegacy
 		}
 
 		JToolbarHelper::title('JED checker');
-		if ( file_exists($this->path) )
+
+		if (file_exists($this->path))
 		{
 			JToolbarHelper::custom('uploads.clear', 'delete', 'delete', JText::_('COM_JEDCHECKER_TOOLBAR_CLEAR'), false);
 		}
@@ -85,7 +89,7 @@ class JedcheckerViewUploads extends JViewLegacy
 	 *
 	 * @param   string  $type  - action
 	 *
-	 * @return bool
+	 * @return boolean
 	 */
 	private function filesExist($type)
 	{
@@ -102,7 +106,7 @@ class JedcheckerViewUploads extends JViewLegacy
 		{
 			$local = JFactory::getConfig()->get('tmp_path') . '/jed_checker/local.txt';
 
-			if ($type == 'unzipped' && JFile::exists($local))
+			if ($type === 'unzipped' && JFile::exists($local))
 			{
 				return true;
 			}

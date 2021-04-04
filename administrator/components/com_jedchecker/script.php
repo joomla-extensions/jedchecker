@@ -20,6 +20,8 @@ class Com_JedcheckerInstallerScript
 {
 	protected $extension = 'com_jedchecker';
 
+	protected $parent;
+
 	/**
 	 * Function executed before the the installation
 	 *
