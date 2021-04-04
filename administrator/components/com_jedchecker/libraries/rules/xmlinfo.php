@@ -107,6 +107,11 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 
 		// Check if this is an extension manifest
 		// 1.5 uses 'install', 1.6+ uses 'extension'
+		if ($xml->getName() === 'install')
+		{
+			$this->report->addWarning($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_MANIFEST_OUTDATED'));
+		}
+
 		if ($xml->getName() !== 'extension')
 		{
 			return false;
