@@ -173,6 +173,21 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 			$this->report->addWarning($file, JText::_('COM_JEDCHECKER_MANIFEST_MISSED_METHOD_UPGRADE'));
 		}
 
+		// check 'client' attribute is "site" or "administrator" (for module/template only)
+		if ($type === 'module' || $type === 'template')
+		{
+			$client = (string) $xml['client'];
+
+			if (!isset($xml['client']))
+			{
+				$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_MISSED_ATTRIBUTE', $xml->getName(), 'client'));
+			}
+			elseif ($client !== 'site' && $client !== 'administrator')
+			{
+				$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_ATTRIBUTE_VALUE', $xml->getName(), 'client', $client));
+			}
+		}
+
 		$data = json_decode(file_get_contents($json_filename), true);
 		$this->DTDNodeRules = $data['nodes'];
 		$this->DTDAttrRules = $data['attributes'];
