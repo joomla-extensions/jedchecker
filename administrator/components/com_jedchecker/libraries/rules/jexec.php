@@ -125,6 +125,7 @@ class JedcheckerRulesJexec extends JEDcheckerRule
 	 */
 	protected function init_jexec()
 	{
+		// Generate regular expression to match JEXEC quard
 		$defines = $this->params->get('constants');
 		$defines = explode(',', $defines);
 
