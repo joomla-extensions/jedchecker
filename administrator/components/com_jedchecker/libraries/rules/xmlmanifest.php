@@ -17,7 +17,7 @@ require_once JPATH_COMPONENT_ADMINISTRATOR . '/models/rule.php';
 /**
  * class JedcheckerRulesXMLManifest
  *
- * This class validates all xml manifestes
+ * This class validates all XML manifests
  *
  * @since  2.3
  */
@@ -75,9 +75,14 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 	 */
 	protected $DTDAttrRules;
 
+	/**
+	 * List of extension types
+	 *
+	 * @var string[]
+	 */
 	protected $types = array(
-	    'component', 'file', 'language', 'library',
-	    'module', 'package', 'plugin', 'template'
+		'component', 'file', 'language', 'library',
+		'module', 'package', 'plugin', 'template'
 	);
 
 	/**
@@ -122,21 +127,26 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 			return false;
 		}
 
-		// check extension type
+		// Check extension type
 		$type = (string) $xml['type'];
+
 		if (!in_array($type, $this->types, true))
 		{
 			$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_TYPE', $type));
+
 			return true;
 		}
 
-		// load DTD-like data for this extension type
+		// Load DTD-like data for this extension type
 		$json_filename = __DIR__ . '/xmlmanifest/dtd_' . $type . '.json';
+
 		if (!is_file($json_filename))
 		{
 			$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_TYPE_NOT_ACCEPTED', $type));
+
 			return true;
 		}
+
 		$data = json_decode(file_get_contents($json_filename), true);
 		$this->DTDNodeRules = $data['nodes'];
 		$this->DTDAttrRules = $data['attributes'];
@@ -144,7 +154,7 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 		$this->errors = array();
 		$this->warnings = array();
 
-		// validate manifest
+		// Validate manifest
 		$this->validateXml($xml, 'extension');
 
 		if (count($this->errors))
@@ -162,8 +172,10 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 	}
 
 	/**
-	 * @param JXMLElement $node
-	 * @param string      $name
+	 * @param   SimpleXMLElement  $node  XML node object
+	 * @param   string            $name  XML node name
+	 *
+	 * @return  void
 	 */
 	protected function validateXml($node, $name)
 	{
@@ -174,12 +186,12 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 		{
 			foreach ($node->attributes() as $attr)
 			{
-				$attr_name = (string)$attr->getName();
+				$attrName = (string)$attr->getName();
 
-				if (!in_array($attr_name, $DTDattributes, true))
+				if (!in_array($attrName, $DTDattributes, true))
 				{
 					// The node has unknown attribute
-					$this->warnings[] = JText::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_ATTRIBUTE', $name, $attr_name);
+					$this->warnings[] = JText::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_ATTRIBUTE', $name, $attrName);
 				}
 			}
 		}
@@ -202,6 +214,7 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 			foreach ($DTDchildren as $child => $mode)
 			{
 				$count = $node->$child->count();
+
 				switch ($mode)
 				{
 					case '!':
@@ -213,6 +226,7 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 					default:
 						continue 2;
 				}
+
 				if ($count === 0)
 				{
 					$errors[] = JText::sprintf('COM_JEDCHECKER_MANIFEST_MISSED_REQUIRED', $name, $child);
@@ -221,20 +235,22 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 				{
 					$errors[] = JText::sprintf('COM_JEDCHECKER_MANIFEST_MULTIPLE_FOUND', $name, $child);
 				}
+
 				unset($errors);
 			}
 
 			// 2) check unknown/multiple elements
 
-			// collect unique child node names
-			$child_names = array();
+			// Collect unique child node names
+			$childNames = array();
+
 			foreach ($node as $child)
 			{
-				$child_names[$child->getName()] = 1;
+				$childNames[$child->getName()] = 1;
 			}
-			$child_names = array_keys($child_names);
+			$childNames = array_keys($childNames);
 
-			foreach ($child_names as $child)
+			foreach ($childNames as $child)
 			{
 				if (!isset($DTDchildren[$child]))
 				{
@@ -252,6 +268,7 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 
 		// Extra checks (if exist)
 		$method = 'validateXml' . $name;
+
 		if (method_exists($this, $method))
 		{
 			$this->$method($node);
@@ -260,29 +277,34 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 		// Recursion
 		foreach ($node as $child)
 		{
-			$child_name = $child->getName();
-			if (isset($this->DTDNodeRules[$child_name])) {
-				$this->validateXml($child, $child_name);
+			$childName = $child->getName();
+
+			if (isset($this->DTDNodeRules[$childName]))
+			{
+				$this->validateXml($child, $childName);
 			}
 		}
 	}
 
 	/**
-	 * Extra check for menu nodes
-	 * @param JXMLElement $node
+	 * @param   SimpleXMLElement  $node  XML node
+	 *
+	 * @return void
 	 */
 	protected function validateXmlMenu($node)
 	{
 		if (isset($node['link']))
 		{
 			// The "link" attribute overrides any other link-related attributes (warn if they present)
-			$skip_attrs = array('act', 'controller', 'layout', 'sub', 'task', 'view');
+			$skipAttrs = array('act', 'controller', 'layout', 'sub', 'task', 'view');
+
 			foreach ($node->attributes() as $attr)
 			{
-				$attr_name = $attr->getName();
-				if (in_array($attr_name, $skip_attrs, true))
+				$attrName = $attr->getName();
+
+				if (in_array($attrName, $skipAttrs, true))
 				{
-					$this->warnings[] = JText::sprintf('COM_JEDCHECKER_MANIFEST_MENU_UNUSED_ATTRIBUTE', $attr_name);
+					$this->warnings[] = JText::sprintf('COM_JEDCHECKER_MANIFEST_MENU_UNUSED_ATTRIBUTE', $attrName);
 				}
 			}
 		}
