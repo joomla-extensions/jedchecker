@@ -160,20 +160,20 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 		}
 
 		// Load DTD-like data for this extension type
-		$json_filename = __DIR__ . '/xmlmanifest/dtd_' . $type . '.json';
+		$jsonFilename = __DIR__ . '/xmlmanifest/dtd_' . $type . '.json';
 
-		if (!is_file($json_filename))
+		if (!is_file($jsonFilename))
 		{
 			return true;
 		}
 
-		// warn if method="upgrade" attribute is not found
+		// Warn if method="upgrade" attribute is not found
 		if ((string) $xml['method'] !== 'upgrade')
 		{
 			$this->report->addWarning($file, JText::_('COM_JEDCHECKER_MANIFEST_MISSED_METHOD_UPGRADE'));
 		}
 
-		// check 'client' attribute is "site" or "administrator" (for module/template only)
+		// Check 'client' attribute is "site" or "administrator" (for module/template only)
 		if ($type === 'module' || $type === 'template')
 		{
 			$client = (string) $xml['client'];
@@ -188,7 +188,7 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 			}
 		}
 
-		$data = json_decode(file_get_contents($json_filename), true);
+		$data = json_decode(file_get_contents($jsonFilename), true);
 		$this->DTDNodeRules = $data['nodes'];
 		$this->DTDAttrRules = $data['attributes'];
 
