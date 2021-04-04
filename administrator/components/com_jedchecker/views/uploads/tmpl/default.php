@@ -31,11 +31,13 @@ if (version_compare(JVERSION, '4.0', '>='))
 {
 	JHtml::_('bootstrap.collapse');
 	JHtml::_('bootstrap.tab');
+	// Tooltips are used by JAMSS reports
+	JHtml::_('bootstrap.tooltip');
 }
 else
 {
 	JHtml::stylesheet('media/com_jedchecker/css/j4-style' . $cssSuffix);
-	JHtml::script('media/com_jedchecker/js/bootstrap.min.js');
+	JHtml::script('media/com_jedchecker/js/bootstrap.bundle.min.js');
 }
 
 JHtml::stylesheet('media/com_jedchecker/css/style' . $cssSuffix);
