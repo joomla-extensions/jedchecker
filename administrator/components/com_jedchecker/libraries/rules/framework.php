@@ -58,6 +58,7 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 		$leftover_folders = $this->params->get('leftover_folders');
 		$regex_leftover_folders = '(?:' . str_replace(',', '|', preg_quote($leftover_folders, '/')) . ')$';
 
+		// Get matched files and folder (w/o default exclusion list)
 		$folders = JFolder::folders($this->basedir, $regex_leftover_folders, true, true, array(), array());
 		$files = JFolder::files($this->basedir, $regex_leftover_folders, true, true, array(), array());
 
@@ -214,7 +215,7 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 	}
 
 	/**
-	 * Remove all text content by keeping newline characters only
+	 * Remove all text content by keeping newline characters only (to preserve line numbers)
 	 *
 	 * @param   string $content
 	 *
