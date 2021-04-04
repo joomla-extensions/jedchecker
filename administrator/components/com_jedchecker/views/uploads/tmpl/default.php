@@ -73,17 +73,8 @@ JFactory::getLanguage()->load('com_jedchecker.sys', JPATH_ADMINISTRATOR);
 					<form action="<?php echo JRoute::_('index.php?option=com_jedchecker&view=uploads'); ?>"
 							method="post" class="needs-validation" name="adminForm" id="adminForm" enctype="multipart/form-data">
 						<div class="input-group">
-<?php /*
-MIME type for accept attribute:
-	application/zip			 => .zip (both Chromium and Firefox)
-	application/x-gzip		 => .gz (both Chromium and Firefox),
-								.tgz (Chromium only)
-	application/x-compressed => .tgz (Firefox only)
-	application/x-tar		 => .tar (both Chromium and Firefox)
-Note: iOS Safari doesn't support file extensions in the accept attribute, so MIME types is the only working solution
-*/ ?>
 							<input type="file" class="form-control" name="extension" id="extension" required
-									accept="application/zip,application/x-gzip,application/x-compressed,application/x-tar"
+									accept=".bz2,.bzip2,.gz,.gzip,.tar,.tbz2,.tgz,.zip"
 									aria-describedby="extension-upload" aria-label="<?php echo JText::_('COM_JEDCHECKER_UPLOAD_FILE'); ?>">
 							<button class="btn btn-success" type="button" id="extension-upload"
 									onclick="add_validation(); jQuery('#jed_uploading_spinner').removeClass('hidden'); Joomla.submitbutton('uploads.upload')">
