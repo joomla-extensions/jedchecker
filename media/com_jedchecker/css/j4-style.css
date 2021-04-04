@@ -599,6 +599,73 @@
   background-color: #0b1c32;
   border-color: #0b1c32;
 }
+#jedchecker .tooltip {
+  position: absolute;
+  z-index: 1070;
+  display: block;
+  margin: 0;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 1.5;
+  text-align: left;
+  text-align: start;
+  text-decoration: none;
+  text-shadow: none;
+  text-transform: none;
+  letter-spacing: normal;
+  word-break: normal;
+  word-spacing: normal;
+  white-space: normal;
+  line-break: auto;
+  font-size: 0.8rem;
+  word-wrap: break-word;
+  opacity: 0;
+}
+#jedchecker .tooltip.show {
+  opacity: 0.9;
+}
+#jedchecker .tooltip .tooltip-arrow {
+  position: absolute;
+  display: block;
+  width: 0.8rem;
+  height: 0.4rem;
+}
+#jedchecker .tooltip .tooltip-arrow::before {
+  position: absolute;
+  content: "";
+  border-color: transparent;
+  border-style: solid;
+}
+#jedchecker .bs-tooltip-top {
+  padding: 0.4rem 0;
+}
+#jedchecker .bs-tooltip-top .tooltip-arrow {
+  bottom: 0;
+}
+#jedchecker .bs-tooltip-top .tooltip-arrow::before {
+  top: -1px;
+  border-width: 0.4rem 0.4rem 0;
+  border-top-color: #000;
+}
+#jedchecker .bs-tooltip-bottom {
+  padding: 0.4rem 0;
+}
+#jedchecker .bs-tooltip-bottom .tooltip-arrow {
+  top: 0;
+}
+#jedchecker .bs-tooltip-bottom .tooltip-arrow::before {
+  bottom: -1px;
+  border-width: 0 0.4rem 0.4rem;
+  border-bottom-color: #000;
+}
+#jedchecker .tooltip-inner {
+  max-width: 200px;
+  padding: 0.25rem 0.5rem;
+  color: #fff;
+  text-align: center;
+  background-color: #000;
+  border-radius: 0.25rem;
+}
 #jedchecker .d-flex {
   display: flex !important;
 }
@@ -607,6 +674,15 @@
 }
 #jedchecker .justify-content-between {
   justify-content: space-between !important;
+}
+#jedchecker .mt-3 {
+  margin-top: 1rem !important;
+}
+#jedchecker .me-1 {
+  margin-right: 0.25rem !important;
+}
+#jedchecker .mb-1 {
+  margin-bottom: 0.25rem !important;
 }
 #jedchecker .ps-1 {
   padding-left: 0.25rem !important;
@@ -738,6 +814,17 @@
 #jedchecker .form-control:disabled {
   border: 0;
   box-shadow: none;
+}
+#jedchecker [role=tooltip]:not(.show) {
+  z-index: 1070;
+  display: none;
+  max-width: 100%;
+  padding: 0.5em;
+  margin: 0.25em;
+  color: #fff;
+  text-align: start;
+  background: #000;
+  border-radius: 0.2rem;
 }
 #jedchecker * {
   box-sizing: border-box;

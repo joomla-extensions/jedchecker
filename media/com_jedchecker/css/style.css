@@ -72,3 +72,6 @@
 #jedchecker .collapse {
 	height: inherit;
 }
+#jedchecker .tooltip > .tooltip-arrow {
+  border-style: none;
+}

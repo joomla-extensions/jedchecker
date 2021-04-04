@@ -83,3 +83,7 @@ Joomla.submitbutton = function (task) {
 		Joomla.submitform(task);
 	}
 }
+
+jQuery(document).ready(function() {
+	new bootstrap.Tooltip(document.getElementById('jedchecker'), {container: 'body', selector: '[data-bs-toggle=tooltip]'});
+});
