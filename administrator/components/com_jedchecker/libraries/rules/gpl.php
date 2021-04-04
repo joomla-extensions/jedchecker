@@ -13,14 +13,13 @@ defined('_JEXEC') or die('Restricted access');
 
 
 // Include the rule base class
-require_once(JPATH_COMPONENT_ADMINISTRATOR . '/models/rule.php');
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/models/rule.php';
 
 
 /**
  * class JedcheckerRulesGpl
  *
- * This class searches all files for the _JEXEC check
- * which prevents direct file access.
+ * This class searches all files for the GPL/compatible licenses
  *
  * @since  1.0
  */
@@ -52,14 +51,14 @@ class JedcheckerRulesGpl extends JEDcheckerRule
 	 *
 	 * @var    string
 	 */
-	protected $regex_gpl_licenses;
+	protected $regexGPLLicenses;
 
 	/**
 	 * Regular expression to match GPL-compatible licenses.
 	 *
 	 * @var    string
 	 */
-	protected $regex_compat_licenses;
+	protected $regexCompatLicenses;
 
 	/**
 	 * Initiates the file search and check
@@ -88,28 +87,31 @@ class JedcheckerRulesGpl extends JEDcheckerRule
 
 	/**
 	 * Initialization (prepare regular expressions)
+	 *
+	 * @return    void
 	 */
 	protected function init()
 	{
-		$gpl_licenses = (array) file(__DIR__ . '/gpl/gnu.txt');
-		$this->regex_gpl_licenses = $this->generate_regexp($gpl_licenses);
+		$GPLLicenses = (array) file(__DIR__ . '/gpl/gnu.txt');
+		$this->regexGPLLicenses = $this->generateRegexp($GPLLicenses);
 
-		$compat_licenses = (array) file(__DIR__ . '/gpl/compat.txt');
+		$compatLicenses = (array) file(__DIR__ . '/gpl/compat.txt');
 
-		$extra_licenses = $this->params->get('constants');
-		$extra_licenses = explode(',', $extra_licenses);
+		$extraLicenses = $this->params->get('constants');
+		$extraLicenses = explode(',', $extraLicenses);
 
-		$compat_licenses = array_merge($compat_licenses, $extra_licenses);
+		$compatLicenses = array_merge($compatLicenses, $extraLicenses);
 
-		$this->regex_compat_licenses = $this->generate_regexp($compat_licenses);
+		$this->regexCompatLicenses = $this->generateRegexp($compatLicenses);
 	}
 
 	/**
 	 * Generate regular expression to match the given list of license names
-	 * @param $lines
+	 * @param   array $lines List of license names
+	 *
 	 * @return string
 	 */
-	protected function generate_regexp($lines)
+	protected function generateRegexp($lines)
 	{
 		$titles = array();
 		$ids = array();
@@ -117,17 +119,19 @@ class JedcheckerRulesGpl extends JEDcheckerRule
 		foreach ($lines as $line)
 		{
 			$line = trim($line);
+
 			if ($line === '' || $line[0] === '#')
 			{
-				// skip empty and commented lines
+				// Skip empty and commented lines
 				continue;
 			}
 
 			$title = $line;
 			if (substr($line, -1, 1) === ')')
 			{
-				// extract identifier
+				// Extract identifier
 				$pos = strrpos($line, '(');
+
 				if ($pos !== false)
 				{
 					$title = trim(substr($line, 0, $pos));
@@ -146,7 +150,7 @@ class JedcheckerRulesGpl extends JEDcheckerRule
 			{
 				$title = preg_quote($title, '#');
 
-				// expand vN.N to different version formats
+				// Expand vN.N to different version formats
 				$title = preg_replace('/(?<=\S)\s+v(?=\d)/', ',?\s+(?:v\.?\s*|version\s+)?', $title);
 
 				$title = preg_replace('/\s+/', '\s+', $title);
@@ -182,7 +186,7 @@ class JedcheckerRulesGpl extends JEDcheckerRule
 	 */
 	protected function find($file)
 	{
-		// check the file is empty (i.e. comments-only)
+		// Check the file is empty (i.e. comments-only)
 		$content = php_strip_whitespace($file);
 
 		if (preg_match('#^<\?php\s+$#', $content))
@@ -195,26 +199,26 @@ class JedcheckerRulesGpl extends JEDcheckerRule
 		// Remove leading "*" characters from phpDoc-like comments
 		$content = preg_replace('/^\s*\*/m', '', $content);
 
-		if (preg_match($this->regex_gpl_licenses, $content, $match, PREG_OFFSET_CAPTURE))
+		if (preg_match($this->regexGPLLicenses, $content, $match, PREG_OFFSET_CAPTURE))
 		{
-			$line_no = substr_count($content, "\n", 0, $match[0][1]) + 1;
+			$lineno = substr_count($content, "\n", 0, $match[0][1]) + 1;
 			$this->report->addInfo(
 				$file,
 				JText::_('COM_JEDCHECKER_PH1_LICENSE_FOUND'),
-				$line_no,
+				$lineno,
 				$match[0][0]
 			);
 
 			return true;
 		}
 
-		if (preg_match($this->regex_compat_licenses, $content, $match, PREG_OFFSET_CAPTURE))
+		if (preg_match($this->regexCompatLicenses, $content, $match, PREG_OFFSET_CAPTURE))
 		{
-			$line_no = substr_count($content, "\n", 0, $match[0][1]) + 1;
+			$lineno = substr_count($content, "\n", 0, $match[0][1]) + 1;
 			$this->report->addInfo(
 				$file,
 				JText::_('COM_JEDCHECKER_GPL_COMPATIBLE_LICENSE_WAS_FOUND'),
-				$line_no,
+				$lineno,
 				$match[0][0]
 			);
 
