@@ -248,21 +248,21 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 			// Check for unquoted values
 			if (strlen($value) < 2 || ($value[0] !== '"' && substr($value, -1) !== '"'))
 			{
-				$this->report->addError($file, JText::_('COM_JEDCHECKER_LANG_TRANSLATION_QUOTES'), $startLineno, $line);
+				$this->report->addWarning($file, JText::_('COM_JEDCHECKER_LANG_TRANSLATION_QUOTES'), $startLineno, $line);
 				continue;
 			}
 
 			if ($value[0] !== '"')
 			{
 				$msg = JText::_('COM_JEDCHECKER_LANG_TRANSLATION_QUOTES') . ' ' . JText::_('COM_JEDCHECKER_LANG_TRANSLATION_MISSED_LEFT_QUOTE');
-				$this->report->addError($file, $msg, $startLineno, $line);
+				$this->report->addWarning($file, $msg, $startLineno, $line);
 				continue;
 			}
 
 			if (substr($value, -1) !== '"')
 			{
 				$msg = JText::_('COM_JEDCHECKER_LANG_TRANSLATION_QUOTES') . ' ' . JText::_('COM_JEDCHECKER_LANG_TRANSLATION_MISSED_RIGHT_QUOTE');
-				$this->report->addError($file, $msg, $startLineno, $line);
+				$this->report->addWarning($file, $msg, $startLineno, $line);
 				continue;
 			}
 
