@@ -1,0 +1,68 @@
+{
+  "nodes": {
+    "extension": {
+      "name": "!",
+      "tag": "!",
+      "creationDate": "=",
+      "author": "=",
+      "authorEmail": "=",
+      "authorUrl": "=",
+      "copyright": "=",
+      "version": "!",
+      "description": "=",
+      "license": "?",
+      "files": "!",
+      "media": "?",
+      "fonts": "?",
+      "update": "?",
+      "updateservers": "?",
+      "dlid": "?"
+    },
+    "files": {
+      "filename": "*",
+      "files:file": "*",
+      "folder": "*"
+    },
+    "media": {
+      "filename": "*",
+      "media:file": "*",
+      "folder": "*"
+    },
+    "fonts": {
+      "filename": "*",
+      "fonts:file": "*",
+      "folder": "*"
+    },
+    "updateservers": {
+      "server": "*"
+    }
+  },
+  "attributes": {
+    "extension": [
+      "client",
+      "method",
+      "overwrite",
+      "type",
+      "version"
+    ],
+    "files": [
+      "folder"
+    ],
+    "media": [
+      "destination",
+      "folder"
+    ],
+    "fonts": [
+      "folder"
+    ],
+    "server": [
+      "name",
+      "priority",
+      "type"
+    ],
+    "dlid": [
+      "prefix",
+      "suffix"
+    ]
+  }
+}
