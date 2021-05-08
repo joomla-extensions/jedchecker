@@ -313,7 +313,7 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 	{
 		$domain = (strpos($url, '//') === false) ? $url : parse_url(trim($url), PHP_URL_HOST);
 
-		if (stripos($domain, 'joom') !== false)
+		if (stripos($domain, 'joomla') !== false)
 		{
 			// Extensions that use "Joomla" or a derivative of Joomla in the domain name need to be licensed by OSM
 			$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_URL_JOOMLA_DERIVATIVE', $url, 'https://tm.joomla.org/approved-domains.html'));
