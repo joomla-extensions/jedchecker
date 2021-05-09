@@ -128,6 +128,12 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 	protected function find($file)
 	{
 		$origContent = (array) file($file);
+
+		if (count($origContent) === 0)
+		{
+			return false;
+		}
+
 		$cleanContent = preg_split("/(?:\r\n|\n|\r)(?!$)/", $this->cleanNonCode($file));
 
 		$result = false;
