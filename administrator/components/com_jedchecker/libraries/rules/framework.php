@@ -89,8 +89,6 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 			}
 		}
 
-		$this->leftover_folders = explode(',', $leftover_folders);
-
 		$files = JFolder::files($this->basedir, '\.php$', true, true);
 
 		foreach ($files as $file)
