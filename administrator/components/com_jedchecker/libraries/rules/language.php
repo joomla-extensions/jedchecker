@@ -44,6 +44,8 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 	 */
 	protected $description = 'COM_JEDCHECKER_LANG_DESC';
 
+	protected $langKeys = array();
+
 	/**
 	 * Initiates the search and check
 	 *
@@ -61,11 +63,35 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 			   (where "tag" is a language code, e.g. en-GB, and "extension" is the extension element name, e.g. com_content)
 			   Joomla!4 allows to skip tag prefix inside of the tag directory
 			   (i.e. to name files as extension.ini and extension.sys.ini) */
-			if (preg_match('#(?:^|/)([a-z]{2,3}-[A-Z]{2})[./]\w+(?:\.sys)?\.ini$#', $file, $match))
+			if (preg_match('#(?:^|/)([a-z]{2,3}-[A-Z]{2})(?:[./]\w+)?(?:\.sys)?\.ini$#', $file, $match))
 			{
+				$tag = $match[1];
+
 				// Try to validate the file
-				$this->find($file, $match[1]);
+				$this->find($file, $tag);
+
+				if ($tag === 'en-GB')
+				{
+					$this->populateLangKeys($file);
+				}
 			}
+		}
+
+		// Load default Joomla's translations
+		$files = version_compare(JVERSION, '4.0', '>=') ? array('joomla.ini', 'lib_joomla.ini') : array('en-GB.ini', 'en-GB.lib_joomla.ini');
+
+		foreach ($files as $file)
+		{
+			$this->populateLangKeys(JPATH_ROOT . '/language/en-GB/' . $file);
+			$this->populateLangKeys(JPATH_ADMINISTRATOR . '/language/en-GB/' . $file);
+		}
+
+		// Check JText usage
+		$files = JFolder::files($this->basedir, '\.php$', true, true);
+
+		foreach ($files as $file)
+		{
+			$this->findJText($file);
 		}
 	}
 
@@ -326,6 +352,60 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 		}
 
 		// All checks passed. Return true
+		return true;
+	}
+
+	/**
+	 * Appends keys from INI file to the list
+	 *
+	 * @param    string    $file
+	 *
+	 * @return   void
+	 */
+	protected function populateLangKeys($file)
+	{
+		if (is_file($file))
+		{
+			$data = parse_ini_file($file);
+
+			if (is_array($data))
+			{
+				$this->langKeys = array_replace($this->langKeys, $data);
+			}
+		}
+	}
+
+	/**
+	 * Reads PHP files and checks JText arguments
+	 *
+	 * @param   string  $file  - The path to the file
+	 *
+	 * @return boolean True on success, otherwise False.
+	 */
+	protected function findJText($file)
+	{
+		$content = file_get_contents($file);
+
+		// Search for Text/JText calls
+		if (!preg_match_all('/\bJ?Text::(?:_|s?printf|alt|plural|script)\s*\(\s*([\'])([^\'"]+)\1\s*[\),]/', $content, $matches, PREG_OFFSET_CAPTURE))
+		{
+			return true;
+		}
+
+		$lines = explode("\n", $content);
+
+		// Check all keys exist in INI files
+		foreach ($matches[2] as $match)
+		{
+			$key = $match[0];
+
+			if (!isset($this->langKeys[$key]))
+			{
+				$lineno = substr_count($content, "\n", 0, $match[1]);
+				$this->report->addInfo($file, JText::sprintf('COM_JEDCHECKER_LANG_UNKNOWN_KEY_IN_CODE', htmlspecialchars($key)), $lineno + 1, $lines[$lineno]);
+			}
+		}
+
 		return true;
 	}
 }
