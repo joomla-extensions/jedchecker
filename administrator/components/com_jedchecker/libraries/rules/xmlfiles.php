@@ -52,6 +52,13 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 	protected $errors;
 
 	/**
+	 * Manifest's directory
+	 *
+	 * @var    string
+	 */
+	protected $basedir;
+
+	/**
 	 * Initiates the search and check
 	 *
 	 * @return    void
@@ -97,9 +104,9 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 
 		// Check declared files and folders do exist
 
-		$basedir = dirname($file) . '/';
+		$this->basedir = dirname($file) . '/';
 
-		$sitedir = $basedir;
+		$sitedir = '';
 
 		// Check: files[folder] (filename|folder)*
 		// ( for package: files[folder] (file|folder)* )
@@ -108,7 +115,7 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 			$node = $xml->files;
 
 			// Get path to site files from "folder" attribute
-			$sitedir = $basedir . (isset($node['folder']) ? $node['folder'] . '/' : '');
+			$sitedir = isset($node['folder']) ? $node['folder'] . '/' : '';
 
 			$this->checkFiles($node->filename, $sitedir);
 			$this->checkFiles($node->file, $sitedir);
@@ -119,7 +126,7 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 		if (isset($xml->media))
 		{
 			$node = $xml->media;
-			$dir = $basedir . (isset($node['folder']) ? $node['folder'] . '/' : '');
+			$dir = isset($node['folder']) ? $node['folder'] . '/' : '';
 
 			$this->checkFiles($node->filename, $dir);
 			$this->checkFiles($node->file, $dir);
@@ -130,7 +137,7 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 		if (isset($xml->fonts))
 		{
 			$node = $xml->fonts;
-			$dir = $basedir . (isset($node['folder']) ? $node['folder'] . '/' : '');
+			$dir = isset($node['folder']) ? $node['folder'] . '/' : '';
 
 			$this->checkFiles($node->filename, $dir);
 			$this->checkFiles($node->file, $dir);
@@ -141,12 +148,12 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 		if (isset($xml->languages))
 		{
 			$node = $xml->languages;
-			$dir = $basedir . (isset($node['folder']) ? $node['folder'] . '/' : '');
+			$dir = isset($node['folder']) ? $node['folder'] . '/' : '';
 
 			$this->checkFiles($node->language, $dir);
 		}
 
-		$admindir = $basedir;
+		$admindir = '';
 
 		// Check: administration files[folder] (filename|file|folder)*
 		if (isset($xml->administration->files))
@@ -154,7 +161,7 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 			$node = $xml->administration->files;
 
 			// Get path to admin files from "folder" attribute
-			$admindir = $basedir . (isset($node['folder']) ? $node['folder'] . '/' : '');
+			$admindir = isset($node['folder']) ? $node['folder'] . '/' : '';
 
 			$this->checkFiles($node->filename, $admindir);
 			$this->checkFiles($node->file, $admindir);
@@ -165,7 +172,7 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 		if (isset($xml->administration->media))
 		{
 			$node = $xml->administration->media;
-			$dir = $basedir . (isset($node['folder']) ? $node['folder'] . '/' : '');
+			$dir = isset($node['folder']) ? $node['folder'] . '/' : '';
 
 			$this->checkFiles($node->filename, $dir);
 			$this->checkFiles($node->file, $dir);
@@ -176,7 +183,7 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 		if (isset($xml->administration->languages))
 		{
 			$node = $xml->administration->languages;
-			$dir = $basedir . (isset($node['folder']) ? $node['folder'] . '/' : '');
+			$dir = isset($node['folder']) ? $node['folder'] . '/' : '';
 
 			$this->checkFiles($node->language, $dir);
 		}
@@ -186,7 +193,7 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 		if (isset($xml->fileset->files))
 		{
 			$node = $xml->fileset->files;
-			$dir = $basedir . (isset($node['folder']) ? $node['folder'] . '/' : '');
+			$dir = isset($node['folder']) ? $node['folder'] . '/' : '';
 
 			$this->checkFiles($node->filename, $dir);
 			$this->checkFiles($node->file, $dir);
@@ -196,7 +203,7 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 		// Check file: scriptfile
 		if (isset($xml->scriptfile))
 		{
-			$this->checkFiles($xml->scriptfile, $basedir);
+			$this->checkFiles($xml->scriptfile);
 		}
 
 		// Check files: install sql file*
@@ -310,7 +317,7 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 						// Convert absolute path to relative (if matches extension path)
 						if (strpos($folder, $extensionPath) === 0)
 						{
-							$folder = $sitedir . substr($folder, strlen($extensionPath));
+							$folder = $this->basedir . $sitedir . substr($folder, strlen($extensionPath));
 
 							if (!is_dir($folder))
 							{
@@ -327,7 +334,7 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 		{
 			$folder = (string) $xml->namespace['path'];
 
-			if (!is_dir($admindir . $folder) && !is_dir($sitedir . $folder))
+			if (!is_dir($this->basedir . $admindir . $folder) && !is_dir($this->basedir . $sitedir . $folder))
 			{
 				$this->errors[] = JText::sprintf('COM_JEDCHECKER_XML_FILES_FOLDER_NOT_FOUND', $folder);
 			}
@@ -350,11 +357,11 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 	 *
 	 * @return  void
 	 */
-	protected function checkFiles($files, $dir)
+	protected function checkFiles($files, $dir = '')
 	{
 		foreach ($files as $file)
 		{
-			$filename = $dir . $file;
+			$filename = $this->basedir . $dir . $file;
 
 			if (is_file($filename))
 			{
@@ -367,7 +374,7 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 				continue;
 			}
 
-			$this->errors[] = JText::sprintf('COM_JEDCHECKER_XML_FILES_FILE_NOT_FOUND', (string) $file);
+			$this->errors[] = JText::sprintf('COM_JEDCHECKER_XML_FILES_FILE_NOT_FOUND', $dir . $file);
 		}
 	}
 
@@ -379,13 +386,13 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 	 *
 	 * @return  void
 	 */
-	protected function checkFolders($folders, $dir)
+	protected function checkFolders($folders, $dir = '')
 	{
 		foreach ($folders as $folder)
 		{
-			if (!is_dir($dir . $folder))
+			if (!is_dir($this->basedir . $dir . $folder))
 			{
-				$this->errors[] = JText::sprintf('COM_JEDCHECKER_XML_FILES_FOLDER_NOT_FOUND', (string) $folder);
+				$this->errors[] = JText::sprintf('COM_JEDCHECKER_XML_FILES_FOLDER_NOT_FOUND', $dir . $folder);
 			}
 		}
 	}
