@@ -177,6 +177,18 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 			$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_NON_ASCII', $extensionName));
 		}
 
+		// Extension name shouldn't be too long
+		$nameLen = strlen($extensionName);
+
+		if ($nameLen > 80)
+		{
+			$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_TOO_LONG', $extensionName));
+		}
+		elseif ($nameLen > 40)
+		{
+			$this->report->addWarning($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_TOO_LONG', $extensionName));
+		}
+
 		$this->validateDomain($file, (string) $xml->authorUrl);
 
 		if ($type === 'package' && (string) $xml->packagerurl !== (string) $xml->authorUrl)
