@@ -15,6 +15,9 @@ defined('_JEXEC') or die('Restricted access');
 // Include the rule base class
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/models/rule.php';
 
+// Include the helper class
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/libraries/helper.php';
+
 /**
  * JedcheckerRulesJamss
  *
@@ -306,7 +309,7 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 			}
 			else
 			{
-				$content = $this->cleanComments($content);
+				$content = JEDCheckerHelper::cleanPhpCode($content, JEDCheckerHelper::CLEAN_COMMENTS);
 
 				// Do a search for fingerprints
 				foreach ($patterns As $pattern)
@@ -432,83 +435,5 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 	{
 		$info = !empty($info) ? sprintf($this->params->get('info'), htmlentities($info, ENT_QUOTES)) : '';
 		$this->report->addWarning($path, $info . $title, $line, $code);
-	}
-
-	/**
-	 * @param   string $content
-	 *
-	 * @return  string
-	 */
-	private function cleanComments($content)
-	{
-		if (!preg_match('/<\?php\s/i', $content, $match, PREG_OFFSET_CAPTURE))
-		{
-			// No PHP code found
-			return $content;
-		}
-
-		$pos = $match[0][1];
-		$cleanContent = substr($content, 0, $pos);
-
-		while (preg_match('/(?:[\'"]|\/\*|\/\/|\?>)/', $content, $match, PREG_OFFSET_CAPTURE, $pos))
-		{
-			$foundPos = $match[0][1];
-			$cleanContent .= substr($content, $pos, $foundPos - $pos);
-			$pos = $foundPos;
-
-			switch ($match[0][0])
-			{
-				case '"':
-				case "'":
-					$q = $match[0][0];
-
-					if (!preg_match("/$q(?>[^$q\\\\]+|\\\\.)*$q/As", $content, $match, 0, $pos))
-					{
-						return $cleanContent . substr($content, $pos);
-					}
-
-					$cleanContent .= $match[0];
-					$pos += strlen($match[0]);
-					break;
-
-				case '/*':
-					$cleanContent .= '/*';
-					$pos += 2;
-
-					$endPos = strpos($content, '*/', $pos);
-
-					if ($endPos === false)
-					{
-						return $cleanContent;
-					}
-
-					$cleanContent .= str_repeat("\n", substr_count(substr($content, $pos, $endPos - $pos), "\n")) . '*/';
-					$pos = $endPos + 2;
-
-					break;
-
-				case '//':
-					$pos += strcspn($content, "\r\n", $pos);
-					break;
-
-				case '?>':
-					$cleanContent .= '?>';
-					$pos += 2;
-
-					if (!preg_match('/<\?php\s/i', $content, $match, PREG_OFFSET_CAPTURE, $pos))
-					{
-						// No PHP code found (up to the end of the file)
-						return $cleanContent . substr($content, $pos);
-					}
-
-					$foundPos = $match[0][1];
-					$cleanContent .= substr($content, $pos, $foundPos - $pos) . $match[0][0];
-					$pos = $foundPos + strlen($match[0][0]);
-
-					break;
-			}
-		}
-
-		return $cleanContent;
 	}
 }
