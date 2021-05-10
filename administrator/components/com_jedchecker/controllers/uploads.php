@@ -54,7 +54,7 @@ class JedcheckerControllerUploads extends JControllerLegacy
 	public function upload()
 	{
 		$appl  = JFactory::getApplication();
-		$input = JFactory::getApplication()->input;
+		$input = $appl->input;
 
 		// Check the sent token by the form
 		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
@@ -164,7 +164,7 @@ class JedcheckerControllerUploads extends JControllerLegacy
 			// Scan unzipped folders if we find zip file -> unzip them as well
 			$this->unzipAll($this->pathUnzipped . '/' . $file[0]);
 			$message = 'COM_JEDCHECKER_UNZIP_SUCCESS';
-			JFactory::getApplication()->enqueueMessage(JText::_($message));
+			$appl->enqueueMessage(JText::_($message));
 		}
 		else
 		{
