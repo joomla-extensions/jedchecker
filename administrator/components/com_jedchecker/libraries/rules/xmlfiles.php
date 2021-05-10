@@ -13,6 +13,9 @@ defined('_JEXEC') or die('Restricted access');
 // Include the rule base class
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/models/rule.php';
 
+// Include the helper class
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/libraries/helper.php';
+
 
 /**
  * class JedcheckerRulesXMLFiles
@@ -229,79 +232,24 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 		{
 			$attributes = array('addfieldpath', 'addformpath', 'addrulepath');
 
+			$element = JEDCheckerHelper::getElementName($xml);
 			$extensionPath = false;
 
-			// @TODO move element name extraction into a helper (similar code is used in XMLinfo rule)
-			switch ((string) $xml['type'])
+			$type = (string) $xml['type'];
+
+			switch ($type)
 			{
 				case 'module':
-					if (isset($xml->element))
-					{
-						$element = (string) $xml->element;
-					}
-					else
-					{
-						$element = (string) $xml->name;
-
-						if (isset($xml->files))
-						{
-							foreach ($xml->files->children() as $child)
-							{
-								if (isset($child['module']))
-								{
-									$element = (string) $child['module'];
-									break;
-								}
-							}
-						}
-					}
-
-					$element = strtolower(JFilterInput::getInstance()->clean($element, 'cmd'));
-
 					$extensionPath = 'modules/' . $element . '/';
 					break;
 
 				case 'plugin':
-					if (isset($xml->element))
-					{
-						$element = (string) $xml->element;
-					}
-					else
-					{
-						$element = (string) $xml->name;
-
-						if (isset($xml->files))
-						{
-							foreach ($xml->files->children() as $child)
-							{
-								if (isset($child['plugin']))
-								{
-									$element = (string) $child['plugin'];
-									break;
-								}
-							}
-						}
-					}
-
-					$element = strtolower(JFilterInput::getInstance()->clean($element, 'cmd'));
-
 					$group = (string) $xml['group'];
 
 					$extensionPath = 'plugins/' . $group . '/' . $element . '/';
 					break;
 
 				case 'template':
-					if (isset($xml->element))
-					{
-						$element = (string) $xml->element;
-					}
-					else
-					{
-						$element = (string) $xml->name;
-					}
-
-					$element = strtolower(JFilterInput::getInstance()->clean($element, 'cmd'));
-
 					$extensionPath = 'templates/' . $element . '/';
 			}
 
