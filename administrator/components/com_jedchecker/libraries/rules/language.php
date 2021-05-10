@@ -402,7 +402,7 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 		// Check all keys exist in INI files
 		foreach ($matches[2] as $match)
 		{
-			$key = $match[0];
+			$key = strtoupper($match[0]);
 
 			if (!isset($this->langKeys[$key]))
 			{
