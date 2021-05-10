@@ -15,6 +15,9 @@ defined('_JEXEC') or die('Restricted access');
 // Include the rule base class
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/models/rule.php';
 
+// Include the helper class
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/libraries/helper.php';
+
 /**
  * class JedcheckerRulesEncoding
  *
@@ -46,12 +49,30 @@ class JedcheckerRulesEncoding extends JEDcheckerRule
 	protected $description = 'COM_JEDCHECKER_RULE_ENCODING_DESC';
 
 	/**
+	 * Regular expression to look for encoding functions.
+	 *
+	 * @var    string
+	 */
+	protected $encodingsRegex;
+
+	/**
 	 * Initiates the file search and check
 	 *
 	 * @return    void
 	 */
 	public function check()
 	{
+		// Get the functions to look for
+		$encodings = explode(',', $this->params->get('encodings'));
+
+		// Prepare regex
+		foreach ($encodings as $i => $encoding)
+		{
+			$encodings[$i] = preg_quote(trim($encoding), '/');
+		}
+
+		$this->encodingsRegex = '/' . implode('|', $encodings) . '/i';
+
 		// Find all php files of the extension
 		$files = JFolder::files($this->basedir, '\.php$', true, true);
 
@@ -76,27 +97,23 @@ class JedcheckerRulesEncoding extends JEDcheckerRule
 	 */
 	protected function find($file)
 	{
-		$content = (array) file($file);
+		$content = file_get_contents($file);
 
-		// Get the functions to look for
-		$encodings = explode(',', $this->params->get('encodings'));
-		$encodings = array_map('trim', $encodings);
+		// Exclude comments
+		$content = JEDCheckerHelper::cleanPhpCode(
+			$content,
+			JEDCheckerHelper::CLEAN_HTML | JEDCheckerHelper::CLEAN_COMMENTS
+		);
+		$content = JEDCheckerHelper::splitLines($content);
 
 		$found = false;
 
 		foreach ($content as $i => $line)
 		{
-			foreach ($encodings as $encoding)
+			if (preg_match($this->encodingsRegex, $line))
 			{
-				// Search for "base64"
-				$pos_1 = stripos($line, $encoding);
-
-				if ($pos_1 !== false)
-				{
-					$found = true;
-					$this->report->addWarning($file, JText::_('COM_JEDCHECKER_ERROR_ENCODING'), $i + 1, $line);
-					break;
-				}
+				$found = true;
+				$this->report->addWarning($file, JText::_('COM_JEDCHECKER_ERROR_ENCODING'), $i + 1, $line);
 			}
 		}
 
