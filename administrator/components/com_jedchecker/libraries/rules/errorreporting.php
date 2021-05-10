@@ -14,6 +14,9 @@ defined('_JEXEC') or die('Restricted access');
 // Include the rule base class
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/models/rule.php';
 
+// Include the helper class
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/libraries/helper.php';
+
 /**
  * JedcheckerRulesErrorreporting
  *
@@ -46,6 +49,12 @@ class JedcheckerRulesErrorreporting extends JEDcheckerRule
 	 */
 	protected $description = 'COM_JEDCHECKER_RULE_ERRORREPORTING_DESC';
 
+	/**
+	 * Regular expression to look for error_reporting calls.
+	 *
+	 * @var    string
+	 */
+	protected $errorreportingRegex;
 
 	/**
 	 * Initiates the file search and check
@@ -54,6 +63,17 @@ class JedcheckerRulesErrorreporting extends JEDcheckerRule
 	 */
 	public function check()
 	{
+		// Get the functions to look for
+		$codes = explode(',', $this->params->get('errorreportings'));
+
+		// Prepare regex
+		foreach ($codes as $i => $encoding)
+		{
+			$codes[$i] = preg_quote(trim($encoding), '/');
+		}
+
+		$this->errorreportingRegex = '/' . implode('|', $codes) . '/i';
+
 		// Find all php files of the extension
 		$files = JFolder::files($this->basedir, '\.php$', true, true);
 
@@ -78,26 +98,23 @@ class JedcheckerRulesErrorreporting extends JEDcheckerRule
 	 */
 	protected function find($file)
 	{
-		$content = (array) file($file);
+		$content = file_get_contents($file);
 
-		// Get the functions to look for
-		$errorreportings = explode(',', $this->params->get('errorreportings'));
-		$errorreportings = array_map('trim', $errorreportings);
+		// Exclude non-code content
+		$content = JEDCheckerHelper::cleanPhpCode(
+			$content,
+			JEDCheckerHelper::CLEAN_HTML | JEDCheckerHelper::CLEAN_COMMENTS | JEDCheckerHelper::CLEAN_STRINGS
+		);
+		$content = JEDCheckerHelper::splitLines($content);
 
 		$found = false;
 
 		foreach ($content as $i => $line)
 		{
-			foreach ($errorreportings as $errorreporting)
+			if (preg_match($this->errorreportingRegex, $line))
 			{
-				$pos_1 = stripos($line, $errorreporting);
-
-				if ($pos_1 !== false)
-				{
-					$found = true;
-					$this->report->addWarning($file, JText::_('COM_JEDCHECKER_ERROR_ERRORREPORTING'), $i + 1, $line);
-					break;
-				}
+				$found = true;
+				$this->report->addWarning($file, JText::_('COM_JEDCHECKER_ERROR_ERRORREPORTING'), $i + 1, $line);
 			}
 		}
 
