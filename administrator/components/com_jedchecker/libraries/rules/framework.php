@@ -14,6 +14,9 @@ defined('_JEXEC') or die('Restricted access');
 // Include the rule base class
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/models/rule.php';
 
+// Include the helper class
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/libraries/helper.php';
+
 /**
  * JedcheckerRulesFramework
  *
@@ -132,7 +135,12 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 			return false;
 		}
 
-		$cleanContent = preg_split("/(?:\r\n|\n|\r)(?!$)/", $this->cleanNonCode($file));
+		$content = file_get_contents($file);
+		$content = JEDCheckerHelper::cleanPhpCode(
+			$content,
+			JEDCheckerHelper::CLEAN_HTML | JEDCheckerHelper::CLEAN_COMMENTS | JEDCheckerHelper::CLEAN_STRINGS
+		);
+		$cleanContent = JEDCheckerHelper::splitLines($content);
 
 		$result = false;
 
@@ -145,98 +153,6 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 		}
 
 		return $result;
-	}
-
-	/**
-	 * @param   string $file
-	 *
-	 * @return  string
-	 */
-	protected function cleanNonCode($file)
-	{
-		$content = file_get_contents($file);
-
-		if (!preg_match('/<\?php\s/i', $content, $match, PREG_OFFSET_CAPTURE))
-		{
-			// No PHP code found
-			return '';
-		}
-
-		$pos = $match[0][1];
-		$cleanContent = $this->removeContent(substr($content, 0, $pos));
-
-		while (preg_match('/(?:[\'"]|\/\*|\/\/|\?>)/', $content, $match, PREG_OFFSET_CAPTURE, $pos))
-		{
-			$foundPos = $match[0][1];
-			$cleanContent .= substr($content, $pos, $foundPos - $pos);
-			$pos = $foundPos;
-
-			switch ($match[0][0])
-			{
-				case '"':
-				case "'":
-					$q = $match[0][0];
-
-					if (!preg_match("/$q(?>[^$q\\\\]+|\\\\.)*$q/As", $content, $match, 0, $pos))
-					{
-						return $cleanContent . $q;
-					}
-
-					$cleanContent .= $q . $this->removeContent($match[0]) . $q;
-					$pos += strlen($match[0]);
-					break;
-
-				case '/*':
-					$cleanContent .= '/*';
-					$pos += 2;
-
-					$endPos = strpos($content, '*/', $pos);
-
-					if ($endPos === false)
-					{
-						return $cleanContent;
-					}
-
-					$cleanContent .= $this->removeContent(substr($content, $pos, $endPos - $pos)) . '*/';
-					$pos = $endPos + 2;
-
-					break;
-
-				case '//':
-					$pos += strcspn($content, "\r\n", $pos);
-					break;
-
-				case '?>':
-					$cleanContent .= '?>';
-					$pos += 2;
-
-					if (!preg_match('/<\?php\s/i', $content, $match, PREG_OFFSET_CAPTURE, $pos))
-					{
-						// No PHP code found (up to the end of the file)
-						return $cleanContent;
-					}
-
-					$foundPos = $match[0][1];
-					$cleanContent .= $this->removeContent(substr($content, $pos, $foundPos - $pos)) . $match[0][0];
-					$pos = $foundPos + strlen($match[0][0]);
-
-					break;
-			}
-		}
-
-		return $cleanContent;
-	}
-
-	/**
-	 * Remove all text content by keeping newline characters only (to preserve line numbers)
-	 *
-	 * @param   string $content
-	 *
-	 * @return  string
-	 */
-	protected function removeContent($content)
-	{
-		return str_repeat("\n", substr_count($content, "\n"));
 	}
 
 	/**
