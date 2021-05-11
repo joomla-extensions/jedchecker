@@ -220,7 +220,7 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 
 	/**
 	 * @param   SimpleXMLElement  $node        XML node object
-	 * @param   string            $ruleset     rulest name in the DTD array
+	 * @param   string            $ruleset     ruleset name in the DTD array
 	 *
 	 * @return  void
 	 */
