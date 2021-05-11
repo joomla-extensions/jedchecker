@@ -152,15 +152,23 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 			$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_VERSION', $extensionName));
 		}
 
+		// Check for "Joomla" in the name
 		if (stripos($extensionName, 'joomla') === 0)
 		{
 			// An extension name can't start with the word "Joomla"
 			$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_JOOMLA', $extensionName));
 		}
-		elseif (stripos($extensionName, 'joom') !== false)
+		else
 		{
-			// Extensions that use "Joomla" or a derivative of Joomla in the extension name need to be licensed by OSM
-			$this->report->addWarning($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_JOOMLA_DERIVATIVE', $extensionName));
+			$cleanName = preg_replace('/\s+for\s+Joomla!?$/', '', $extensionName);
+
+			if (stripos($cleanName, 'joom') !== false)
+			{
+				// Extensions that use "Joomla" or a derivative of Joomla in the extension name need to be licensed by OSM
+				$this->report->addWarning($file,
+						JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_JOOMLA_DERIVATIVE', $extensionName, 'https://tm.joomla.org/approved-domains.html')
+				);
+			}
 		}
 
 		$this->validateDomain($file, (string) $xml->authorUrl);
