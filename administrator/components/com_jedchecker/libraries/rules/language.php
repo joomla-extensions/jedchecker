@@ -44,6 +44,11 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 	 */
 	protected $description = 'COM_JEDCHECKER_LANG_DESC';
 
+	/**
+	 * Key-value map for language translations
+	 *
+	 * @var    array
+	 */
 	protected $langKeys = array();
 
 	/**
@@ -358,9 +363,9 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 	/**
 	 * Appends keys from INI file to the list
 	 *
-	 * @param    string    $file
+	 * @param   string    $file  Language INI-file name
 	 *
-	 * @return   void
+	 * @return  void
 	 */
 	protected function populateLangKeys($file)
 	{
