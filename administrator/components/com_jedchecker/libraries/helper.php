@@ -24,6 +24,71 @@ abstract class JEDCheckerHelper
 	const CLEAN_STRINGS  = 4;
 
 	/**
+	 * Returns XML manifest files in the package (sorted by depth)
+	 *
+	 * @param   string $basedir Extension's directory
+	 *
+	 * @return  string[]
+	 * @since  3.0
+	 */
+	public static function findManifests($basedir)
+	{
+		// Find all XML files of the extension
+		$files = JFolder::files($basedir, '\.xml$', true, true);
+
+		$excludeList = array();
+
+		foreach ($files as $file)
+		{
+			$xml = simplexml_load_file($file);
+
+			if (!$xml || ($xml->getName() !== 'extension' && $xml->getName() !== 'install'))
+			{
+				// Exclude non-install-manifest XML files
+				$excludeList[] = $file;
+			}
+			elseif ((string) $xml['type'] === 'component' && isset($xml->administration->files['folder']))
+			{
+				// Exclude possible duplicates of manifest in components
+				$excludeList[] = dirname($file) . '/' . trim($xml->administration->files['folder'], ' /') . '/' . basename($file);
+			}
+			elseif ((string) $xml['type'] === 'file' && isset($xml->fileset->files))
+			{
+				// Exclude possible duplicates of file-type extension manifest
+				foreach ($xml->fileset->files as $child)
+				{
+					if (isset($child['folder']))
+					{
+						$excludeList[] = dirname($file) . '/' . trim($child['folder'], ' /') . '/' . basename($file);
+					}
+				}
+			}
+		}
+
+		$files = array_diff($files, $excludeList);
+		usort($files, array(__CLASS__, 'sortPathsCmp'));
+
+		return $files;
+	}
+
+	/**
+	 * Sort directories by depth
+	 *
+	 * @param   string $path1 1st path to compare
+	 * @param   string $path2 2nd path to compare
+	 *
+	 * @return  integer
+	 * @since  3.0
+	 */
+	public static function sortPathsCmp($path1, $path2)
+	{
+		$depth1 = substr_count($path1, '/');
+		$depth2 = substr_count($path2, '/');
+
+		return ($depth1 === $depth2) ? strcmp($path1, $path2) : ($depth1 - $depth2);
+	}
+
+	/**
 	 * Split text into lines
 	 *
 	 * @param   string $content Text to split
