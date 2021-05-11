@@ -140,6 +140,12 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 			$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_RESERVED_KEYWORDS', $extensionName, strtolower($match[0])));
 		}
 
+		// Extension name shouldn't start with extension type prefix
+		if (preg_match('/^\s*(?:mod|com|plg|tpl|pkg)_/i', $extensionName))
+		{
+			$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_PREFIXED', $extensionName));
+		}
+
 		// NM5 - Version in name/title
 		if (preg_match('/(?:\bversion\b|\d\.\d)/i', $extensionName))
 		{
