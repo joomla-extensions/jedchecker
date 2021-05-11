@@ -16,6 +16,9 @@ defined('_JEXEC') or die('Restricted access');
 // Include the rule base class
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/models/rule.php';
 
+// Include the helper class
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/libraries/helper.php';
+
 
 /**
  * class JedcheckerRulesXMLinfo
@@ -237,40 +240,10 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 	 */
 	protected function loadExtensionLanguage($xml, $langDir, $langTag = 'en-GB')
 	{
-		$type = (string) $xml['type'];
-
 		// Get extension's element name (simulates work of Joomla's installer)
+		$extension = JEDCheckerHelper::getElementName($xml);
 
-		// Firstly, check for <element> node
-		if (isset($xml->element))
-		{
-			$extension = (string) $xml->element;
-		}
-		else
-		{
-			// Otherwise, use <name> node or plugin/module attribute in the <files> section
-			$extension = (string) $xml->name;
-
-			if (isset($xml->files))
-			{
-				foreach ($xml->files->children() as $child)
-				{
-					if (isset($child[$type]))
-					{
-						$extension = (string) $child[$type];
-					}
-				}
-			}
-		}
-
-		// Filter extension's element name
-		$extension = strtolower(JFilterInput::getInstance()->clean($extension, 'cmd'));
-
-		// Component's element name starts with com_
-		if ($type === 'component' && strpos($extension, 'com_') !== 0)
-		{
-			$extension = 'com_' . $extension;
-		}
+		$type = (string) $xml['type'];
 
 		// Plugin's element name starts with plg_
 		if ($type === 'plugin' && isset($xml['group']) && strpos($extension, 'plg_') !== 0)
