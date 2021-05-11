@@ -171,6 +171,12 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 			}
 		}
 
+		// Check extension name consists of ASCII characters only
+		if (preg_match('/[^\x20-\x7E]/', $extensionName))
+		{
+			$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_NON_ASCII', $extensionName));
+		}
+
 		$this->validateDomain($file, (string) $xml->authorUrl);
 
 		if ($type === 'package' && (string) $xml->packagerurl !== (string) $xml->authorUrl)
