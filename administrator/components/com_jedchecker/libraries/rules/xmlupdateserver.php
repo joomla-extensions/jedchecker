@@ -15,6 +15,9 @@ defined('_JEXEC') or die('Restricted access');
 // Include the rule base class
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/models/rule.php';
 
+// Include the helper class
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/libraries/helper.php';
+
 /**
  * class JedcheckerRulesXMLUpdateServer
  *
@@ -53,7 +56,7 @@ class JedcheckerRulesXMLUpdateServer extends JEDcheckerRule
 	public function check()
 	{
 		// Find all XML files of the extension
-		$files = JFolder::files($this->basedir, '\.xml$', true, true);
+		$files = JEDCheckerHelper::findManifests($this->basedir);
 
 		// Find XML package file
 		$packageFile = $this->checkPackageXML($files);
@@ -81,15 +84,11 @@ class JedcheckerRulesXMLUpdateServer extends JEDcheckerRule
 		{
 			$xml = JFactory::getXml($file);
 
-			// Check if this is an XML and an extension manifest
-			if ($xml && ($xml->getName() == 'install' || $xml->getName() == 'extension'))
+			// Check if extension attribute 'type' is for a package
+			if ($xml && (string) $xml['type'] === 'package')
 			{
-				// Check if extension attribute 'type' is for a package
-				if($xml->attributes()->type == 'package')
-				{
-					$packageCount++;
-					$this->find($file);
-				}
+				$packageCount++;
+				$this->find($file);
 			}
 		}
 
@@ -118,8 +117,7 @@ class JedcheckerRulesXMLUpdateServer extends JEDcheckerRule
 		{
 			$xml = JFactory::getXml($file);
 
-			// Check if this is an XML and an extension manifest
-			if ($xml && ($xml->getName() == 'install' || $xml->getName() == 'extension'))
+			if ($xml)
 			{
 				$directories = explode('/', substr($file, 0, strrpos( $file, '/')));
 				$XMLFiles[] = array(
@@ -179,13 +177,6 @@ class JedcheckerRulesXMLUpdateServer extends JEDcheckerRule
 		// Failed to parse the xml file.
 		// Assume that this is not a extension manifest
 		if (!$xml)
-		{
-			return true;
-		}
-
-		// Check if this is an extension manifest
-		// 1.5 uses 'install', 1.6 uses 'extension'
-		if ($xml->getName() != 'install' && $xml->getName() != 'extension')
 		{
 			return true;
 		}
