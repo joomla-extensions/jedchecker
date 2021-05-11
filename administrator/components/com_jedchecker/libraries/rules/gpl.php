@@ -186,14 +186,15 @@ class JedcheckerRulesGpl extends JEDcheckerRule
 	 */
 	protected function find($file)
 	{
-		// Check the file is empty (i.e. comments-only)
 		$content = php_strip_whitespace($file);
 
-		if (preg_match('#^<\?php\s+$#', $content))
+		// Check the file is empty, comments-only, or nonexecutable
+		if (empty($content) || preg_match('#^<\?php\s+(?:$|(?:die|exit)(?:\(\))?;)#', $content))
 		{
 			return true;
 		}
 
+		// Reload file to preserve comments and line numbers
 		$content = file_get_contents($file);
 
 		// Remove leading "*" characters from phpDoc-like comments
