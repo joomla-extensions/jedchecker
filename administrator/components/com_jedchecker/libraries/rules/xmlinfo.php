@@ -70,7 +70,7 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 	public function check()
 	{
 		// Find all XML files of the extension
-		$files = JFolder::files($this->basedir, '\.xml$', true, true);
+		$files = JEDCheckerHelper::findManifests($this->basedir);
 
 		$manifestFound = false;
 
