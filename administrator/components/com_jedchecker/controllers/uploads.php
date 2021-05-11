@@ -23,7 +23,7 @@ use Joomla\Archive\Archive;
  *
  * @since  1.0
  */
-class JedcheckerControllerUploads extends JControllerlegacy
+class JedcheckerControllerUploads extends JControllerLegacy
 {
 	/** @var string */
 	public $path;
