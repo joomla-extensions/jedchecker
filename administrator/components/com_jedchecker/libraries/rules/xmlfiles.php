@@ -69,7 +69,7 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 	public function check()
 	{
 		// Find all XML files of the extension
-		$files = JFolder::files($this->basedir, '\.xml$', true, true);
+		$files = JEDCheckerHelper::findManifests($this->basedir);
 
 		// Iterate through all the xml files
 		foreach ($files as $file)
@@ -93,12 +93,6 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 		// Failed to parse the xml file.
 		// Assume that this is not a extension manifest
 		if (!$xml)
-		{
-			return false;
-		}
-
-		// Check if this is an extension manifest
-		if ($xml->getName() !== 'extension')
 		{
 			return false;
 		}
@@ -245,7 +239,6 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 
 				case 'plugin':
 					$group = (string) $xml['group'];
-
 					$extensionPath = 'plugins/' . $group . '/' . $element . '/';
 					break;
 
