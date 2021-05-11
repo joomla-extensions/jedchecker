@@ -154,7 +154,7 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 					$this->report->addWarning($file, JText::_('COM_JEDCHECKER_LANG_BOM_FOUND'), $startLineno);
 				}
 
-				// Romeve BOM for further checks
+				// Remove BOM for further checks
 				$line = substr($line, 3);
 			}
 
