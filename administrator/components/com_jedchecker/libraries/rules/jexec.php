@@ -172,7 +172,6 @@ class JedcheckerRulesJexec extends JEDcheckerRule
 	 */
 	protected function files($path)
 	{
-		$path = JPath::clean($path);
 		$arr = array();
 
 		// Read the source directory
