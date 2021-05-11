@@ -120,7 +120,7 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 		// Check EOL format is \n (not \r or \n\r)
 		if (strpos($content, "\r") !== false)
 		{
-			$this->report->addWarning($file, JText::_('COM_JEDCHECKER_LANG_INCORRECT_EOL'));
+			$this->report->addInfo($file, JText::_('COM_JEDCHECKER_LANG_INCORRECT_EOL'));
 		}
 
 		$lines = file($file);
