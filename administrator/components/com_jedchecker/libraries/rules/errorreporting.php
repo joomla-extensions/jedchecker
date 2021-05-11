@@ -95,7 +95,7 @@ class JedcheckerRulesErrorreporting extends JEDcheckerRule
 				if ($pos_1 !== false)
 				{
 					$found = true;
-					$this->report->addError($file, JText::_('COM_JEDCHECKER_ERROR_ERRORREPORTING'), $i + 1, $line);
+					$this->report->addWarning($file, JText::_('COM_JEDCHECKER_ERROR_ERRORREPORTING'), $i + 1, $line);
 					break;
 				}
 			}
