@@ -48,7 +48,7 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 
 	protected $tests = false;
 
-	protected $regex_leftover_folders;
+	protected $regexLeftoverFolders;
 
 	/**
 	 * Initiates the file search and check
@@ -58,21 +58,23 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 	public function check()
 	{
 		// Warn about code versioning files included
-		$leftover_folders = $this->params->get('leftover_folders');
-		$leftover_folders_whitelist = $this->params->get('leftover_folders_whitelist');
+		$leftoverFolders = $this->params->get('leftover_folders');
+		$leftoverFoldersWhitelist = $this->params->get('leftover_folders_whitelist');
 
-		$this->regex_leftover_folders = '';
-		if (!empty($leftover_folders_whitelist))
+		$this->regexLeftoverFolders = '';
+
+		if (!empty($leftoverFoldersWhitelist))
 		{
-			$this->regex_leftover_folders .= '(?!(?:' . str_replace(array(',', '\*'), array('|', '.*'), preg_quote($leftover_folders_whitelist, '/')) . '))';
+			$this->regexLeftoverFolders .= '(?!(?:' . str_replace(array(',', '\*'), array('|', '.*'), preg_quote($leftoverFoldersWhitelist, '/')) . '))';
 		}
-		$this->regex_leftover_folders .= '(?:' . str_replace(array(',', '\*'), array('|', '.*'), preg_quote($leftover_folders, '/')) . ')';
 
-		$regex_leftover_folders = '^' . $this->regex_leftover_folders . '$';
+		$this->regexLeftoverFolders .= '(?:' . str_replace(array(',', '\*'), array('|', '.*'), preg_quote($leftoverFolders, '/')) . ')';
+
+		$regexLeftoverFolders = '^' . $this->regexLeftoverFolders . '$';
 
 		// Get matched files and folder (w/o default exclusion list)
-		$folders = JFolder::folders($this->basedir, $regex_leftover_folders, true, true, array(), array());
-		$files = JFolder::files($this->basedir, $regex_leftover_folders, true, true, array(), array());
+		$folders = JFolder::folders($this->basedir, $regexLeftoverFolders, true, true, array(), array());
+		$files = JFolder::files($this->basedir, $regexLeftoverFolders, true, true, array(), array());
 
 		if ($folders !== false)
 		{
@@ -116,7 +118,7 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 	 */
 	private function excludeResource($file)
 	{
-		return (bool) preg_match('/\/' . $this->regex_leftover_folders . '\//', $file);
+		return (bool) preg_match('/\/' . $this->regexLeftoverFolders . '\//', $file);
 	}
 
 	/**
