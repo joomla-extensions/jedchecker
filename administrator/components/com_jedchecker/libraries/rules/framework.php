@@ -65,7 +65,10 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 
 		if (!empty($leftoverFoldersWhitelist))
 		{
-			$this->regexLeftoverFolders .= '(?!(?:' . str_replace(array(',', '\*'), array('|', '.*'), preg_quote($leftoverFoldersWhitelist, '/')) . '))';
+			$this->regexLeftoverFolders .=
+				'(?!(?:'
+				. str_replace(array(',', '\*'), array('|', '.*'), preg_quote($leftoverFoldersWhitelist, '/'))
+				. '))';
 		}
 
 		$this->regexLeftoverFolders .= '(?:' . str_replace(array(',', '\*'), array('|', '.*'), preg_quote($leftoverFolders, '/')) . ')';
