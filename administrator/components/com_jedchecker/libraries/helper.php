@@ -159,7 +159,7 @@ abstract class JEDCheckerHelper
 		$isCleanComments = $options & self::CLEAN_COMMENTS;
 		$isCleanStrings  = $options & self::CLEAN_STRINGS;
 
-		if (!preg_match('/<\?php\s/i', $content, $match, PREG_OFFSET_CAPTURE))
+		if (!preg_match('/<\?(?:php\s|\s|=)/i', $content, $match, PREG_OFFSET_CAPTURE))
 		{
 			// No PHP code found
 			return $isCleanHtml ? '' : $content;
@@ -224,7 +224,7 @@ abstract class JEDCheckerHelper
 					$cleanContent .= '?>';
 					$pos += 2;
 
-					if (!preg_match('/<\?php\s/i', $content, $match, PREG_OFFSET_CAPTURE, $pos))
+					if (!preg_match('/<\?(?:php\s|\s|=)/i', $content, $match, PREG_OFFSET_CAPTURE, $pos))
 					{
 						// No PHP code found (up to the end of the file)
 						return $cleanContent . ($isCleanHtml ? '' : substr($content, $pos));
