@@ -149,6 +149,13 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 
 		$result = false;
 
+		if (preg_match('/<\?\s/', $content, $match, PREG_OFFSET_CAPTURE))
+		{
+			$lineno = substr_count($content, "\n", 0, $match[0][1]);
+			$this->report->addError($file, JText::_('COM_JEDCHECKER_ERROR_FRAMEWORK_SHORT_PHP_TAG'), $lineno + 1, $origContent[$lineno]);
+			$result = true;
+		}
+
 		foreach ($this->getTests() as $testObject)
 		{
 			if ($this->runTest($file, $origContent, $cleanContent, $testObject))
