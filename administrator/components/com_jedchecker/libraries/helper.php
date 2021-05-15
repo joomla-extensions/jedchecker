@@ -15,7 +15,7 @@ defined('_JEXEC') or die('Restricted access');
  *
  * This is a helper class with a set of static methods used by other JEDChecker classes
  *
- * @since  3.0
+ * @since  2.4
  */
 abstract class JEDCheckerHelper
 {
