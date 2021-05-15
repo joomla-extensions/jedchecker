@@ -29,7 +29,7 @@ abstract class JEDCheckerHelper
 	 * @param   string $basedir Extension's directory
 	 *
 	 * @return  string[]
-	 * @since  3.0
+	 * @since  2.4
 	 */
 	public static function findManifests($basedir)
 	{
@@ -78,7 +78,7 @@ abstract class JEDCheckerHelper
 	 * @param   string $path2 2nd path to compare
 	 *
 	 * @return  integer
-	 * @since  3.0
+	 * @since  2.4
 	 */
 	public static function sortPathsCmp($path1, $path2)
 	{
@@ -94,7 +94,7 @@ abstract class JEDCheckerHelper
 	 * @param   string $content Text to split
 	 *
 	 * @return  string[]
-	 * @since  3.0
+	 * @since  2.4
 	 */
 	public static function splitLines($content)
 	{
@@ -108,7 +108,7 @@ abstract class JEDCheckerHelper
 	 * @param   SimpleXMLElement $xml XML Manifest
 	 *
 	 * @return  string
-	 * @since  3.0
+	 * @since  2.4
 	 */
 	public static function getElementName($xml)
 	{
@@ -151,7 +151,7 @@ abstract class JEDCheckerHelper
 	 * @param   int    $options Bitwise set of options
 	 *
 	 * @return  string
-	 * @since  3.0
+	 * @since  2.4
 	 */
 	public static function cleanPhpCode($content, $options = self::CLEAN_HTML | self::CLEAN_COMMENTS)
 	{
@@ -253,7 +253,7 @@ abstract class JEDCheckerHelper
 	 * @param   string $content Partial content
 	 *
 	 * @return  string
-	 * @since  3.0
+	 * @since  2.4
 	 */
 	protected static function removeContent($content)
 	{
