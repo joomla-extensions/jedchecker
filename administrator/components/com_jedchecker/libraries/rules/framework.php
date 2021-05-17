@@ -151,12 +151,14 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 			$result = true;
 		}
 
+		// Clean non-code
 		$content = JEDCheckerHelper::cleanPhpCode(
 			$content,
 			JEDCheckerHelper::CLEAN_HTML | JEDCheckerHelper::CLEAN_COMMENTS | JEDCheckerHelper::CLEAN_STRINGS
 		);
 		$cleanContent = JEDCheckerHelper::splitLines($content);
 
+		// Check short PHP tag
 		if (preg_match('/<\?\s/', $content, $match, PREG_OFFSET_CAPTURE))
 		{
 			$lineno = substr_count($content, "\n", 0, $match[0][1]);
@@ -164,6 +166,7 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 			$result = true;
 		}
 
+		// Run other tests
 		foreach ($this->getTests() as $testObject)
 		{
 			if ($this->runTest($file, $origContent, $cleanContent, $testObject))
