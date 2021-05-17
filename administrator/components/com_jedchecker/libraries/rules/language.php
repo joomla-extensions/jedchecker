@@ -45,6 +45,13 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 	protected $description = 'COM_JEDCHECKER_LANG_DESC';
 
 	/**
+	 * The ordering value to sort rules in the menu.
+	 *
+	 * @var    integer
+	 */
+	public static $ordering = 1100;
+
+	/**
 	 * Initiates the search and check
 	 *
 	 * @return    void
