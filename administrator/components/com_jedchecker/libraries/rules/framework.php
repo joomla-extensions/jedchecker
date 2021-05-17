@@ -140,14 +140,22 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 			return false;
 		}
 
+		$result = false;
+
 		$content = file_get_contents($file);
+
+		// Check BOM
+		if (strncmp($content, "\xEF\xBB\xBF", 3) === 0)
+		{
+			$this->report->addError($file, JText::_('COM_JEDCHECKER_ERROR_FRAMEWORK_BOM_FOUND'));
+			$result = true;
+		}
+
 		$content = JEDCheckerHelper::cleanPhpCode(
 			$content,
 			JEDCheckerHelper::CLEAN_HTML | JEDCheckerHelper::CLEAN_COMMENTS | JEDCheckerHelper::CLEAN_STRINGS
 		);
 		$cleanContent = JEDCheckerHelper::splitLines($content);
-
-		$result = false;
 
 		if (preg_match('/<\?\s/', $content, $match, PREG_OFFSET_CAPTURE))
 		{
