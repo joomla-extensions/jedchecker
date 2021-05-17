@@ -103,6 +103,9 @@ class JedcheckerRulesJexec extends JEDcheckerRule
 		// Load file and strip comments
 		$content = php_strip_whitespace($file);
 
+		// Strip BOM (it is checked separately)
+		$content = preg_replace('/^\xEF\xBB\xBF/', '', $content);
+
 		// Skip empty files
 		if ($content === '' || preg_match('#^<\?php\s+$#', $content))
 		{
