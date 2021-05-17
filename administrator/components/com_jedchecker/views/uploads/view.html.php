@@ -50,34 +50,24 @@ class JedcheckerViewUploads extends JViewLegacy
 	 */
 	public function getRules()
 	{
-		$existingRules = array(
-			'xmlinfo',
-			'xmllicense',
-			'xmlmanifest',
-			'xmlfiles',
-			'xmlupdateserver',
-			'gpl',
-			'jexec',
-			'errorreporting',
-			'framework',
-			'encoding',
-			'jamss',
-			'language'
-		);
+		$rules = array();
+		$files = JFolder::files(JPATH_COMPONENT_ADMINISTRATOR . '/libraries/rules', '\.php$', false, false);
 
 		JLoader::discover('jedcheckerRules', JPATH_COMPONENT_ADMINISTRATOR . '/libraries/rules/');
 
-		$rules = array();
-
-		foreach ($existingRules as $rule)
+		foreach ($files as $file)
 		{
+			$rule = substr($file, 0, -4);
 			$class = 'jedcheckerRules' . ucfirst($rule);
 
-			if (class_exists($class))
+			if (class_exists($class) && is_subclass_of($class, 'JEDcheckerRule'))
 			{
-				$rules[] = $rule;
+				$rules[$rule] = $class::$ordering;
 			}
 		}
+
+		asort($rules, SORT_NUMERIC);
+		$rules = array_keys($rules);
 
 		return $rules;
 	}

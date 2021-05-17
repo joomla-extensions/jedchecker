@@ -46,6 +46,13 @@ class JedcheckerRulesXMLlicense extends JEDcheckerRule
 	protected $description = 'COM_JEDCHECKER_RULE_PH3_DESC';
 
 	/**
+	 * The ordering value to sort rules in the menu.
+	 *
+	 * @var    integer
+	 */
+	public static $ordering = 100;
+
+	/**
 	 * Initiates the search and check
 	 *
 	 * @return    void

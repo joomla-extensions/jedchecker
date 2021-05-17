@@ -46,6 +46,13 @@ class JEDcheckerRule extends JObject
 	protected $description;
 
 	/**
+	 * The ordering value to sort rules in the menu.
+	 *
+	 * @var    integer
+	 */
+	public static $ordering = 10000;
+
+	/**
 	 * The absolute path to the target extension.
 	 *
 	 * @var    string

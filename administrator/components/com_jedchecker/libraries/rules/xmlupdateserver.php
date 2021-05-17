@@ -46,6 +46,13 @@ class JedcheckerRulesXMLUpdateServer extends JEDcheckerRule
 	protected $description = 'COM_JEDCHECKER_RULE_US1_DESC';
 
 	/**
+	 * The ordering value to sort rules in the menu.
+	 *
+	 * @var    integer
+	 */
+	public static $ordering = 400;
+
+	/**
 	 * Initiates the search and check
 	 *
 	 * @return    void

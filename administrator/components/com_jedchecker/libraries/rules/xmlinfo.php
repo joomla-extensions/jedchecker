@@ -48,6 +48,13 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 	protected $description = 'COM_JEDCHECKER_INFO_XML_DESC';
 
 	/**
+	 * The ordering value to sort rules in the menu.
+	 *
+	 * @var    integer
+	 */
+	public static $ordering = 0;
+
+	/**
 	 * Initiates the search and check
 	 *
 	 * @return    void

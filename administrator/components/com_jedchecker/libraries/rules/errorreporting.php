@@ -48,6 +48,13 @@ class JedcheckerRulesErrorreporting extends JEDcheckerRule
 
 
 	/**
+	 * The ordering value to sort rules in the menu.
+	 *
+	 * @var    integer
+	 */
+	public static $ordering = 800;
+
+	/**
 	 * Initiates the file search and check
 	 *
 	 * @return    void

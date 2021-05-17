@@ -43,6 +43,13 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 	 */
 	protected $description = 'COM_JEDCHECKER_RULE_FRAMEWORK_DESC';
 
+	/**
+	 * The ordering value to sort rules in the menu.
+	 *
+	 * @var    integer
+	 */
+	public static $ordering = 700;
+
 	protected $tests = false;
 
 	protected $leftover_folders;

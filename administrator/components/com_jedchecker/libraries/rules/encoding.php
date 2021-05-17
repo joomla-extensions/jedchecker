@@ -46,6 +46,13 @@ class JedcheckerRulesEncoding extends JEDcheckerRule
 	protected $description = 'COM_JEDCHECKER_RULE_ENCODING_DESC';
 
 	/**
+	 * The ordering value to sort rules in the menu.
+	 *
+	 * @var    integer
+	 */
+	public static $ordering = 900;
+
+	/**
 	 * Initiates the file search and check
 	 *
 	 * @return    void
