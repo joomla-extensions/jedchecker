@@ -169,7 +169,7 @@ abstract class JEDCheckerHelper
 		$code = substr($content, 0, $pos);
 		$cleanContent = $isCleanHtml ? self::removeContent($code) : $code;
 
-		while (preg_match('/(?:[\'"]|\/\*|\/\/|\?>)/', $content, $match, PREG_OFFSET_CAPTURE, $pos))
+		while (preg_match('/(?:[\'"]|\/\*|\/\/|#|\?>)/', $content, $match, PREG_OFFSET_CAPTURE, $pos))
 		{
 			$foundPos = $match[0][1];
 			$cleanContent .= substr($content, $pos, $foundPos - $pos);
@@ -210,7 +210,14 @@ abstract class JEDCheckerHelper
 					break;
 
 				case '//':
+				case '#':
 					$commentLen = strcspn($content, "\r\n", $pos);
+					$endPhpPos = strpos($content, '?>', $pos);
+
+					if ($endPhpPos !== false && $endPhpPos < $pos + $commentLen)
+					{
+						$commentLen = $endPhpPos - $pos;
+					}
 
 					if (!$isCleanComments)
 					{
@@ -218,6 +225,7 @@ abstract class JEDCheckerHelper
 					}
 
 					$pos += $commentLen;
+
 					break;
 
 				case '?>':
