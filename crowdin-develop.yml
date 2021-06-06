@@ -1,5 +1,5 @@
 # Project Public Identifier: jed-checker-extension
-project_id: 44
+project_id: 104
 api_token_env: CROWDIN_PERSONAL_TOKEN
 base_path: 
 base_url: "https://joomla.crowdin.com"
@@ -8,6 +8,7 @@ preserve_hierarchy: true
 
 files:
   - source: /administrator/components/com_jedchecker/language/en-GB/en-GB*.ini
+    dest: 'JEDChecker/administrator/en-gb*.ini'
     translation: /administrator/components/com_jedchecker/language/%locale%/%locale%%original_file_name%
     update_option: update_as_unapproved
     translation_replace:
