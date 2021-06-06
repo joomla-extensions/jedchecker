@@ -7,10 +7,11 @@ base_url: "https://joomla.crowdin.com"
 preserve_hierarchy: true
 
 files:
-  - source: /administrator/components/com_jedchecker/language/en-GB/en-GB*.ini
-    dest: 'JEDChecker/administrator/en-gb*.ini'
-    translation: /administrator/components/com_jedchecker/language/%locale%/%locale%%original_file_name%
+  - source: /administrator/components/com_jedchecker/language/en-GB/en-GB.com_jedchecker.ini
+    dest: 'JEDChecker/administrator/en-GB.com_jedchecker.ini'
+    translation: /administrator/components/com_jedchecker/language/%locale%/%locale%.com_jedchecker.ini
     update_option: update_as_unapproved
-    translation_replace:
-      en-GB: ''
-      
+  - source: /administrator/components/com_jedchecker/language/en-GB/en-GB.com_jedchecker.sys.ini
+    dest: 'JEDChecker/administrator/en-GB.com_jedchecker.sys.ini'
+    translation: /administrator/components/com_jedchecker/language/%locale%/%locale%.com_jedchecker.sys.ini
+    update_option: update_as_unapproved
