@@ -39,7 +39,7 @@ jobs:
         # Configuration file to use
         config: 'crowdin-develop.yml'
         # Use true for dryrun to test the run without actually processing anything
-        dryrun_action: false
+        dryrun_action: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         CROWDIN_PERSONAL_TOKEN: ${{ secrets.CROWDIN_PERSONAL_TOKEN }}
