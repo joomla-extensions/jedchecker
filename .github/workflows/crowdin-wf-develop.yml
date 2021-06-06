@@ -30,6 +30,8 @@ jobs:
         upload_translations: false
         # Make pull request of Crowdin translations
         download_translations: true
+        # Don't download strings which aren't translated
+        skip_untranslated_strings: true
         # Download translations with pushing to branch
         push_translations: true
         # To download translations to the specified version branch
