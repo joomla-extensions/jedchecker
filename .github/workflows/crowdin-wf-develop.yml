@@ -27,7 +27,7 @@ jobs:
         # Upload sources to Crowdin
         upload_sources: true
         # Upload translations to Crowdin, only use true at initial run
-        upload_translations: true
+        upload_translations: false
         # Make pull request of Crowdin translations
         download_translations: true
         # Don't download strings which aren't translated
