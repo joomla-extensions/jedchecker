@@ -205,6 +205,17 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 			$this->checkFolders($node->folder, $dir);
 		}
 
+		// Check: api files[folder] (filename|file|folder)*
+		if (isset($xml->api->files))
+		{
+			$node = $xml->api->files;
+			$dir = $this->getSourceFolder($node);
+
+			$this->checkFiles($node->filename, $dir);
+			$this->checkFiles($node->file, $dir);
+			$this->checkFolders($node->folder, $dir);
+		}
+
 		// Check file: scriptfile
 		if (isset($xml->scriptfile))
 		{
