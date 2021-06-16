@@ -52,7 +52,7 @@ JFactory::getDocument()->addScriptDeclaration("var jed_options = $options;");
 	<div class="row g-3">
 		<div class="col-12 col-md-8">
 			<div class="card bg-light">
-				<div class="card-header" data-bs-toggle="collapse" data-href="#jedchecker-welcome">
+				<div class="card-header" data-bs-toggle="collapse" data-bs-target="#jedchecker-welcome" role="button">
 					<?php echo JText::_('COM_JEDCHECKER'); ?>
 				</div>
 				<div class="card-body show" id="jedchecker-welcome">
@@ -90,12 +90,12 @@ JFactory::getDocument()->addScriptDeclaration("var jed_options = $options;");
 		</div>
 
 		<div class="col-6 col-md-4">
-			<div class="card text-white bg-info">
-				<div class="card-header text-white bg-info" data-bs-toggle="collapse" data-href="#jedchecker-contributors">
+			<div class="card bg-info">
+				<div class="card-header text-white bg-info" data-bs-toggle="collapse" data-bs-target="#jedchecker-contributors" role="button">
 					<?php echo JText::_('COM_JEDCHECKER_WALL_OF_HONOR'); ?>
 				</div>
 				<div class="card-body show" id="jedchecker-contributors">
-					<h5 class="card-title"><?php echo JText::_('COM_JEDCHECKER_PEOPLE_THAT_HAVE_HELPED_WITH_THE_DEVELOPMENT'); ?></h5>
+					<h5 class="card-title text-white"><?php echo JText::_('COM_JEDCHECKER_PEOPLE_THAT_HAVE_HELPED_WITH_THE_DEVELOPMENT'); ?></h5>
 					<p class="card-text">
 						<a href="https://github.com/joomla-extensions/jedchecker/graphs/contributors" target="_blank" class="btn btn-light">
 						<?php echo JText::_('COM_JEDCHECKER_CONTRIBUTORS'); ?></a>
