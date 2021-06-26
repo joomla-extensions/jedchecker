@@ -51,6 +51,15 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 	protected $description = 'COM_JEDCHECKER_INFO_XML_DESC';
 
 	/**
+	 * List of JED extension types
+	 *
+	 * @var string[]
+	 */
+	protected $jedTypes = array(
+		'component', 'module', 'package', 'plugin'
+	);
+
+	/**
 	 * Mapping of the plugin title prefix to the plugin group
 	 *
 	 * @var    string[]
@@ -146,6 +155,12 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 
 		if ($isTopLevel)
 		{
+			// JED allows components, modules, plugins, and packages (as a container) only
+			if (!in_array($type, $this->jedTypes, true))
+			{
+				$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_TYPE_NOT_ACCEPTED', $type));
+			}
+
 			// NM3 - Listing name contains “module” or “plugin”
 			// (and other reserved words)
 			if (preg_match('/\b(?:module|plugin|component|template|extension|free)\b/i', $extensionName, $match))
