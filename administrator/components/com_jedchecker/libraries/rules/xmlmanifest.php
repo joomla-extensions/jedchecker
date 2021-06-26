@@ -93,15 +93,6 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 	);
 
 	/**
-	 * List of JED extension types
-	 *
-	 * @var string[]
-	 */
-	protected $jedTypes = array(
-		'component', 'module', 'package', 'plugin'
-	);
-
-	/**
 	 * Initiates the search and check
 	 *
 	 * @return    void
@@ -151,12 +142,6 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 			$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_TYPE', $type));
 
 			return true;
-		}
-
-		// JED allows components, modules, plugins, and packages (as a container) only
-		if (!in_array($type, $this->jedTypes, true))
-		{
-			$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_TYPE_NOT_ACCEPTED', $type));
 		}
 
 		// Load DTD-like data for this extension type
