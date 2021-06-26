@@ -248,7 +248,6 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 	 * @param   string            $langTag  The language to load
 	 *
 	 * @return  void
-	 * @since   3.0
 	 */
 	protected function loadExtensionLanguage($xml, $langDir, $langTag = 'en-GB')
 	{
@@ -335,7 +334,6 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 	 * @param   string $url  URL to validate
 	 *
 	 * @return  void
-	 * @since   3.0
 	 */
 	protected function validateDomain($file, $url)
 	{
