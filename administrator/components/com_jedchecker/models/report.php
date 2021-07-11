@@ -192,6 +192,7 @@ class JEDcheckerReport extends JObject
 			if ($this->data['count']->warning > 0)
 			{
 				$html[] = $this->formatItems($this->data['warning'], 'warning');
+			}
 
 			// Go through the compat list
 			if ($this->data['count']->compat > 0)
