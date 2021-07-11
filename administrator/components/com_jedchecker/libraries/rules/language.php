@@ -293,7 +293,7 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 			// The code below detects incorrect format of numbered placeholders (e.g. "%1s" instead of "%1$s")
 
 			// Count numbered placeholders in the string (e.g. "%1s")
-			$count = preg_match_all('/(?<=^|[^%])%(\d+)\w/', $value, $matches);
+			$count = preg_match_all('/(?<=^|[^%])%(\d+)\w/', $value, $matches, PREG_SET_ORDER);
 
 			if ($count)
 			{
