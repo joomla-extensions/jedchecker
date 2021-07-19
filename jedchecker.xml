@@ -92,6 +92,7 @@
   </administration>
   <media destination="com_jedchecker" folder="media/com_jedchecker">
     <folder>css</folder>
+    <folder>js</folder>
   </media>
   <updateservers>
     <!-- Note: No spaces or linebreaks allowed between the server tags -->
