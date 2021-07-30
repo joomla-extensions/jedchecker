@@ -216,7 +216,7 @@ class JedcheckerRulesGpl extends JEDcheckerRule
 		if (preg_match($this->regexCompatLicenses, $content, $match, PREG_OFFSET_CAPTURE))
 		{
 			$lineno = substr_count($content, "\n", 0, $match[0][1]) + 1;
-			$this->report->addInfo(
+			$this->report->addWarning(
 				$file,
 				JText::_('COM_JEDCHECKER_GPL_COMPATIBLE_LICENSE_WAS_FOUND'),
 				$lineno,
