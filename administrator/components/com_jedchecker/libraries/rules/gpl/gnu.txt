@@ -1,0 +1,38 @@
+# GPL Licenses
+
+# Based on:
+# https://www.gnu.org/licenses/license-list.en.html
+# https://opensource.org/licenses/alphabetical
+# https://spdx.org/licenses/
+
+# Comments are marked with the "#" character in the first position of the line
+
+# Each line contains the full name of the license with the optional abbreviation in parenthesis
+
+# The version of the license (if presented) should be written in the form
+# [space][the letter "v"][digit(s)]
+# (see examples below)
+
+
+GNU General Public License
+GNU GPL
+GNU/GPL
+GNU Lesser General Public License
+GNU LGPL
+GNU/LGPL
+
+GNU General Public License v2 (GPL-2.0)
+//www.gnu.org/licenses/gpl-2.0.html
+
+GNU General Public License v3 (GPL-3.0)
+//www.gnu.org/licenses/gpl-3.0.html
+
+GNU Affero General Public License v3 (AGPL-3.0)
+GNU Affero General Public License (AGPL) v3
+GNU Library General Public License v2 (LGPL-2.0)
+GNU Lesser General Public License v2.1 (LGPL-2.1)
+GNU Lesser General Public License (LGPL) v2.1
+GNU Lesser General Public License v3 (LGPL-3.0)
+GNU Lesser General Public License (LGPL) v3
+
+GNU All-Permissive License
