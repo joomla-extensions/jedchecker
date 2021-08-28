@@ -1,0 +1,81 @@
+# Based on:
+# https://www.gnu.org/licenses/license-list.en.html
+# https://opensource.org/licenses/alphabetical
+# https://spdx.org/licenses/
+
+# Comments are marked with the "#" character in the first position of the line
+
+# Each line contains the full name of the license with the optional abbreviation in parenthesis
+
+# The version of the license (if presented) should be written in the form
+# [space][the letter "v"][digit(s)]
+# (see examples below)
+
+
+# BSD Licenses
+0-clause BSD License (0BSD)
+BSD Zero Clause License
+Zero-Clause BSD / Free Public License v1.0.0
+1-clause BSD License (BSD-1-Clause)
+BSD 1-Clause License
+2-clause BSD License (BSD-2-Clause)
+BSD v2 (BSDv2)
+BSD 2-Clause "Simplified" License
+BSD-2-Clause Plus Patent License (BSD-2-Clause-Patent)
+FreeBSD License
+3-clause BSD License (BSD-3-Clause)
+BSD v3 (BSDv3)
+BSD 3-Clause "New" or "Revised" License
+Modified BSD License
+Clear BSD License
+
+# Other GPL-compatible Licenses
+Apache License v2.0 (Apache-2.0)
+Artistic License v2.0 (Artistic-2.0)
+Berkeley Database License
+Boost Software License (BSL-1.0)
+CeCILL v2
+CeCILL License v2.1 (CECILL-2.1)
+CeCILL Free Software License Agreement v2.1
+Clarified Artistic License
+Cryptix General License
+eCos License v2.0 (eCos-2.0)
+Educational Community License v2.0 (ECL-2.0)
+Eiffel Forum License v2.0 (EFL-2.0)
+EU DataGrid Software License (EUDatagrid)
+Expat License
+Freetype Project License
+Historical Permission Notice and Disclaimer (HPND)
+Independent JPEG Group License
+Intel Open Source License (Intel)
+ISC License (ISC)
+MIT License (MIT)
+Mozilla Public License v2.0 (MPL-2.0)
+OpenLDAP License v2.7
+OpenLDAP Public License v2.8 (OLDAP-2.8)
+Open LDAP Public License v2.8
+Public Domain
+Python License (Python-2.0)
+SGI Free Software License B v2.0
+Sleepycat License (Sleepycat)
+Sleepycat Software Product License
+Standard ML of New Jersey Copyright License
+Unicode Data Files and Software License (Unicode-DFS-2016)
+Unicode License Agreement - Data Files and Software
+Unicode, Inc. License Agreement for Data Files and Software
+Universal Permissive License (UPL)
+Universal Permissive License v1.0 (UPL-1.0)
+University of Illinois/NCSA Open Source License (NCSA)
+NCSA/University of Illinois Open Source License
+Unlicense
+W3C License
+W3C Software Notice and License
+WTFPL v2
+WxWidgets Library License
+wxWindows Library License (WXwindows)
+X11 License
+XFree86 v1.1 License
+Zope Public License v2.0 (ZPL-2.0)
+Zope Public License v2.1
+zlib/libpng License (Zlib)
+zlib License

@@ -2,7 +2,7 @@
 /**
  * @package    Joomla.JEDChecker
  *
- * @copyright  Copyright (C) 2017 - 2019 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2017 - 2021 Open Source Matters, Inc. All rights reserved.
  * 			   Copyright (C) 2008 - 2016 compojoom.com . All rights reserved.
  * @author     Daniel Dimitrov <daniel@compojoom.com>
  *
@@ -31,7 +31,8 @@ if (version_compare(JVERSION, '4.0', '>='))
 {
 	JHtml::_('bootstrap.collapse');
 	JHtml::_('bootstrap.tab');
-	// Tooltips are used by JAMSS reports
+
+  // Tooltips are used by JAMSS reports
 	JHtml::_('bootstrap.tooltip');
 }
 else

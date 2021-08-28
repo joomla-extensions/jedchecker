@@ -86,7 +86,7 @@ class JedcheckerRulesXMLUpdateServer extends JEDcheckerRule
 
 		foreach ($files as $file)
 		{
-			$xml = JFactory::getXml($file);
+			$xml = simplexml_load_file($file);
 
 			// Check if this is an XML and an extension manifest
 			if ($xml && ($xml->getName() == 'install' || $xml->getName() == 'extension'))
@@ -123,7 +123,7 @@ class JedcheckerRulesXMLUpdateServer extends JEDcheckerRule
 
 		foreach ($files as $file)
 		{
-			$xml = JFactory::getXml($file);
+			$xml = simplexml_load_file($file);
 
 			// Check if this is an XML and an extension manifest
 			if ($xml && ($xml->getName() == 'install' || $xml->getName() == 'extension'))
@@ -181,7 +181,7 @@ class JedcheckerRulesXMLUpdateServer extends JEDcheckerRule
 	 */
 	protected function find($file)
 	{
-		$xml = JFactory::getXml($file);
+		$xml = simplexml_load_file($file);
 
 		// Failed to parse the xml file.
 		// Assume that this is not a extension manifest

@@ -15,6 +15,9 @@ defined('_JEXEC') or die('Restricted access');
 // Include the rule base class
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/models/rule.php';
 
+// Include the helper class
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/libraries/helper.php';
+
 /**
  * class JedcheckerRulesEncoding
  *
@@ -52,6 +55,13 @@ class JedcheckerRulesEncoding extends JEDcheckerRule
 	 */
 	public static $ordering = 900;
 
+  /**
+	 * Regular expression to look for encoding functions.
+	 *
+	 * @var    string
+	 */
+	protected $encodingsRegex;
+
 	/**
 	 * Initiates the file search and check
 	 *
@@ -59,6 +69,17 @@ class JedcheckerRulesEncoding extends JEDcheckerRule
 	 */
 	public function check()
 	{
+		// Get the functions to look for
+		$encodings = explode(',', $this->params->get('encodings'));
+
+		// Prepare regex
+		foreach ($encodings as $i => $encoding)
+		{
+			$encodings[$i] = preg_quote(trim($encoding), '/');
+		}
+
+		$this->encodingsRegex = '/' . implode('|', $encodings) . '/i';
+
 		// Find all php files of the extension
 		$files = JFolder::files($this->basedir, '\.php$', true, true);
 
@@ -68,8 +89,7 @@ class JedcheckerRulesEncoding extends JEDcheckerRule
 			// Try to find the base64 use in the file
 			if ($this->find($file))
 			{
-				// Add as error to the report if it was not found
-				$this->report->addError($file, JText::_('COM_JEDCHECKER_ERROR_ENCODING'));
+				// The error has been added by the find() method
 			}
 		}
 	}
@@ -84,27 +104,26 @@ class JedcheckerRulesEncoding extends JEDcheckerRule
 	 */
 	protected function find($file)
 	{
-		$content = (array) file($file);
+		$content = file_get_contents($file);
 
-		// Get the functions to look for
-		$encodings = explode(',', $this->params->get('encodings'));
+		// Exclude comments
+		$content = JEDCheckerHelper::cleanPhpCode(
+			$content,
+			JEDCheckerHelper::CLEAN_HTML | JEDCheckerHelper::CLEAN_COMMENTS
+		);
+		$content = JEDCheckerHelper::splitLines($content);
 
-		foreach ($encodings as $encoding)
+		$found = false;
+
+		foreach ($content as $i => $line)
 		{
-			$encoding = trim($encoding);
-
-			foreach ($content AS $line)
+			if (preg_match($this->encodingsRegex, $line))
 			{
-				// Search for "base64"
-				$pos_1 = stripos($line, $encoding);
-
-				if ($pos_1 !== false)
-				{
-					return true;
-				}
+				$found = true;
+				$this->report->addError($file, JText::_('COM_JEDCHECKER_ERROR_ENCODING'), $i + 1, $line);
 			}
 		}
 
-		return false;
+		return $found;
 	}
 }
