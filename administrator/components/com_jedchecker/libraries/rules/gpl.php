@@ -53,7 +53,7 @@ class JedcheckerRulesGpl extends JEDcheckerRule
 	 */
 	public static $ordering = 500;
 
-  /**
+	/**
 	 * Regular expression to match GPL licenses.
 	 *
 	 * @var    string

@@ -55,7 +55,7 @@ class JedcheckerRulesEncoding extends JEDcheckerRule
 	 */
 	public static $ordering = 900;
 
-  /**
+	/**
 	 * Regular expression to look for encoding functions.
 	 *
 	 * @var    string

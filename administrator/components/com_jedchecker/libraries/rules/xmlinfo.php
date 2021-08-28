@@ -57,7 +57,7 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 	 */
 	public static $ordering = 0;
 
-  /**
+	/**
 	 * List of JED extension types
 	 *
 	 * @var string[]
