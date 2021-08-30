@@ -20,6 +20,7 @@
       "languages": "?",
       "media": "?",
       "administration": "?",
+      "api": "?",
       "updateservers": "?",
       "dlid": "?",
       "config": "?",
@@ -31,6 +32,9 @@
       "files": "=",
       "languages": "?",
       "media": "?"
+    },
+    "api": {
+      "files": "="
     },
     "files": {
       "filename": "*",
