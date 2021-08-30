@@ -24,7 +24,8 @@
       "updateservers": "?",
       "dlid": "?",
       "config": "?",
-      "namespace": "?"
+      "namespace": "?",
+      "dashboards": "?"
     },
     "administration": {
       "menu": "?",
@@ -70,6 +71,9 @@
     },
     "updateservers": {
       "server": "*"
+    },
+    "dashboards": {
+      "dashboard": "*"
     }
   },
   "attributes": {
@@ -120,6 +124,10 @@
     "dlid": [
       "prefix",
       "suffix"
+    ],
+    "dashboard": [
+      "title",
+      "icon"
     ]
   }
 }
