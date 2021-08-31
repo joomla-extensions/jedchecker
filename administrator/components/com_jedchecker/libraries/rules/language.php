@@ -113,17 +113,9 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 			// Check for BOM sequence
 			if ($lineno === 0 && strncmp($line, "\xEF\xBB\xBF", 3) === 0)
 			{
-				// Report as an error if BOM is directly followed by key name (and become a part of the name)
-				if (isset($line[3]) && strpos(";\n\r", $line[3]) === false)
-				{
-					$this->report->addError($file, JText::_('COM_JEDCHECKER_LANG_BOM_FOUND'), $startLineno);
-				}
-				else // Otherwise report a warning
-				{
-					$this->report->addWarning($file, JText::_('COM_JEDCHECKER_LANG_BOM_FOUND'), $startLineno);
-				}
+				$this->report->addWarning($file, JText::_('COM_JEDCHECKER_LANG_BOM_FOUND'), $startLineno);
 
-				// Romeve BOM for further checks
+				// Remove BOM for further checks
 				$line = substr($line, 3);
 			}
 
