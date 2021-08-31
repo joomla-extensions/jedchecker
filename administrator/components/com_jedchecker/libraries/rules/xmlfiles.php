@@ -48,6 +48,13 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 	protected $description = 'COM_JEDCHECKER_XML_FILES_DESC';
 
 	/**
+	 * The ordering value to sort rules in the menu.
+	 *
+	 * @var    integer
+	 */
+	public static $ordering = 300;
+
+	/**
 	 * List of errors.
 	 *
 	 * @var    string[]
