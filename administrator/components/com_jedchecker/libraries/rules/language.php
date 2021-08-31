@@ -302,7 +302,7 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 			// Check for legacy "_QQ_" code (deprecated since Joomla! 3.9 in favour of escaped double quote \"; removed in Joomla! 4)
 			if (strpos($value, '"_QQ_"') !== false)
 			{
-				$this->report->addCompat($file, JText::_('COM_JEDCHECKER_LANG_QQDEPRECATED'), $startLineno, $line);
+				$this->report->addCompat($file, JText::sprintf('COM_JEDCHECKER_LANG_QQDEPRECATED', '<code>"_QQ_"</code>', '<code>\\"</code>'), $startLineno, $line);
 			}
 
 			// Convert "_QQ_" to escaped quotes for further analysis
