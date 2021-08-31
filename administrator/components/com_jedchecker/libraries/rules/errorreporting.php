@@ -14,6 +14,9 @@ defined('_JEXEC') or die('Restricted access');
 // Include the rule base class
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/models/rule.php';
 
+// Include the helper class
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/libraries/helper.php';
+
 /**
  * JedcheckerRulesErrorreporting
  *
@@ -46,6 +49,12 @@ class JedcheckerRulesErrorreporting extends JEDcheckerRule
 	 */
 	protected $description = 'COM_JEDCHECKER_RULE_ERRORREPORTING_DESC';
 
+	/**
+	 * Regular expression to look for error_reporting calls.
+	 *
+	 * @var    string
+	 */
+	protected $errorreportingRegex;
 
 	/**
 	 * The ordering value to sort rules in the menu.
@@ -61,6 +70,17 @@ class JedcheckerRulesErrorreporting extends JEDcheckerRule
 	 */
 	public function check()
 	{
+		// Get the functions to look for
+		$codes = explode(',', $this->params->get('errorreportings'));
+
+		// Prepare regex
+		foreach ($codes as $i => $encoding)
+		{
+			$codes[$i] = preg_quote(trim($encoding), '/');
+		}
+
+		$this->errorreportingRegex = '/' . implode('|', $codes) . '/i';
+
 		// Find all php files of the extension
 		$files = JFolder::files($this->basedir, '\.php$', true, true);
 
@@ -70,14 +90,13 @@ class JedcheckerRulesErrorreporting extends JEDcheckerRule
 			// Try to find the base64 use in the file
 			if ($this->find($file))
 			{
-				// Add as error to the report if it was not found
-				$this->report->addError($file, JText::_('COM_JEDCHECKER_ERROR_ERRORREPORTING'));
+				// The error has been added by the find() method
 			}
 		}
 	}
 
 	/**
-	 * Reads a file and searches for any encoding function defined in the params
+	 * Reads a file and searches for any function defined in the params
 	 * Not a very clever way of doing this, but it should be fine for now
 	 *
 	 * @param   string  $file  - The path to the file
@@ -86,27 +105,26 @@ class JedcheckerRulesErrorreporting extends JEDcheckerRule
 	 */
 	protected function find($file)
 	{
-		$content = (array) file($file);
+		$content = file_get_contents($file);
 
-		// Get the functions to look for
-		$encodings = explode(',', $this->params->get('errorreportings'));
+		// Exclude non-code content
+		$content = JEDCheckerHelper::cleanPhpCode(
+			$content,
+			JEDCheckerHelper::CLEAN_HTML | JEDCheckerHelper::CLEAN_COMMENTS | JEDCheckerHelper::CLEAN_STRINGS
+		);
+		$content = JEDCheckerHelper::splitLines($content);
 
-		foreach ($encodings as $encoding)
+		$found = false;
+
+		foreach ($content as $i => $line)
 		{
-			$encoding = trim($encoding);
-
-			foreach ($content AS $line)
+			if (preg_match($this->errorreportingRegex, $line))
 			{
-				// Search for "base64"
-				$pos_1 = stripos($line, $encoding);
-
-				if ($pos_1 !== false)
-				{
-					return true;
-				}
+				$found = true;
+				$this->report->addWarning($file, JText::_('COM_JEDCHECKER_ERROR_ERRORREPORTING'), $i + 1, $line);
 			}
 		}
 
-		return false;
+		return $found;
 	}
 }
