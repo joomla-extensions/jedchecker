@@ -13,6 +13,9 @@ defined('_JEXEC') or die('Restricted access');
 // Include the rule base class
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/models/rule.php';
 
+// Include the helper class
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/libraries/helper.php';
+
 
 /**
  * class JedcheckerRulesXMLManifest
@@ -100,15 +103,6 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 	);
 
 	/**
-	 * List of JED extension types
-	 *
-	 * @var string[]
-	 */
-	protected $jedTypes = array(
-		'component', 'module', 'package', 'plugin'
-	);
-
-	/**
 	 * Initiates the search and check
 	 *
 	 * @return    void
@@ -116,7 +110,7 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 	public function check()
 	{
 		// Find all XML files of the extension
-		$files = JFolder::files($this->basedir, '\.xml$', true, true);
+		$files = JEDCheckerHelper::findManifests($this->basedir);
 
 		// Iterate through all the xml files
 		foreach ($files as $file)
@@ -144,12 +138,6 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 			return false;
 		}
 
-		// Check if this is an extension manifest
-		if ($xml->getName() !== 'extension')
-		{
-			return false;
-		}
-
 		// Check extension type
 		$type = (string) $xml['type'];
 
@@ -158,12 +146,6 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 			$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_TYPE', $type));
 
 			return true;
-		}
-
-		// JED allows components, modules, plugins, and packages (as a container) only
-		if (!in_array($type, $this->jedTypes, true))
-		{
-			$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_TYPE_NOT_ACCEPTED', $type));
 		}
 
 		// Load DTD-like data for this extension type
@@ -227,7 +209,7 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 
 	/**
 	 * @param   SimpleXMLElement  $node        XML node object
-	 * @param   string            $ruleset     rulest name in the DTD array
+	 * @param   string            $ruleset     ruleset name in the DTD array
 	 *
 	 * @return  void
 	 */

@@ -76,11 +76,7 @@ class JedcheckerControllerPolice extends JControllerLegacy
 		// Get the report and then print it
 		$report = $police->get('report');
 
-		echo '<span class="rule">'
-			. JText::_('COM_JEDCHECKER_RULE') . ' ' . JText::_($police->get('id'))
-			. ' - ' . JText::_($police->get('title'))
-			. '</span><br/>'
-			. $report->getHTML();
+		echo $report->getHTML();
 
 		flush();
 		ob_flush();
@@ -112,7 +108,7 @@ class JedcheckerControllerPolice extends JControllerLegacy
 
 		if (JFile::exists($local))
 		{
-			$content = JFile::read($local);
+			$content = file_get_contents($local);
 
 			if (!empty($content))
 			{
