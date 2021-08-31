@@ -106,6 +106,9 @@
       "charset",
       "driver"
     ],
+    "schemapath": [
+      "type"
+    ],
     "server": [
       "name",
       "priority",
