@@ -199,7 +199,7 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 			$value = ltrim($value);
 
 			// Parse multiline values
-			while (!preg_match('/^((?>\'(?>[^\'\\\\]+|\\\\.)*\'|"(?>[^"\\\\]+|\\\\.)*"|[^\'";]+)*)(;.*)?$/', $value, $matches))
+			while (!preg_match('/^((?>\'[^\']*\'|"(?>[^"\\\\]+|\\\\.)*"|[^\'";]+)*)(;.*)?$/', $value, $matches))
 			{
 				if ($lineno + 1 >= $nLines)
 				{
