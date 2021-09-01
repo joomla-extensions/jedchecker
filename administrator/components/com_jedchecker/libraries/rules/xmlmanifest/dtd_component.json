@@ -11,6 +11,7 @@
       "version": "!",
       "description": "=",
       "license": "?",
+      "changelogurl": "?",
       "scriptfile": "?",
       "install": "?",
       "update": "?",
@@ -19,10 +20,12 @@
       "languages": "?",
       "media": "?",
       "administration": "?",
+      "api": "?",
       "updateservers": "?",
       "dlid": "?",
       "config": "?",
-      "namespace": "?"
+      "namespace": "?",
+      "dashboards": "?"
     },
     "administration": {
       "menu": "?",
@@ -30,6 +33,9 @@
       "files": "=",
       "languages": "?",
       "media": "?"
+    },
+    "api": {
+      "files": "="
     },
     "files": {
       "filename": "*",
@@ -65,6 +71,9 @@
     },
     "updateservers": {
       "server": "*"
+    },
+    "dashboards": {
+      "dashboard": "*"
     }
   },
   "attributes": {
@@ -118,6 +127,10 @@
     "dlid": [
       "prefix",
       "suffix"
+    ],
+    "dashboard": [
+      "title",
+      "icon"
     ]
   }
 }
