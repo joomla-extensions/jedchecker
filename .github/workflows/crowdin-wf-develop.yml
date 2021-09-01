@@ -22,7 +22,7 @@ jobs:
     
     # Runs the Crowdin action command - https://github.com/crowdin/github-action
     - name: crowdin action
-      uses: crowdin/github-action@1.1.0
+      uses: crowdin/github-action@1.1.2
       with:
         # Upload sources to Crowdin
         upload_sources: true
@@ -30,6 +30,8 @@ jobs:
         upload_translations: false
         # Make pull request of Crowdin translations
         download_translations: true
+        # Don't download strings which aren't translated
+        skip_untranslated_strings: false
         # Download translations with pushing to branch
         push_translations: true
         # To download translations to the specified version branch

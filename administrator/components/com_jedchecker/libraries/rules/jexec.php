@@ -47,6 +47,13 @@ class JedcheckerRulesJexec extends JEDcheckerRule
 	protected $description = 'COM_JEDCHECKER_RULE_PH2_DESC';
 
 	/**
+	 * The ordering value to sort rules in the menu.
+	 *
+	 * @var    integer
+	 */
+	public static $ordering = 600;
+
+	/**
 	 * Regexp to match _JEXEC-like guard
 	 *
 	 * @var    string

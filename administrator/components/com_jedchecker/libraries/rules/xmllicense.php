@@ -15,6 +15,9 @@ defined('_JEXEC') or die('Restricted access');
 // Include the rule base class
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/models/rule.php';
 
+// Include the helper class
+require_once JPATH_COMPONENT_ADMINISTRATOR . '/libraries/helper.php';
+
 /**
  * class JedcheckerRulesXMLlicense
  *
@@ -46,6 +49,13 @@ class JedcheckerRulesXMLlicense extends JEDcheckerRule
 	protected $description = 'COM_JEDCHECKER_RULE_PH3_DESC';
 
 	/**
+	 * The ordering value to sort rules in the menu.
+	 *
+	 * @var    integer
+	 */
+	public static $ordering = 100;
+
+	/**
 	 * Initiates the search and check
 	 *
 	 * @return    void
@@ -53,7 +63,7 @@ class JedcheckerRulesXMLlicense extends JEDcheckerRule
 	public function check()
 	{
 		// Find all XML files of the extension
-		$files = JFolder::files($this->basedir, '\.xml$', true, true);
+		$files = JEDCheckerHelper::findManifests($this->basedir);
 
 		// Iterate through all the xml files
 		foreach ($files as $file)
@@ -72,18 +82,11 @@ class JedcheckerRulesXMLlicense extends JEDcheckerRule
 	 */
 	protected function find($file)
 	{
-		$xml = JFactory::getXml($file);
+		$xml = simplexml_load_file($file);
 
 		// Failed to parse the xml file.
 		// Assume that this is not a extension manifest
 		if (!$xml)
-		{
-			return true;
-		}
-
-		// Check if this is an extension manifest
-		// 1.5 uses 'install', 1.6 uses 'extension'
-		if ($xml->getName() != 'install' && $xml->getName() != 'extension')
 		{
 			return true;
 		}

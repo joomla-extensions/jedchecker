@@ -1,0 +1,122 @@
+{
+  "nodes": {
+    "extension": {
+      "name": "!",
+      "element": "?",
+      "creationDate": "=",
+      "author": "=",
+      "authorEmail": "=",
+      "authorUrl": "=",
+      "copyright": "=",
+      "version": "!",
+      "description": "=",
+      "license": "?",
+      "scriptfile": "?",
+      "install": "?",
+      "update": "?",
+      "uninstall": "?",
+      "files": "?",
+      "images": "?",
+      "css": "?",
+      "languages": "?",
+      "media": "?",
+      "positions": "=",
+      "updateservers": "?",
+      "dlid": "?",
+      "config": "?"
+    },
+    "positions": {
+      "position": "*"
+    },
+    "files": {
+      "filename": "*",
+      "files:file": "*",
+      "folder": "*"
+    },
+    "images": {
+      "filename": "*",
+      "images:file": "*",
+      "folder": "*"
+    },
+    "css": {
+      "filename": "*",
+      "css:file": "*",
+      "folder": "*"
+    },
+    "languages": {
+      "language": "*"
+    },
+    "media": {
+      "filename": "*",
+      "media:file": "*",
+      "folder": "*"
+    },
+    "install": {
+      "sql": "*"
+    },
+    "update": {
+      "sql": "*",
+      "schemas": "*"
+    },
+    "uninstall": {
+      "sql": "*"
+    },
+    "sql": {
+      "file": "*"
+    },
+    "schemas": {
+      "schemapath": "*"
+    },
+    "updateservers": {
+      "server": "*"
+    }
+  },
+  "attributes": {
+    "extension": [
+      "client",
+      "method",
+      "overwrite",
+      "type",
+      "version"
+    ],
+    "files": [
+      "folder"
+    ],
+    "images": [
+      "folder"
+    ],
+    "css": [
+      "folder"
+    ],
+    "languages": [
+      "folder"
+    ],
+    "language": [
+      "client",
+      "tag"
+    ],
+    "position": [
+      "value"
+    ],
+    "media": [
+      "destination",
+      "folder"
+    ],
+    "file": [
+      "charset",
+      "driver"
+    ],
+    "schemapath": [
+      "type"
+    ],
+    "server": [
+      "name",
+      "priority",
+      "type"
+    ],
+    "dlid": [
+      "prefix",
+      "suffix"
+    ]
+  }
+}

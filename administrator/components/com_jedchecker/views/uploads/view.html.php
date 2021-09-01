@@ -20,6 +20,12 @@ jimport('joomla.application.component.viewlegacy');
  */
 class JedcheckerViewUploads extends JViewLegacy
 {
+	/** @var string */
+	protected $path;
+
+	/** @var array */
+	protected $jsOptions;
+
 	/**
 	 * Display method
 	 *
@@ -29,7 +35,10 @@ class JedcheckerViewUploads extends JViewLegacy
 	 */
 	public function display($tpl = null)
 	{
-		$this->path         = JFactory::getConfig()->get('tmp_path') . '/jed_checker';
+		$this->path = JFactory::getConfig()->get('tmp_path') . '/jed_checker';
+
+		// Load translation for "JED Checker" title from sys.ini file
+		JFactory::getLanguage()->load('com_jedchecker.sys', JPATH_ADMINISTRATOR);
 
 		$this->setToolbar();
 		$this->jsOptions['url'] = JUri::base();
@@ -46,12 +55,22 @@ class JedcheckerViewUploads extends JViewLegacy
 	{
 		$rules = array();
 		$files = JFolder::files(JPATH_COMPONENT_ADMINISTRATOR . '/libraries/rules', '\.php$', false, false);
+
 		JLoader::discover('jedcheckerRules', JPATH_COMPONENT_ADMINISTRATOR . '/libraries/rules/');
 
 		foreach ($files as $file)
 		{
-			$rules[] = substr($file, 0, -4);
+			$rule = substr($file, 0, -4);
+			$class = 'jedcheckerRules' . ucfirst($rule);
+
+			if (class_exists($class) && is_subclass_of($class, 'JEDcheckerRule'))
+			{
+				$rules[$rule] = $class::$ordering;
+			}
 		}
+
+		asort($rules, SORT_NUMERIC);
+		$rules = array_keys($rules);
 
 		return $rules;
 	}
@@ -68,8 +87,9 @@ class JedcheckerViewUploads extends JViewLegacy
 			JToolbarHelper::custom('check', 'search', 'search', JText::_('COM_JEDCHECKER_TOOLBAR_CHECK'), false);
 		}
 
-		JToolbarHelper::title('JED checker');
-		if ( file_exists($this->path) )
+		JToolbarHelper::title(JText::_('COM_JEDCHECKER'));
+
+		if (file_exists($this->path))
 		{
 			JToolbarHelper::custom('uploads.clear', 'delete', 'delete', JText::_('COM_JEDCHECKER_TOOLBAR_CLEAR'), false);
 		}
@@ -85,7 +105,7 @@ class JedcheckerViewUploads extends JViewLegacy
 	 *
 	 * @param   string  $type  - action
 	 *
-	 * @return bool
+	 * @return boolean
 	 */
 	private function filesExist($type)
 	{
@@ -102,7 +122,7 @@ class JedcheckerViewUploads extends JViewLegacy
 		{
 			$local = JFactory::getConfig()->get('tmp_path') . '/jed_checker/local.txt';
 
-			if ($type == 'unzipped' && JFile::exists($local))
+			if ($type === 'unzipped' && JFile::exists($local))
 			{
 				return true;
 			}

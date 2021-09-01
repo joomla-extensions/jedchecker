@@ -1,0 +1,144 @@
+{
+  "nodes": {
+    "extension": {
+      "name": "!",
+      "element": "?",
+      "creationDate": "=",
+      "author": "=",
+      "authorEmail": "=",
+      "authorUrl": "=",
+      "copyright": "=",
+      "version": "!",
+      "description": "=",
+      "license": "?",
+      "scriptfile": "?",
+      "install": "?",
+      "update": "?",
+      "uninstall": "?",
+      "files": "?",
+      "languages": "?",
+      "media": "?",
+      "updateservers": "?",
+      "dlid": "?",
+      "config": "?",
+      "namespace": "?"
+    },
+    "files": {
+      "filename": "*",
+      "files:file": "*",
+      "folder": "*"
+    },
+    "languages": {
+      "language": "*"
+    },
+    "media": {
+      "filename": "*",
+      "media:file": "*",
+      "folder": "*"
+    },
+    "install": {
+      "sql": "*"
+    },
+    "update": {
+      "sql": "*",
+      "schemas": "*"
+    },
+    "uninstall": {
+      "sql": "*"
+    },
+    "sql": {
+      "file": "*"
+    },
+    "updateservers": {
+      "server": "*"
+    },
+    "config": {
+      "fields": "!"
+    },
+    "fields": {
+      "fieldset": "+"
+    },
+    "fieldset": {
+      "field": "+"
+    },
+    "field": {
+      "*": "*"
+    }
+  },
+  "attributes": {
+    "extension": [
+      "client",
+      "method",
+      "overwrite",
+      "type",
+      "version"
+    ],
+    "files": [
+      "folder"
+    ],
+    "filename": [
+      "module"
+    ],
+    "files:file": [
+      "module"
+    ],
+    "languages": [
+      "folder"
+    ],
+    "language": [
+      "client",
+      "tag"
+    ],
+    "media": [
+      "destination",
+      "folder"
+    ],
+    "file": [
+      "charset",
+      "driver"
+    ],
+    "server": [
+      "name",
+      "priority",
+      "type"
+    ],
+    "namespace": [
+      "path"
+    ],
+    "config": [
+      "addfieldpath",
+      "addfieldprefix",
+      "addformpath",
+      "addformprefix",
+      "addrulepath",
+      "addruleprefix"
+    ],
+    "fields": [
+      "addfieldpath",
+      "addfieldprefix",
+      "addformpath",
+      "addformprefix",
+      "addrulepath",
+      "addruleprefix",
+      "name"
+    ],
+    "fieldset": [
+      "addfieldpath",
+      "addfieldprefix",
+      "addformpath",
+      "addformprefix",
+      "addrulepath",
+      "addruleprefix",
+      "description",
+      "label",
+      "name"
+    ],
+    "field": [
+      "*"
+    ],
+    "dlid": [
+      "prefix",
+      "suffix"
+    ]
+  }
+}
