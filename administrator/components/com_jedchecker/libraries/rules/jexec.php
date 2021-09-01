@@ -54,14 +54,37 @@ class JedcheckerRulesJexec extends JEDcheckerRule
 	public static $ordering = 600;
 
 	/**
+	 * Regexp to match _JEXEC-like guard
+	 *
+	 * @var    string
+	 */
+	protected $regex;
+
+	/**
+	 * Regexp to match directories to skip
+	 *
+	 * @var    string
+	 */
+	protected $regexExcludeFolders;
+
+	/**
+	 * List of files related to libraries
+	 *
+	 * @var    array
+	 */
+	protected $libFiles;
+
+	/**
 	 * Initiates the file search and check
 	 *
 	 * @return    void
 	 */
 	public function check()
 	{
+		$this->initJexec();
+
 		// Find all php files of the extension
-		$files = JFolder::files($this->basedir, '\.php$', true, true);
+		$files = $this->files($this->basedir);
 
 		// Iterate through all files
 		foreach ($files as $file)
@@ -84,79 +107,117 @@ class JedcheckerRulesJexec extends JEDcheckerRule
 	 */
 	protected function find($file)
 	{
-		$content = (array) file($file);
+		// Load file and strip comments
+		$content = php_strip_whitespace($file);
 
-		// Get the constants to look for
+		// Strip BOM (it is checked separately)
+		$content = preg_replace('/^\xEF\xBB\xBF/', '', $content);
+
+		// Skip empty files
+		if ($content === '' || preg_match('#^<\?php\s+$#', $content))
+		{
+			return true;
+		}
+
+		// Check guards
+		if (preg_match($this->regex, $content))
+		{
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Prepare regexps aforehand
+	 *
+	 * @return void
+	 */
+	protected function initJexec()
+	{
+		// Generate regular expression to match JEXEC quard
 		$defines = $this->params->get('constants');
 		$defines = explode(',', $defines);
 
-		$hascode = 0;
-
-		foreach ($content AS $line)
+		foreach ($defines as $i => $define)
 		{
-			$tline = trim($line);
-
-			if ($tline == '' || $tline == '<?php' || $tline == '?>')
-			{
-				continue;
-			}
-
-			if ($tline['0'] != '/' && $tline['0'] != '*')
-			{
-				$hascode = 1;
-			}
-
-			// Search for "defined"
-			$pos_1 = stripos($line, 'defined');
-
-			// Skip the line if "defined" is not found
-			if ($pos_1 === false)
-			{
-				continue;
-			}
-
-			// Search for "die".
-			//  "or" may not be present depending on syntax
-			$pos_3 = stripos($line, 'die');
-
-			// Check for "exit"
-			if ($pos_3 === false)
-			{
-				$pos_3 = stripos($line, 'exit');
-
-				// Skip the line if "die" or "exit" is not found
-				if ($pos_3 === false)
-				{
-					continue;
-				}
-			}
-
-			// Search for the constant name
-			foreach ($defines AS $define)
-			{
-				$define = trim($define);
-
-				// Search for the define
-				$pos_2 = strpos($line, $define);
-
-				// Skip the line if the define is not found
-				if ($pos_2 === false)
-				{
-					continue;
-				}
-
-				// Check the position of the words
-				if ($pos_2 > $pos_1 && $pos_3 > $pos_2)
-				{
-					unset($content);
-
-					return true;
-				}
-			}
+			$defines[$i] = preg_quote(trim($define), '#');
 		}
 
-		unset($content);
+		$this->regex
+			= '#^' // at the beginning of the file
+			. '<\?php\s+' // there is an opening php tag
+			. '(?:declare ?\(strict_types ?= ?1 ?\) ?; ?)?' // optionally followed by declare(strict_types=1) directive
+			. '(?:namespace [0-9A-Za-z_\\\\]+ ?; ?)?' // optionally followed by namespace directive
+			. '(?:use [0-9A-Za-z_\\\\]+ ?(?:as [0-9A-Za-z_]+ ?)?; ?)*' // optionally followed by use directives
+			. 'defined ?\( ?' // followed by defined test
+			. '([\'"])(?:' . implode('|', $defines) . ')\1' // of any of given constant
+			. ' ?\) ?(?:or |\|\| ?)(?:die|exit)\b' // or exit
+			. '#i'; // (case insensitive)
 
-		return $hascode ? false : true;
+		// Generate regular expression to match excluded directories
+		$libfolders = $this->params->get('libfolders');
+		$libfolders = explode(',', $libfolders);
+
+		foreach ($libfolders as &$libfolder)
+		{
+			$libfolder = preg_quote(trim($libfolder), '#');
+		}
+
+		// Prepend libFolders with default Joomla's exclude list
+		$this->regexExcludeFolders = '#^(?:\.svn|CVS|\.DS_Store|__MACOSX|' . implode('|', $libfolders) . ')$#';
+
+		// Generate list of libraries fingerprint files
+		$libFiles = $this->params->get('libfiles');
+		$this->libFiles = array_map('trim', explode(',', $libFiles));
+	}
+
+	/**
+	 * Collect php files to check (excluding external library directories)
+	 *
+	 * @param   string $path The path of the folder to read.
+	 *
+	 * @return array
+	 * @since 3.0
+	 */
+	protected function files($path)
+	{
+		$arr = array();
+
+		// Read the source directory
+		if ($handle = @opendir($path))
+		{
+			while (($file = readdir($handle)) !== false)
+			{
+				// Skip excluded directories
+				if ($file !== '.' && $file !== '..' && !preg_match($this->regexExcludeFolders, $file))
+				{
+					$fullpath = $path . '/' . $file;
+
+					if (is_dir($fullpath))
+					{
+						// Detect and skip external library directories
+						foreach ($this->libFiles as $libFile)
+						{
+							if (is_file($fullpath . '/' . $libFile))
+							{
+								// Skip processing of this directory
+								continue 2;
+							}
+						}
+
+						$arr = array_merge($arr, $this->files($fullpath));
+					}
+					elseif (preg_match('/\.php$/', $file))
+					{
+						$arr[] = $fullpath;
+					}
+				}
+			}
+
+			closedir($handle);
+		}
+
+		return $arr;
 	}
 }
