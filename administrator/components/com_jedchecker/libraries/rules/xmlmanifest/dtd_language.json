@@ -15,7 +15,9 @@
       "files": "!",
       "media": "?",
       "fonts": "?",
+      "install": "?",
       "update": "?",
+      "uninstall": "?",
       "updateservers": "?",
       "dlid": "?"
     },
@@ -33,6 +35,22 @@
       "filename": "*",
       "fonts:file": "*",
       "folder": "*"
+    },
+    "install": {
+      "sql": "*"
+    },
+    "update": {
+      "sql": "*",
+      "schemas": "*"
+    },
+    "uninstall": {
+      "sql": "*"
+    },
+    "sql": {
+      "file": "*"
+    },
+    "schemas": {
+      "schemapath": "*"
     },
     "updateservers": {
       "server": "*"
@@ -55,6 +73,9 @@
     ],
     "fonts": [
       "folder"
+    ],
+    "schemapath": [
+      "type"
     ],
     "server": [
       "name",
