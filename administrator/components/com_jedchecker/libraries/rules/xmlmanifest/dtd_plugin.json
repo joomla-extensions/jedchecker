@@ -50,6 +50,9 @@
     "sql": {
       "file": "*"
     },
+    "schemas": {
+      "schemapath": "*"
+    },
     "updateservers": {
       "server": "*"
     },
@@ -98,6 +101,9 @@
     "file": [
       "charset",
       "driver"
+    ],
+    "schemapath": [
+      "type"
     ],
     "server": [
       "name",
