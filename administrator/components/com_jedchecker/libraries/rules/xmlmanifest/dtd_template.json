@@ -21,6 +21,7 @@
       "positions": "=",
       "updateservers": "?",
       "dlid": "?",
+      "help": "?",
       "config": "?"
     },
     "positions": {
@@ -92,6 +93,10 @@
       "name",
       "priority",
       "type"
+    ],
+    "help": [
+      "key",
+      "url"
     ],
     "dlid": [
       "prefix",

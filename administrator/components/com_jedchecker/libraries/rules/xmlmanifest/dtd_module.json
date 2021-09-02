@@ -21,6 +21,7 @@
       "media": "?",
       "updateservers": "?",
       "dlid": "?",
+      "help": "?",
       "config": "?",
       "namespace": "?"
     },
@@ -142,6 +143,10 @@
     ],
     "field": [
       "*"
+    ],
+    "help": [
+      "key",
+      "url"
     ],
     "dlid": [
       "prefix",
