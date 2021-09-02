@@ -82,6 +82,10 @@
       "client",
       "tag"
     ],
+    "file": [
+      "charset",
+      "driver"
+    ],
     "schemapath": [
       "type"
     ],

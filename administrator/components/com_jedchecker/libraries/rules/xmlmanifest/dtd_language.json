@@ -74,6 +74,10 @@
     "fonts": [
       "folder"
     ],
+    "file": [
+      "charset",
+      "driver"
+    ],
     "schemapath": [
       "type"
     ],
