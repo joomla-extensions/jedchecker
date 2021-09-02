@@ -13,9 +13,6 @@
       "license": "?",
       "changelogurl": "?",
       "scriptfile": "?",
-      "install": "?",
-      "update": "?",
-      "uninstall": "?",
       "files": "?",
       "images": "?",
       "css": "?",
@@ -51,22 +48,6 @@
       "filename": "*",
       "media:file": "*",
       "folder": "*"
-    },
-    "install": {
-      "sql": "*"
-    },
-    "update": {
-      "sql": "*",
-      "schemas": "*"
-    },
-    "uninstall": {
-      "sql": "*"
-    },
-    "sql": {
-      "file": "*"
-    },
-    "schemas": {
-      "schemapath": "*"
     },
     "updateservers": {
       "server": "*"
@@ -106,9 +87,6 @@
     "file": [
       "charset",
       "driver"
-    ],
-    "schemapath": [
-      "type"
     ],
     "server": [
       "name",
