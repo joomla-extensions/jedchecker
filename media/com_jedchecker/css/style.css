@@ -100,19 +100,19 @@
   color: #d4e1f1;
 }
 #jedchecker .alert pre {
-	margin-bottom: 0;
-	white-space: pre;
+  margin-bottom: 0;
+  white-space: pre;
 }
 
 /* fixes for Joomla! 3.x */
 #jedchecker input[type="file"] {
-	height: auto;
+  height: auto;
 }
 #jedchecker .fade.show {
-	opacity: 1;
+  opacity: 1;
 }
 #jedchecker .collapse {
-	height: inherit;
+  height: inherit;
 }
 #jedchecker .tooltip > .tooltip-arrow {
   border-style: none;
