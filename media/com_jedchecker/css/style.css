@@ -50,6 +50,7 @@
 
 /* Alerts */
 #jedchecker .alert::before {
+  content: attr(data-level);
   position: absolute;
   top: -.5rem;
   left: .5rem;
@@ -65,7 +66,6 @@
   border-color: #eebfbe;
 }
 #jedchecker .alert.alert-danger::before {
-  content: 'ERROR';
   background-color: #761817;
   color: #f3d4d4;
 }
@@ -75,7 +75,6 @@
   border-color: #ffe9b9;
 }
 #jedchecker .alert.alert-warning::before {
-  content: 'WARNING';
   background-color: #664808;
   color: #fff0d0;
 }
@@ -85,7 +84,6 @@
   border-color: #c8cbcd;
 }
 #jedchecker .alert.alert-secondary::before {
-  content: 'DEPRECATED';
   background-color: #2c3034;
   color: #dbdcdd;
 }
@@ -95,7 +93,6 @@
   border-color: #bfcbd9;
 }
 #jedchecker .alert.alert-info::before {
-  content: 'INFO';
   background-color: #193f6e;
   color: #d4e1f1;
 }

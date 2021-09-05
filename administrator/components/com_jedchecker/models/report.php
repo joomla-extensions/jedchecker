@@ -186,24 +186,24 @@ class JEDcheckerReport extends JObject
 			// Go through the error list
 			if ($this->data['count']->errors > 0)
 			{
-				$html[] = $this->formatItems($this->data['errors'], 'danger');
+				$html[] = $this->formatItems($this->data['errors'], 'danger', JText::_('COM_JEDCHECKER_LEVEL_ERROR'));
 			}
 			// Go through the warning list
 			if ($this->data['count']->warning > 0)
 			{
-				$html[] = $this->formatItems($this->data['warning'], 'warning');
+				$html[] = $this->formatItems($this->data['warning'], 'warning', JText::_('COM_JEDCHECKER_LEVEL_WARNING'));
 			}
 
 			// Go through the compat list
 			if ($this->data['count']->compat > 0)
 			{
-				$html[] = $this->formatItems($this->data['compat'], 'secondary');
+				$html[] = $this->formatItems($this->data['compat'], 'secondary', JText::_('COM_JEDCHECKER_LEVEL_COMPATIBILITY'));
 			}
 
 			// Go through the info list
 			if ($this->data['count']->info > 0)
 			{
-				$html[] = $this->formatItems($this->data['info'], 'info');
+				$html[] = $this->formatItems($this->data['info'], 'info', JText::_('COM_JEDCHECKER_LEVEL_INFO'));
 			}
 		}
 
@@ -243,11 +243,12 @@ class JEDcheckerReport extends JObject
 	 * Converts an item to the string representation
 	 *
 	 * @param   array   $items       List or reports
-	 * @param   string  $alertStyle  Type of alert blocks
+	 * @param   string  $alertStyle  Style of alert blocks
+	 * @param   string  $alertName   Type of alert blocks
 	 *
 	 * @return  string
 	 */
-	protected function formatItems($items, $alertStyle)
+	protected function formatItems($items, $alertStyle, $alertName)
 	{
 		$html = array();
 
@@ -255,7 +256,7 @@ class JEDcheckerReport extends JObject
 		{
 			$num = $i + 1;
 
-			$html[] = '<div class="alert alert-' . $alertStyle . '">';
+			$html[] = '<div class="alert alert-' . $alertStyle . '" data-level="' . $alertName . '">';
 
 			// Add count number
 			$html[] = '<strong>#' . str_pad($num, 3, '0', STR_PAD_LEFT) . '</strong> ';
