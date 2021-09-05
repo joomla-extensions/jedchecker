@@ -47,15 +47,57 @@
   background-color: #2a69b8 !important;
   color: #fff;
 }
+
+/* Alerts */
+#jedchecker .alert::before {
+  position: absolute;
+  top: -.5rem;
+  left: .5rem;
+  padding: .25rem .5rem;
+  font-size: .75rem;
+  font-weight: bold;
+  line-height: 1;
+  border-radius: .25rem;
+}
+#jedchecker .alert.alert-danger {
+  color: #761817;
+  background-color: #f3d4d4;
+  border-color: #eebfbe;
+}
+#jedchecker .alert.alert-danger::before {
+  content: 'ERROR';
+  background-color: #761817;
+  color: #f3d4d4;
+}
 #jedchecker .alert.alert-warning {
   color: #664808;
   background-color: #fff0d0;
   border-color: #ffe9b9;
 }
+#jedchecker .alert.alert-warning::before {
+  content: 'WARNING';
+  background-color: #664808;
+  color: #fff0d0;
+}
+#jedchecker .alert.alert-secondary {
+  color: #2c3034;
+  background-color: #dbdcdd;
+  border-color: #c8cbcd;
+}
+#jedchecker .alert.alert-secondary::before {
+  content: 'DEPRECATED';
+  background-color: #2c3034;
+  color: #dbdcdd;
+}
 #jedchecker .alert.alert-info {
   color: #193f6e;
   background-color: #d4e1f1;
   border-color: #bfcbd9;
+}
+#jedchecker .alert.alert-info::before {
+  content: 'INFO';
+  background-color: #193f6e;
+  color: #d4e1f1;
 }
 #jedchecker .alert pre {
 	margin-bottom: 0;
