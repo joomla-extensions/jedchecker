@@ -74,6 +74,8 @@ class JedcheckerRulesGpl extends JEDcheckerRule
 	 */
 	public function check()
 	{
+		$this->report->setDefaultSubtype($this->id);
+
 		// Prepare regexp
 		$this->init();
 
@@ -210,7 +212,7 @@ class JedcheckerRulesGpl extends JEDcheckerRule
 		if (preg_match($this->regexGPLLicenses, $content, $match, PREG_OFFSET_CAPTURE))
 		{
 			$lineno = substr_count($content, "\n", 0, $match[0][1]) + 1;
-			$this->report->addInfo(
+			$this->report->addPassed(
 				$file,
 				JText::_('COM_JEDCHECKER_PH1_LICENSE_FOUND'),
 				$lineno,

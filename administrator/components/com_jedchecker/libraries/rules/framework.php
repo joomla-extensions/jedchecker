@@ -238,7 +238,7 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 							break;
 						default:
 							// Case 'notice':
-							$this->report->addInfo($file, $error_message, $line_number);
+							$this->report->addNotice($file, $error_message, $line_number);
 							break;
 					}
 				}

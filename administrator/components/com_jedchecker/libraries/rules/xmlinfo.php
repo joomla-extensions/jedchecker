@@ -172,7 +172,8 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 			// (and other reserved words)
 			if (preg_match('/\b(?:module|plugin|component|template|extension|free)\b/i', $extensionName, $match))
 			{
-				$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_RESERVED_KEYWORDS', $extensionName, strtolower($match[0])));
+				$this->report->addIssue(JEDcheckerReport::LEVEL_ERROR, 'NM3', $file,
+				                        JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_RESERVED_KEYWORDS', $extensionName, strtolower($match[0])));
 			}
 
 			// Extension name shouldn't start with extension type prefix
@@ -184,14 +185,16 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 			// NM5 - Version in name/title
 			if (preg_match('/(?:\bversion\b|\d\.\d)/i', $extensionName))
 			{
-				$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_VERSION', $extensionName));
+				$this->report->addIssue(JEDcheckerReport::LEVEL_ERROR, 'NM5', $file,
+				                        JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_VERSION', $extensionName));
 			}
 
 			// Check for "Joomla" in the name
 			if (stripos($extensionName, 'joomla') === 0)
 			{
 				// An extension name can't start with the word "Joomla"
-				$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_JOOMLA', $extensionName));
+				$this->report->addIssue(JEDcheckerReport::LEVEL_ERROR, 'TM2', $file,
+				                        JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_JOOMLA', $extensionName));
 			}
 			else
 			{
@@ -200,9 +203,8 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 				if (stripos($cleanName, 'joom') !== false)
 				{
 					// Extensions that use "Joomla" or a derivative of Joomla in the extension name need to be licensed by OSM
-					$this->report->addWarning($file,
-							JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_JOOMLA_DERIVATIVE', $extensionName, 'https://tm.joomla.org/approved-domains.html')
-					);
+					$this->report->addIssue(JEDcheckerReport::LEVEL_WARNING, 'TM2', $file,
+					                        JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_JOOMLA_DERIVATIVE', $extensionName, 'https://tm.joomla.org/approved-domains.html'));
 				}
 			}
 
@@ -364,7 +366,8 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 		if (stripos($domain, 'joomla') !== false)
 		{
 			// Extensions that use "Joomla" or a derivative of Joomla in the domain name need to be licensed by OSM
-			$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_URL_JOOMLA_DERIVATIVE', $url, 'https://tm.joomla.org/approved-domains.html'));
+			$this->report->addIssue(JEDcheckerReport::LEVEL_ERROR, 'TM1', $file,
+			                        JText::sprintf('COM_JEDCHECKER_INFO_XML_URL_JOOMLA_DERIVATIVE', $url, 'https://tm.joomla.org/approved-domains.html'));
 		}
 	}
 }

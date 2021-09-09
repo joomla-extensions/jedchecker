@@ -81,6 +81,8 @@ class JedcheckerRulesJexec extends JEDcheckerRule
 	 */
 	public function check()
 	{
+		$this->report->setDefaultSubtype($this->id);
+
 		$this->initJexec();
 
 		// Find all php files of the extension

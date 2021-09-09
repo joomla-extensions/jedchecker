@@ -127,7 +127,7 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 		// Check EOL format is \n (not \r or \n\r)
 		if (strpos($content, "\r") !== false)
 		{
-			$this->report->addInfo($file, JText::_('COM_JEDCHECKER_LANG_INCORRECT_EOL', false, false));
+			$this->report->addNotice($file, JText::_('COM_JEDCHECKER_LANG_INCORRECT_EOL', false, false));
 		}
 
 		$lines = file($file);
@@ -263,7 +263,7 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 			// Check for empty value
 			if ($value === '""')
 			{
-				$this->report->addInfo($file, JText::_('COM_JEDCHECKER_LANG_TRANSLATION_EMPTY'), $startLineno, $line);
+				$this->report->addNotice($file, JText::_('COM_JEDCHECKER_LANG_TRANSLATION_EMPTY'), $startLineno, $line);
 				continue;
 			}
 
@@ -350,7 +350,7 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 				// Check spaces around (but allow trailing space after colon)
 				if (preg_match('/^\s|[^:]\s+$/', $value))
 				{
-					$this->report->addInfo($file, JText::_('COM_JEDCHECKER_LANG_SPACES_AROUND'), $startLineno, $line);
+					$this->report->addNotice($file, JText::_('COM_JEDCHECKER_LANG_SPACES_AROUND'), $startLineno, $line);
 				}
 			}
 		}
@@ -406,7 +406,7 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 			if (!isset($this->langKeys[$key]))
 			{
 				$lineno = substr_count($content, "\n", 0, $match[1]);
-				$this->report->addInfo($file, JText::sprintf('COM_JEDCHECKER_LANG_UNKNOWN_KEY_IN_CODE', htmlspecialchars($key)), $lineno + 1, $lines[$lineno]);
+				$this->report->addNotice($file, JText::sprintf('COM_JEDCHECKER_LANG_UNKNOWN_KEY_IN_CODE', htmlspecialchars($key)), $lineno + 1, $lines[$lineno]);
 			}
 		}
 

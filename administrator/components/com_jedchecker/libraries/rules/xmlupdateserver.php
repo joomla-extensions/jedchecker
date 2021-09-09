@@ -62,6 +62,8 @@ class JedcheckerRulesXMLUpdateServer extends JEDcheckerRule
 	 */
 	public function check()
 	{
+		$this->report->setDefaultSubtype($this->id);
+
 		// Find all XML files of the extension
 		$files = JEDCheckerHelper::findManifests($this->basedir);
 
@@ -213,12 +215,12 @@ class JedcheckerRulesXMLUpdateServer extends JEDcheckerRule
 				$this->report->addError($file, JText::_('COM_JEDCHECKER_ERROR_XML_UPDATE_SERVER_LINK_NOT_FOUND'));
 
 				return false;
-
-			} else {
-				$this->report->addInfo($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_UPDATE_SERVER_LINK', (string) $server));
+			}
+			else
+			{
+				$this->report->addPassed($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_UPDATE_SERVER_LINK', (string) $server));
 			}
 		}
-
 
 		// All checks passed. Return true
 		return true;

@@ -62,6 +62,8 @@ class JedcheckerRulesXMLlicense extends JEDcheckerRule
 	 */
 	public function check()
 	{
+		$this->report->setDefaultSubtype($this->id);
+
 		// Find all XML files of the extension
 		$files = JEDCheckerHelper::findManifests($this->basedir);
 
