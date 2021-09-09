@@ -87,6 +87,7 @@ class JEDcheckerRule extends JObject
 		if (empty($this->report))
 		{
 			// Create a new report
+			require_once JPATH_COMPONENT_ADMINISTRATOR . '/models/item.php';
 			require_once JPATH_COMPONENT_ADMINISTRATOR . '/models/report.php';
 			$this->report = new JEDcheckerReport($properties);
 		}

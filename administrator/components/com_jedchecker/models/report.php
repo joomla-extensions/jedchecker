@@ -23,6 +23,17 @@ defined('_JEXEC') or die('Restricted access');
 class JEDcheckerReport extends JObject
 {
 	/**
+	 * Rule's issue levels
+	 * @since 2.4.1
+	 */
+	const LEVEL_ERROR   = 'error';
+	const LEVEL_WARNING = 'warning';
+	const LEVEL_COMPAT  = 'compatibility';
+	const LEVEL_NOTICE  = 'notice';
+	const LEVEL_INFO    = 'info';
+	const LEVEL_PASSED  = 'passed';
+
+	/**
 	 * Contains the report data.
 	 *
 	 * @var    array
@@ -36,6 +47,38 @@ class JEDcheckerReport extends JObject
 	 * @var    string
 	 */
 	protected $basedir;
+
+	/**
+	 * Default rule subtype (e.g. PH1)
+	 *
+	 * @var string
+	 * @since 2.4.1
+	 */
+	protected $defaultSubtype = '';
+
+	/**
+	 * Bootstrap5 styles for issue levels
+	 *
+	 * @var string[]
+	 * @since 2.4.1
+	 */
+	protected $issueBootstrapStyles = array(
+		self::LEVEL_ERROR   => 'danger',
+		self::LEVEL_WARNING => 'warning',
+		self::LEVEL_COMPAT  => 'secondary',
+		self::LEVEL_NOTICE  => 'info',
+		self::LEVEL_INFO    => 'info',
+		self::LEVEL_PASSED  => 'info',
+	);
+
+	/**
+	 * Translations for issue levels.
+	 *
+	 * @var string[]
+	 * @see reset
+	 * @since 2.4.1
+	 */
+	protected $issueLangTitles;
 
 	/**
 	 * Constructor. Initialises variables.
@@ -62,19 +105,38 @@ class JEDcheckerReport extends JObject
 	 */
 	public function reset()
 	{
-		$this->data = array();
+		// Initialize language strings
+		$this->issueLangTitles = array(
+			self::LEVEL_ERROR   => JText::_('COM_JEDCHECKER_LEVEL_ERROR'),
+			self::LEVEL_WARNING => JText::_('COM_JEDCHECKER_LEVEL_WARNING'),
+			self::LEVEL_COMPAT  => JText::_('COM_JEDCHECKER_LEVEL_COMPATIBILITY'),
+			self::LEVEL_NOTICE  => JText::_('COM_JEDCHECKER_LEVEL_NOTICE'),
+			self::LEVEL_INFO    => JText::_('COM_JEDCHECKER_LEVEL_INFO'),
+			self::LEVEL_PASSED  => JText::_('COM_JEDCHECKER_LEVEL_PASSED'),
+		);
 
-		$this->data['errors'] = array();
-		$this->data['compat'] = array();
-		$this->data['info'] = array();
-		$this->data['warning'] = array();
+		$this->data = array();
 
 		$this->data['count'] = new stdClass;
 		$this->data['count']->total = 0;
-		$this->data['count']->errors = 0;
-		$this->data['count']->compat = 0;
-		$this->data['count']->warning = 0;
-		$this->data['count']->info = 0;
+
+		foreach ($this->issueLangTitles as $key => $_dummy)
+		{
+			$this->data[$key] = array();
+			$this->data['count']->$key = 0;
+		}
+	}
+
+	/**
+	 * Sets default rule's subtype (e.g. PH1)
+	 *
+	 * @param   string $subtype
+	 *
+	 * @since 2.4.1
+	 */
+	public function setDefaultSubtype($subtype)
+	{
+		$this->defaultSubtype = $subtype;
 	}
 
 	/**
@@ -88,59 +150,9 @@ class JEDcheckerReport extends JObject
 	 *
 	 * @return    void
 	 */
-	public function addError($location, $text = null, $line = 0, $code = null)
+	public function addError($location, $text = null, $line = null, $code = null)
 	{
-		$item = new stdClass;
-		$item->location = $location;
-		$item->line = $line;
-		$item->text = $text;
-		$item->code = $code;
-
-		$this->addItem($item, 'errors');
-	}
-
-	/**
-	 * Adds an error to the report.
-	 *
-	 * @param   string   $location  - The location of the error. Can be a path to a file or dir.
-	 * @param   string   $text      - An optional description of the error.
-	 * @param   integer  $line      - If $location is a file, you may specify the line where the
-	 *                                   error occurred.
-	 * @param   string   $code      - Code at that location (to be displayed below the description)
-	 *
-	 * @return    void
-	 */
-	public function addInfo($location, $text = null, $line = 0, $code = null)
-	{
-		$item = new stdClass;
-		$item->location = $location;
-		$item->line = $line;
-		$item->text = $text;
-		$item->code = $code;
-
-		$this->addItem($item, 'info');
-	}
-
-	/**
-	 * Adds a compatibility issue to the report.
-	 *
-	 * @param   string   $location  - The location of the issue. Can be a path to a file or dir.
-	 * @param   string   $text      - An optional description of the issue
-	 * @param   integer  $line      - If $location is a file, you may specify the line where the
-	 *                                   issue occurred.
-	 * @param   string   $code      - Code at that location (to be displayed below the description)
-	 *
-	 * @return    void
-	 */
-	public function addCompat($location, $text = null, $line = 0, $code = null)
-	{
-		$item = new stdClass;
-		$item->location = $location;
-		$item->line = $line;
-		$item->text = $text;
-		$item->code = $code;
-
-		$this->addItem($item, 'compat');
+		$this->addIssue(self::LEVEL_ERROR, $this->defaultSubtype, $location, $text, $line, $code);
 	}
 
 	/**
@@ -154,15 +166,94 @@ class JEDcheckerReport extends JObject
 	 *
 	 * @return    void
 	 */
-	public function addWarning($location, $text = null, $line = 0, $code = null)
+	public function addWarning($location, $text = null, $line = null, $code = null)
 	{
-		$item = new stdClass;
-		$item->location = $location;
-		$item->line = $line;
-		$item->text = $text;
-		$item->code = $code;
+		$this->addIssue(self::LEVEL_WARNING, $this->defaultSubtype, $location, $text, $line, $code);
+	}
 
-		$this->addItem($item, 'warning');
+	/**
+	 * Adds a compatibility issue to the report.
+	 *
+	 * @param   string   $location  - The location of the issue. Can be a path to a file or dir.
+	 * @param   string   $text      - An optional description of the issue
+	 * @param   integer  $line      - If $location is a file, you may specify the line where the
+	 *                                   issue occurred.
+	 * @param   string   $code      - Code at that location (to be displayed below the description)
+	 *
+	 * @return    void
+	 */
+	public function addCompat($location, $text = null, $line = null, $code = null)
+	{
+		$this->addIssue(self::LEVEL_COMPAT, $this->defaultSubtype, $location, $text, $line, $code);
+	}
+
+	/**
+	 * Adds a notice to the report.
+	 *
+	 * @param   string   $location  - The location of the error. Can be a path to a file or dir.
+	 * @param   string   $text      - An optional description of the error.
+	 * @param   integer  $line      - If $location is a file, you may specify the line where the
+	 *                                   error occurred.
+	 * @param   string   $code      - Code at that location (to be displayed below the description)
+	 *
+	 * @return    void
+	 */
+	public function addNotice($location, $text = null, $line = null, $code = null)
+	{
+		$this->addIssue(self::LEVEL_NOTICE, $this->defaultSubtype, $location, $text, $line, $code);
+	}
+
+	/**
+	 * Adds an info message to the report.
+	 *
+	 * @param   string   $location  - The location of the error. Can be a path to a file or dir.
+	 * @param   string   $text      - An optional description of the error.
+	 * @param   integer  $line      - If $location is a file, you may specify the line where the
+	 *                                   error occurred.
+	 * @param   string   $code      - Code at that location (to be displayed below the description)
+	 *
+	 * @return    void
+	 */
+	public function addInfo($location, $text = null, $line = null, $code = null)
+	{
+		$this->addIssue(self::LEVEL_INFO, $this->defaultSubtype, $location, $text, $line, $code);
+	}
+
+	/**
+	 * Adds a "passed" message to the report.
+	 *
+	 * @param   string   $location  - The location of the error. Can be a path to a file or dir.
+	 * @param   string   $text      - An optional description of the error.
+	 * @param   integer  $line      - If $location is a file, you may specify the line where the
+	 *                                   error occurred.
+	 * @param   string   $code      - Code at that location (to be displayed below the description)
+	 *
+	 * @return    void
+	 */
+	public function addPassed($location, $text = null, $line = null, $code = null)
+	{
+		$this->addIssue(self::LEVEL_PASSED, $this->defaultSubtype, $location, $text, $line, $code);
+	}
+
+	/**
+	 * Add an issue to the report
+	 *
+	 * @param   string  $type     Issue type (see LEVEL_* constants)
+	 * @param   string  $subtype  Issue subtype (e.g. PH1)
+	 * @param   string  $location The location of the issue. Can be a path to a file or dir.
+	 * @param   ?string $text     An optional description of the issue
+	 * @param   ?int    $line     If $location is a file, you may specify the line where the issue occurred
+	 * @param   ?string $code     Code at that location (to be displayed below the description)
+	 *
+	 * @return    void
+	 *
+	 * @since 2.4.1
+	 */
+	public function addIssue($type, $subtype, $location, $text = null, $line = null, $code = null)
+	{
+		$item = new JEDCheckerReportItem($type, $subtype, $location, $text, $line, $code);
+
+		$this->addItem($item, $type);
 	}
 
 	/**
@@ -183,27 +274,13 @@ class JEDcheckerReport extends JObject
 		}
 		else
 		{
-			// Go through the error list
-			if ($this->data['count']->errors > 0)
+			foreach ($this->issueBootstrapStyles as $type => $bsStyle)
 			{
-				$html[] = $this->formatItems($this->data['errors'], 'danger', JText::_('COM_JEDCHECKER_LEVEL_ERROR'));
-			}
-			// Go through the warning list
-			if ($this->data['count']->warning > 0)
-			{
-				$html[] = $this->formatItems($this->data['warning'], 'warning', JText::_('COM_JEDCHECKER_LEVEL_WARNING'));
-			}
-
-			// Go through the compat list
-			if ($this->data['count']->compat > 0)
-			{
-				$html[] = $this->formatItems($this->data['compat'], 'secondary', JText::_('COM_JEDCHECKER_LEVEL_COMPATIBILITY'));
-			}
-
-			// Go through the info list
-			if ($this->data['count']->info > 0)
-			{
-				$html[] = $this->formatItems($this->data['info'], 'info', JText::_('COM_JEDCHECKER_LEVEL_INFO'));
+				// Go through the error list
+				if ($this->data['count']->{$type} > 0)
+				{
+					$html[] = $this->formatItems($this->data[$type], $bsStyle, $this->issueLangTitles[$type]);
+				}
 			}
 		}
 
@@ -213,13 +290,12 @@ class JEDcheckerReport extends JObject
 	/**
 	 * Adds an item to the report data
 	 *
-	 * @param   object  $item  - The item to add.
-	 * @param   string  $type  - Optional item type. Can be 'errors' or 'compat'.
-	 *                              Defaults to 'errors'.
+	 * @param   JEDCheckerReportItem $item  - The item to add.
+	 * @param   string               $type  - The item type (see LEVEL_* constants).
 	 *
 	 * @return    void
 	 */
-	protected function addItem($item, $type = 'errors')
+	protected function addItem($item, $type)
 	{
 		// Remove the base dir from the location
 		if (!empty($this->basedir))
@@ -242,9 +318,9 @@ class JEDcheckerReport extends JObject
 	/**
 	 * Converts an item to the string representation
 	 *
-	 * @param   array   $items       List or reports
-	 * @param   string  $alertStyle  Style of alert blocks
-	 * @param   string  $alertName   Type of alert blocks
+	 * @param   JEDCheckerReportItem[] $items       List or reports
+	 * @param   string                 $alertStyle  Style of alert blocks
+	 * @param   string                 $alertName   Type of alert blocks
 	 *
 	 * @return  string
 	 */
@@ -256,14 +332,16 @@ class JEDcheckerReport extends JObject
 		{
 			$num = $i + 1;
 
-			$html[] = '<div class="alert alert-' . $alertStyle . '" data-level="' . $alertName . '">';
+			$title = $alertName . (empty($item->subtype) ? '' : ': ' . $item->subtype);
+
+			$html[] = '<div class="alert alert-' . $alertStyle . '" data-level="' . $title . '">';
 
 			// Add count number
 			$html[] = '<strong>#' . str_pad($num, 3, '0', STR_PAD_LEFT) . '</strong> ';
 			$html[] = $item->location;
 
 			// Add line information if given
-			if ($item->line > 0)
+			if ($item->line !== null)
 			{
 				$html[] = ' ' . JText::_('COM_JEDCHECKER_IN_LINE') . ': <strong>' . $item->line . '</strong>';
 			}
