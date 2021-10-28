@@ -63,7 +63,7 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 	 * @var string[]
 	 */
 	protected $jedTypes = array(
-		'component', 'module', 'package', 'plugin'
+		'component', 'module', 'package', 'plugin', 'library'
 	);
 
 	/**
