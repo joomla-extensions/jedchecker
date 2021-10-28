@@ -1,6 +1,13 @@
 <?php defined('_JEXEC') or die(); ?>
 
 =====================================================================
+JED Checker 2.4.1 - Released 28-Oct-2021 Onward -->
+=====================================================================
+
+Please follow the changelog in the commit messages on github.
+https://github.com/joomla-extensions/jedchecker/commits/master
+
+=====================================================================
 JED Checker 2.1.1 - 2.1.2 - Released 10-March-2019
 =====================================================================
 
