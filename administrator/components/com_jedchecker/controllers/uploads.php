@@ -85,11 +85,7 @@ class JedcheckerControllerUploads extends JControllerLegacy
 				}
 			}
 
-			$filepath = $path . '/' . strtolower($file['name']);
-
-			$object_file           = new JObject($file);
-			$object_file->filepath = $filepath;
-			$file                  = (array) $object_file;
+			$file['filepath'] = $path . '/' . strtolower($file['name']);
 
 			// Let us try to upload
 			if (!JFile::upload($file['tmp_name'], $file['filepath'], false, true))
