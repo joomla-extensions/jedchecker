@@ -260,7 +260,7 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 						'Found direct shell command execution getting variables from POST/GET, ' .
 						'which is highly dangerous security flaw or a part of malicious webrootkit',
 						'code'),
-						array('\$\w[\w\W\s/\*]*=[\w\W\s/\*]*`.*`',
+						array('`',
 						'PHP execution operator: backticks (``)',
 						'24',
 						'PHP execution operator found. Note that these are not single-quotes! ' .
