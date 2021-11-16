@@ -116,7 +116,7 @@ class JedcheckerRulesJexec extends JEDcheckerRule
 		$content = preg_replace('/^\xEF\xBB\xBF/', '', $content);
 
 		// Skip empty files
-		if ($content === '' || preg_match('#^<\?php\s+$#', $content))
+		if ($content === '' || preg_match('#^\s*<\?php\s+$#', $content))
 		{
 			return true;
 		}
@@ -147,7 +147,7 @@ class JedcheckerRulesJexec extends JEDcheckerRule
 		}
 
 		$this->regex
-			= '#^' // at the beginning of the file
+			= '#^\s*' // at the beginning of the file
 			. '<\?php\s+' // there is an opening php tag
 			. '(?:declare ?\(strict_types ?= ?1 ?\) ?; ?)?' // optionally followed by declare(strict_types=1) directive
 			. '(?:namespace [0-9A-Za-z_\\\\]+ ?; ?)?' // optionally followed by namespace directive
