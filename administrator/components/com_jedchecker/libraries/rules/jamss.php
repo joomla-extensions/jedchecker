@@ -432,8 +432,6 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 						}
 					}
 				}
-
-				unset($content);
 			}
 		}
 
