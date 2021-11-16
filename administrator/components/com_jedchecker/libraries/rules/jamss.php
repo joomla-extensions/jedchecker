@@ -2,7 +2,7 @@
 /**
  * @package    Joomla.JEDChecker
  *
- * @copyright  Copyright (C) 2017 - 2019 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2017 - 2021 Open Source Matters, Inc. All rights reserved.
  * 			   Copyright (C) 2008 - 2016 fasterjoomla.com. All rights reserved.
  * @author     Riccardo Zorn <support@fasterjoomla.com>
  * 			   Bernard Toplak <bernard@orion-web.hr>
