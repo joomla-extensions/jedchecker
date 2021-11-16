@@ -200,7 +200,7 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 			{
 				$cleanName = preg_replace('/\s+for\s+Joomla!?$/', '', $extensionName);
 
-				if (stripos($cleanName, 'joom') !== false)
+				if (stripos($cleanName, 'joomla') !== false)
 				{
 					// Extensions that use "Joomla" or a derivative of Joomla in the extension name need to be licensed by OSM
 					$this->report->addIssue(JEDcheckerReport::LEVEL_WARNING, 'TM2', $file,
