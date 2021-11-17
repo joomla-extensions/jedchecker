@@ -315,7 +315,6 @@ abstract class JEDCheckerHelper
 			$cleanContent .= substr($content, $pos, $foundPos - $pos);
 			$pos = $foundPos;
 
-/**/echo "removeContent ($pos): {$match[0][0]}\n";
 			switch ($match[0][0])
 			{
 				case "\n":
