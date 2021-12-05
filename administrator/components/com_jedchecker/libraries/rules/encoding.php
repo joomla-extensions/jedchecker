@@ -120,7 +120,7 @@ class JedcheckerRulesEncoding extends JEDcheckerRule
 			if (preg_match($this->encodingsRegex, $line))
 			{
 				$found = true;
-				$this->report->addError($file, JText::_('COM_JEDCHECKER_ERROR_ENCODING'), $i + 1, $line);
+				$this->report->addWarning($file, JText::_('COM_JEDCHECKER_ERROR_ENCODING'), $i + 1, $line);
 			}
 		}
 
