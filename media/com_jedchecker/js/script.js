@@ -50,7 +50,7 @@
         var success = [...target.querySelectorAll('.alert-success')].length;
         [...sidebar.querySelectorAll('.badge.bg-info')].map(el => el.classList.toggle('hidden', !success));
 
-        [...sidebar.querySelectorAll('.badge.bg-border')].map(el => el.classList.add('hidden'));
+        [...sidebar.querySelectorAll('.spinner-border')].map(el => el.classList.add('hidden'));
       })
       .catch(error => {
         console.log(error);
@@ -61,22 +61,23 @@
 
         [...sidebar.querySelectorAll('.badge.bg-danger')].map(el => el.textContent = '?');
         [...sidebar.querySelectorAll('.badge.bg-danger, .badge.bg-secondary, .badge.bg-info')].map(el => el.textContent = '');
-        [...sidebar.querySelectorAll('.badge.bg-success, .spinner-border')].map(el => el.addClass('hidden'));
+        [...sidebar.querySelectorAll('.badge.bg-success, .spinner-border')].map(el => el.classList.add('hidden'));
       });
   }
 
   let jed_collapse_init = false;
   window.Joomla.submitbutton = function (task) {
     if (task == 'check') {
-      [...document.querySelectorAll(".jedchecker-results")].map((el) => el.removeClass("hidden"));
+      [...document.querySelectorAll(".jedchecker-results")].map((el) => el.classList.remove("hidden"));
       [...document.querySelectorAll('.jedchecker-results .badge:not(.bg-success)')].map((el) => el.innerHTML = '');
-      [...document.querySelectorAll('.jedchecker-results .badge.bg-success')].map((el) => el.addClass('hidden'));
-      [...document.querySelectorAll('.jedchecker-results .spinner-border')].map((el) => el.removeClass('hidden'));
+      [...document.querySelectorAll('.jedchecker-results .badge.bg-success')].map((el) => el.classList.add('hidden'));
+      [...document.querySelectorAll('.jedchecker-results .spinner-border')].map((el) => el.classList.remove('hidden'));
       [...document.querySelectorAll('.police-check-result')].map((el) => el.innerHTML = '<div class="text-center text-info"><span class="spinner-border"></span></div>');
 
       if (!jed_collapse_init) {
         [...document.querySelectorAll(".card-header[data-bs-toggle]")].forEach((el) => {
-    el.addClass("accordion-button collapsed");
+					el.classList.add("accordion-button");
+					el.classList.add("collapsed");
           el.setAttribute('href', el.dataset.href);
         });
 
