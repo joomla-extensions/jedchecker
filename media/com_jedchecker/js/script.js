@@ -13,7 +13,7 @@ const add_validation = () => {
 }
 
 function check(url, rule) {
-  fetch(url + "?task=check&rule=" + rule)
+  fetch(`${url}index.php?option=com_jedchecker&task=police.check&format=raw&rule=${rule}`)
     .then(response => response.text())
     .then(data => {
       const sidebar = document.querySelector(`#jed-${rule}`);
