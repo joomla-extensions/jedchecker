@@ -169,7 +169,7 @@ abstract class JEDCheckerHelper
 		$code = substr($content, 0, $pos);
 		$cleanContent = $isCleanHtml ? self::removeContent($code) : $code;
 
-		while (preg_match('/(?:[\'"]|\/\*|\/\/|#|\?>)/', $content, $match, PREG_OFFSET_CAPTURE, $pos))
+		while (preg_match('/[\'"`]|<<<|\/\*|\/\/|#|\?>/', $content, $match, PREG_OFFSET_CAPTURE, $pos))
 		{
 			$foundPos = $match[0][1];
 			$cleanContent .= substr($content, $pos, $foundPos - $pos);
@@ -186,9 +186,45 @@ abstract class JEDCheckerHelper
 						return $cleanContent . ($isCleanStrings ? $q : substr($content, $pos));
 					}
 
+					$code = substr($match[0], 1, -1);
+					$cleanContent .= $q . ($isCleanStrings ? self::removeContent($code, $q === '"') : $code) . $q;
+					$pos += strlen($match[0]);
+					break;
+
+				case '`':
+					if (!preg_match("/`.*?`/As", $content, $match, 0, $pos))
+					{
+						return $cleanContent . substr($content, $pos);
+					}
+
 					$code = $match[0];
-					$cleanContent .= $isCleanStrings ? $q . self::removeContent($code) . $q : $code;
+					$cleanContent .= $code;
 					$pos += strlen($code);
+					break;
+
+				case '<<<':
+					$cleanContent .= '<<<';
+					$pos += 3;
+
+					if (!preg_match('/([a-z_]\w*|\'.*?\'|".*?")\n/iA', $content, $match, 0, $pos))
+					{
+						break;
+					}
+
+					$identifier = $match[1];
+					$cleanContent .= $match[0];
+					$pos += strlen($match[0]);
+
+					$foundPos = strpos($content, $identifier, $pos);
+
+					if ($foundPos === false)
+					{
+						return $cleanContent . ($isCleanStrings ? '' : substr($content, $pos));
+					}
+
+					$code = substr($content, $pos, $foundPos - $pos);
+					$cleanContent .= ($isCleanStrings ? self::removeContent($code, $identifier[0] !== "'") : $code) . $identifier;
+					$pos += strlen($code) + strlen($identifier);
 					break;
 
 				case '/*':
@@ -263,8 +299,89 @@ abstract class JEDCheckerHelper
 	 * @return  string
 	 * @since  2.4
 	 */
-	protected static function removeContent($content)
+	protected static function removeContent($content, $parse = false)
 	{
-		return str_repeat("\n", substr_count($content, "\n"));
+		if (!$parse)
+		{
+			return str_repeat("\n", substr_count($content, "\n"));
+		}
+
+		$pos = 0;
+		$cleanContent = '';
+
+		while (preg_match('/\n|\\|\{\$|\$\{/', $content, $match, PREG_OFFSET_CAPTURE, $pos))
+		{
+			$foundPos = $match[0][1];
+			$cleanContent .= substr($content, $pos, $foundPos - $pos);
+			$pos = $foundPos;
+
+			switch ($match[0][0])
+			{
+				case "\n":
+					$cleanContent .= "\n";
+					$pos++;
+					break;
+
+				case '\\':
+					$pos++;
+
+					if ($pos < strlen($content) && $content[$pos] === "\n")
+					{
+						$cleanContent .= "\\\n";
+					}
+
+					$pos++;
+					break;
+
+				case '{$':
+				case '${':
+					$posx = $pos + 2;
+					$braces = 1;
+					$strlen = strlen($content);
+
+					while ($braces > 0 && $posx < $strlen)
+					{
+						$q = $content[$posx];
+
+						switch ($q)
+						{
+							case '{':
+								$braces++;
+								break;
+
+							case '}':
+								$braces--;
+								break;
+
+							case '"':
+							case "'":
+								if (!preg_match("/$q(?>[^$q\\\\]+|\\\\.)*$q/As", $content, $match, 0, $posx))
+								{
+									return $cleanContent . substr($content, $pos);
+								}
+
+								$posx += strlen($match[0]);
+								break;
+
+							case '`':
+								if (!preg_match("/`.*?`/As", $content, $match, 0, $posx))
+								{
+									return $cleanContent . substr($content, $pos);
+								}
+
+								$posx += strlen($match[0]);
+								break;
+						}
+
+						$posx++;
+					}
+
+					$cleanContent .= substr($content, $pos, $posx - $pos);
+					$pos = $posx;
+					break;
+			}
+		}
+
+		return $cleanContent;
 	}
 }
