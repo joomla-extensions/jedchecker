@@ -11,9 +11,6 @@
 
 defined('_JEXEC') or die('Restricted access');
 
-// Load jQuery
-JHtml::_('jquery.framework');
-
 // Load Bootstrap
 if (version_compare(JVERSION, '4.0', '>='))
 {
@@ -25,6 +22,9 @@ if (version_compare(JVERSION, '4.0', '>='))
 }
 else
 {
+	// Load jQuery
+	JHtml::_('jquery.framework');
+
 	JHtml::_('stylesheet', 'com_jedchecker/j4-style.css', array('version' => 'auto', 'relative' => true));
 	JHtml::_('script', 'com_jedchecker/bootstrap.bundle.min.js', array('version' => 'auto', 'relative' => true), array('defer' => true));
 }
