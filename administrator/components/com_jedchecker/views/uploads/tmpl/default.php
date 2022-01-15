@@ -44,7 +44,7 @@ else
 JHtml::stylesheet('media/com_jedchecker/css/style' . $cssSuffix);
 JHtml::script('media/com_jedchecker/js/script.js');
 ?>
-<script id="jed-rules-json" type="application/json"><?php echo json_encode($this->jsOptions); ?></script?
+<script id="jed-rules-json" type="application/json"><?php echo json_encode($this->jsOptions); ?></script>
 <div id="jedchecker">
 	<div class="row g-3">
 		<div class="col-12 col-md-8">
