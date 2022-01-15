@@ -11,16 +11,6 @@
 
 defined('_JEXEC') or die('Restricted access');
 
-// Load Joomla framework
-if (version_compare(JVERSION, '3.3.0', '>='))
-{
-	JHtml::_('behavior.core');
-}
-else
-{
-	JHtml::_('behavior.framework', true);
-}
-
 // Load jQuery
 JHtml::_('jquery.framework');
 
