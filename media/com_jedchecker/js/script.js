@@ -75,7 +75,7 @@
       [...document.querySelectorAll('.jedchecker-results .badge:not(.bg-success)')].map((el) => el.innerHTML = '');
       [...document.querySelectorAll('.jedchecker-results .badge.bg-success')].map((el) => el.classList.add('hidden'));
       [...document.querySelectorAll('.jedchecker-results .spinner-border')].map((el) => el.classList.remove('hidden'));
-      [...document.querySelectorAll('.police-check-result')].forEach(el => el.innerHTML = '<div class='text-center text-info'><span class='spinner-border'></span></div>');
+      [...document.querySelectorAll('.police-check-result')].forEach(el => el.innerHTML = '<div class="text-center text-info"><span class="spinner-border"></span></div>');
 
       if (!jed_collapse_init) {
         [...document.querySelectorAll('.card-header[data-bs-toggle]')].forEach(el => {
