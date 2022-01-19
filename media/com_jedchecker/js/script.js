@@ -4,11 +4,10 @@
   let jedOptions;
   try {
     jedOptions = JSON.parse(document.getElementById('jed-rules-json').innerHTML);
+    if (!jedOptions) throw new Error();
   } catch (e) {
     throw new Error('Initialization data is missing');
   }
-
-  if (!jedOptions) throw new Error('Initialization data is missing');
 
   const add_validation = () => {
     // Loop over them and prevent submission
