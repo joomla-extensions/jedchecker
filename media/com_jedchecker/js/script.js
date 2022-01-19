@@ -37,19 +37,19 @@
 
         target.innerHTML = data;
 
-        const error = [...target.querySelectorAll('.alert-danger')].length;
+        const error = target.querySelectorAll('.alert-danger').length;
         [...sidebar.querySelectorAll('.badge.bg-danger')].forEach(el => el.textContent = error || '');
 
-        const warning = [...target.querySelectorAll('.alert-warning')].length;
+        const warning = target.querySelectorAll('.alert-warning').length;
         [...sidebar.querySelectorAll('.badge.bg-warning')].forEach(el => el.textContent = warning || '');
 
-        const compat = [...target.querySelectorAll('.alert-secondary')].length;
+        const compat = target.querySelectorAll('.alert-secondary').length;
         [...sidebar.querySelectorAll('.badge.bg-secondary')].forEach(el => el.textContent = compat || '');
 
-        const info = [...target.querySelectorAll('.alert-info')].length;
+        const info = target.querySelectorAll('.alert-info').length;
         [...sidebar.querySelectorAll('.badge.bg-info')].forEach(el => el.textContent = info || '');
 
-        const success = [...target.querySelectorAll('.alert-success')].length;
+        const success = target.querySelectorAll('.alert-success').length;
         [...sidebar.querySelectorAll('.badge.bg-success')].forEach(el => el.classList.toggle('hidden', !success));
 
         [...sidebar.querySelectorAll('.spinner-border')].forEach(el => el.classList.add('hidden'));
