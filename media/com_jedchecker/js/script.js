@@ -51,7 +51,7 @@
         [...sidebar.querySelectorAll('.badge.bg-info')].forEach(el => el.textContent = info || '');
 
         const success = [...target.querySelectorAll('.alert-success')].length;
-        [...sidebar.querySelectorAll('.badge.bg-info')].forEach(el => el.classList.toggle('hidden', !success));
+        [...sidebar.querySelectorAll('.badge.bg-success')].forEach(el => el.classList.toggle('hidden', !success));
 
         [...sidebar.querySelectorAll('.spinner-border')].forEach(el => el.classList.add('hidden'));
       })
