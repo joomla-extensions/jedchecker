@@ -11,7 +11,7 @@
 
   const add_validation = () => {
     // Loop over them and prevent submission
-    [...document.querySelectorAll('.needs-validation')].forEach((form) => {
+    [...document.querySelectorAll('.needs-validation')].forEach(form => {
       form.addEventListener('submit', (event) => {
         const form = event.target;
         if (form.checkValidity() === false) {
@@ -78,8 +78,8 @@
 
       if (!jed_collapse_init) {
         [...document.querySelectorAll('.card-header[data-bs-toggle]')].forEach(el => {
-               el.classList.add('accordion-button');
-               el.classList.add('collapsed');
+          el.classList.add('accordion-button');
+          el.classList.add('collapsed');
           el.setAttribute('href', el.dataset.href);
         });
 
@@ -89,7 +89,7 @@
         jed_collapse_init = true;
       }
 
-      jedOptions["rules"].forEach(rule => check(jedOptions["url"], rule));
+      jedOptions['rules'].forEach(rule => check(jedOptions['url'], rule));
     } else {
       Joomla.submitform(task);
     }
