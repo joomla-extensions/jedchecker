@@ -62,8 +62,8 @@
         target.innerHTML = `<span class="text-danger"><b>${error.name}:</b> ${error.message}</span>`;
 
         [...sidebar.querySelectorAll('.badge.bg-danger')].forEach(el => el.textContent = '?');
-        [...sidebar.querySelectorAll('.badge.bg-warning, .badge.bg-secondary, .badge.bg-info')].map(el => el.textContent = '');
-        [...sidebar.querySelectorAll('.badge.bg-success, .spinner-border')].map(el => el.classList.add('hidden'));
+        [...sidebar.querySelectorAll('.badge.bg-warning, .badge.bg-secondary, .badge.bg-info')].forEach(el => el.textContent = '');
+        [...sidebar.querySelectorAll('.badge.bg-success, .spinner-border')].forEach(el => el.classList.add('hidden'));
       });
   }
 
@@ -71,9 +71,9 @@
   window.Joomla.submitbutton = function (task) {
     if (task === 'check') {
       [...document.querySelectorAll('.jedchecker-results')].forEach(el => el.classList.remove('hidden'));
-      [...document.querySelectorAll('.jedchecker-results .badge:not(.bg-success)')].map((el) => el.innerHTML = '');
-      [...document.querySelectorAll('.jedchecker-results .badge.bg-success')].map((el) => el.classList.add('hidden'));
-      [...document.querySelectorAll('.jedchecker-results .spinner-border')].map((el) => el.classList.remove('hidden'));
+      [...document.querySelectorAll('.jedchecker-results .badge:not(.bg-success)')].forEach(el => el.innerHTML = '');
+      [...document.querySelectorAll('.jedchecker-results .badge.bg-success')].forEach(el => el.classList.add('hidden'));
+      [...document.querySelectorAll('.jedchecker-results .spinner-border')].forEach(el => el.classList.remove('hidden'));
       [...document.querySelectorAll('.police-check-result')].forEach(el => el.innerHTML = '<div class="text-center text-info"><span class="spinner-border"></span></div>');
 
       if (!jed_collapse_init) {
