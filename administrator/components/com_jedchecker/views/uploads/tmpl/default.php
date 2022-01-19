@@ -2,7 +2,7 @@
 /**
  * @package    Joomla.JEDChecker
  *
- * @copyright  Copyright (C) 2017 - 2021 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2017 - 2022 Open Source Matters, Inc. All rights reserved.
  * 			   Copyright (C) 2008 - 2016 compojoom.com . All rights reserved.
  * @author     Daniel Dimitrov <daniel@compojoom.com>
  *
@@ -22,7 +22,7 @@ if (version_compare(JVERSION, '4.0', '>='))
 }
 else
 {
-
+	JHtml::_('behavior.core');
 	JHtml::_('stylesheet', 'com_jedchecker/j4-style.css', array('version' => 'auto', 'relative' => true));
 	JHtml::_('script', 'com_jedchecker/bootstrap.bundle.min.js', array('version' => 'auto', 'relative' => true), array('defer' => true));
 }
