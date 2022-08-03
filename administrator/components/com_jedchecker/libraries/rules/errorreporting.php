@@ -106,6 +106,7 @@ class JedcheckerRulesErrorreporting extends JEDcheckerRule
 	protected function find($file)
 	{
 		$content = file_get_contents($file);
+		$origContent = JEDCheckerHelper::splitLines($content);
 
 		// Exclude non-code content
 		$content = JEDCheckerHelper::cleanPhpCode(
@@ -121,7 +122,7 @@ class JedcheckerRulesErrorreporting extends JEDcheckerRule
 			if (preg_match($this->errorreportingRegex, $line))
 			{
 				$found = true;
-				$this->report->addWarning($file, JText::_('COM_JEDCHECKER_ERROR_ERRORREPORTING'), $i + 1, $line);
+				$this->report->addWarning($file, JText::_('COM_JEDCHECKER_ERROR_ERRORREPORTING'), $i + 1, $origContent[$i]);
 			}
 		}
 

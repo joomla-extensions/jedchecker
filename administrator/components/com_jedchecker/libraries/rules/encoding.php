@@ -105,6 +105,7 @@ class JedcheckerRulesEncoding extends JEDcheckerRule
 	protected function find($file)
 	{
 		$content = file_get_contents($file);
+		$origContent = JEDCheckerHelper::splitLines($content);
 
 		// Exclude comments
 		$content = JEDCheckerHelper::cleanPhpCode(
@@ -120,7 +121,7 @@ class JedcheckerRulesEncoding extends JEDcheckerRule
 			if (preg_match($this->encodingsRegex, $line))
 			{
 				$found = true;
-				$this->report->addWarning($file, JText::_('COM_JEDCHECKER_ERROR_ENCODING'), $i + 1, $line);
+				$this->report->addWarning($file, JText::_('COM_JEDCHECKER_ERROR_ENCODING'), $i + 1, $origContent[$i]);
 			}
 		}
 

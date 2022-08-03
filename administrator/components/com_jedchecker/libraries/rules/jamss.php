@@ -340,6 +340,7 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 			}
 			else
 			{
+				$origContent = JEDCheckerHelper::splitLines($content);
 				$scopes = array(
 					'full' => $content,
 					'clean' => JEDCheckerHelper::cleanPhpCode($content, JEDCheckerHelper::CLEAN_COMMENTS),
@@ -403,8 +404,8 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 								$end = strlen($scoped_content);
 							}
 
-							$first_code = substr($scoped_content, $start, min($end - $start, 200));
 							$first_line = $this->calculate_line_number($offset, $scoped_content);
+							$first_code = $origContent[$first_line - 1];
 							break;
 						}
 
