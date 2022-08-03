@@ -309,7 +309,7 @@ abstract class JEDCheckerHelper
 		$pos = 0;
 		$cleanContent = '';
 
-		while (preg_match('/\n|\\|\{\$|\$\{/', $content, $match, PREG_OFFSET_CAPTURE, $pos))
+		while (preg_match('/\n|\\\\|\{\$|\$\{/', $content, $match, PREG_OFFSET_CAPTURE, $pos))
 		{
 			$foundPos = $match[0][1];
 			$cleanContent .= substr($content, $pos, $foundPos - $pos);
