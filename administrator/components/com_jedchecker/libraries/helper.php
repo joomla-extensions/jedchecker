@@ -303,7 +303,7 @@ abstract class JEDCheckerHelper
 	{
 		if (!$parse)
 		{
-			return str_repeat("\n", substr_count($content, "\n"));
+			return self::cleanLines($content);
 		}
 
 		$pos = 0;
@@ -312,7 +312,7 @@ abstract class JEDCheckerHelper
 		while (preg_match('/\n|\\\\|\{\$|\$\{/', $content, $match, PREG_OFFSET_CAPTURE, $pos))
 		{
 			$foundPos = $match[0][1];
-			$cleanContent .= substr($content, $pos, $foundPos - $pos);
+			$cleanContent .= self::cleanLines(substr($content, $pos, $foundPos - $pos));
 			$pos = $foundPos;
 
 			switch ($match[0][0])
@@ -383,5 +383,18 @@ abstract class JEDCheckerHelper
 		}
 
 		return $cleanContent;
+	}
+
+	/**
+	 * Remove all content except of EOLs to preserve line numbers
+	 *
+	 * @param string $content
+	 *
+	 * @return string
+	 * @since 2.4.2
+	 */
+	protected static function cleanLines($content)
+	{
+		return str_repeat("\n", substr_count($content, "\n"));
 	}
 }
