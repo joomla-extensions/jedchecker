@@ -192,7 +192,7 @@ abstract class JEDCheckerHelper
 					break;
 
 				case '`':
-					if (!preg_match("/`.*?`/As", $content, $match, 0, $pos))
+					if (!preg_match("/`(?>[^`\\\\]+|\\\\.)*`/As", $content, $match, 0, $pos))
 					{
 						return $cleanContent . substr($content, $pos);
 					}
