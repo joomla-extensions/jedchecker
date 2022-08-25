@@ -164,9 +164,10 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 
 		switch ($type)
 		{
+			case 'language':
 			case 'module':
 			case 'template':
-				// Check 'client' attribute is "site" or "administrator" (for module/template only)
+				// Check 'client' attribute is "site" or "administrator" (for language/module/template only)
 				$client = (string) $xml['client'];
 
 				if (!isset($xml['client']))
@@ -192,6 +193,7 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 							}
 							break;
 
+						case 'language':
 						case 'module':
 						case 'template':
 							$client = (string) $item['client'];
@@ -208,7 +210,6 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 
 						case 'component':
 						case 'file':
-						case 'language':
 						case 'library':
 							break;
 
