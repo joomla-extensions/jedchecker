@@ -324,8 +324,7 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 		 */
 
 		if (in_array(pathinfo($path, PATHINFO_EXTENSION), $ext)
-			&& filesize($path)/* skip empty ones */
-			&& !stripos($path, 'jamss.php')/* skip this file */)
+			&& filesize($path)/* skip empty ones */)
 			{
 			if ($malic_file_descr = array_search(pathinfo($path, PATHINFO_BASENAME), $jamssFileNames))
 			{
