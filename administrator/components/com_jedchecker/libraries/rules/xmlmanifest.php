@@ -2,7 +2,7 @@
 /**
  * @package    Joomla.JEDChecker
  *
- * @copyright  Copyright (C) 2021 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2021-2022 Open Source Matters, Inc. All rights reserved.
  *
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -162,21 +162,62 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 			$this->report->addWarning($file, JText::_('COM_JEDCHECKER_MANIFEST_MISSED_METHOD_UPGRADE'));
 		}
 
-		// Check 'client' attribute is "site" or "administrator" (for module/template only)
-		if ($type === 'module' || $type === 'template')
+		switch ($type)
 		{
-			$client = (string) $xml['client'];
+			case 'language':
+			case 'module':
+			case 'template':
+				// Check 'client' attribute is "site" or "administrator" (for language/module/template only)
+				$client = (string) $xml['client'];
 
-			if (!isset($xml['client']))
-			{
-				$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_MISSED_ATTRIBUTE', $xml->getName(), 'client'));
-			}
-			elseif ($client !== 'site' && $client !== 'administrator')
-			{
-				$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_ATTRIBUTE_VALUE', $xml->getName(), 'client', $client));
-			}
+				if (!isset($xml['client']))
+				{
+					$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_MISSED_ATTRIBUTE', $xml->getName(), 'client'));
+				}
+				elseif ($client !== 'site' && $client !== 'administrator')
+				{
+					$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_ATTRIBUTE_VALUE', $xml->getName(), 'client', $client));
+				}
+				break;
+
+			case 'package':
+				// Check type-specific attributes
+				foreach ($xml->files->file as $item)
+				{
+					switch ((string) $item['type'])
+					{
+						case 'plugin':
+							if (!isset($item['group']))
+							{
+								$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_MISSED_ATTRIBUTE', $item->getName(), 'group'));
+							}
+							break;
+
+						case 'language':
+						case 'module':
+						case 'template':
+							$client = (string) $item['client'];
+
+							if (!isset($item['client']))
+							{
+								$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_MISSED_ATTRIBUTE', $item->getName(), 'client'));
+							}
+							elseif ($client !== 'site' && $client !== 'administrator')
+							{
+								$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_ATTRIBUTE_VALUE', $item->getName(), 'client', $client));
+							}
+							break;
+
+						case 'component':
+						case 'file':
+						case 'library':
+							break;
+
+						default:
+							$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_TYPE', $item['type']));
+					}
+				}
 		}
-
 		$data = json_decode(file_get_contents($jsonFilename), true);
 		$this->DTDNodeRules = $data['nodes'];
 		$this->DTDAttrRules = $data['attributes'];
