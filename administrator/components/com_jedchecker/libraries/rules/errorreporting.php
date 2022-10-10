@@ -2,7 +2,7 @@
 /**
  * @package    Joomla.JEDChecker
  *
- * @copyright  Copyright (C) 2017 - 2019 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2017 - 2022 Open Source Matters, Inc. All rights reserved.
  * 			   Copyright (C) 2008 - 2016 mijosoft.com . All rights reserved.
  * @author     Denis Dulici <denis@mijosoft.com>
  *
@@ -106,6 +106,7 @@ class JedcheckerRulesErrorreporting extends JEDcheckerRule
 	protected function find($file)
 	{
 		$content = file_get_contents($file);
+		$origContent = JEDCheckerHelper::splitLines($content);
 
 		// Exclude non-code content
 		$content = JEDCheckerHelper::cleanPhpCode(
@@ -121,7 +122,7 @@ class JedcheckerRulesErrorreporting extends JEDcheckerRule
 			if (preg_match($this->errorreportingRegex, $line))
 			{
 				$found = true;
-				$this->report->addWarning($file, JText::_('COM_JEDCHECKER_ERROR_ERRORREPORTING'), $i + 1, $line);
+				$this->report->addWarning($file, JText::_('COM_JEDCHECKER_ERROR_ERRORREPORTING'), $i + 1, $origContent[$i]);
 			}
 		}
 

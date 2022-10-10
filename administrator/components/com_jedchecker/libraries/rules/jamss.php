@@ -2,7 +2,7 @@
 /**
  * @package    Joomla.JEDChecker
  *
- * @copyright  Copyright (C) 2017 - 2021 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2017 - 2022 Open Source Matters, Inc. All rights reserved.
  * 			   Copyright (C) 2008 - 2016 fasterjoomla.com. All rights reserved.
  * @author     Riccardo Zorn <support@fasterjoomla.com>
  * 			   Bernard Toplak <bernard@orion-web.hr>
@@ -340,6 +340,7 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 			}
 			else
 			{
+				$origContent = JEDCheckerHelper::splitLines($content);
 				$scopes = array(
 					'full' => $content,
 					'clean' => JEDCheckerHelper::cleanPhpCode($content, JEDCheckerHelper::CLEAN_COMMENTS),
@@ -403,8 +404,8 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 								$end = strlen($scoped_content);
 							}
 
-							$first_code = substr($scoped_content, $start, min($end - $start, 200));
 							$first_line = $this->calculate_line_number($offset, $scoped_content);
+							$first_code = $origContent[$first_line - 1];
 							break;
 						}
 
