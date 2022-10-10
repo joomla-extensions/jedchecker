@@ -2,7 +2,7 @@
 /**
  * @package    Joomla.JEDChecker
  *
- * @copyright  Copyright (C) 2021 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2021-2022 Open Source Matters, Inc. All rights reserved.
  *
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
@@ -192,7 +192,7 @@ abstract class JEDCheckerHelper
 					break;
 
 				case '`':
-					if (!preg_match("/`.*?`/As", $content, $match, 0, $pos))
+					if (!preg_match("/`(?>[^`\\\\]+|\\\\.)*`/As", $content, $match, 0, $pos))
 					{
 						return $cleanContent . substr($content, $pos);
 					}
@@ -303,16 +303,16 @@ abstract class JEDCheckerHelper
 	{
 		if (!$parse)
 		{
-			return str_repeat("\n", substr_count($content, "\n"));
+			return self::cleanLines($content);
 		}
 
 		$pos = 0;
 		$cleanContent = '';
 
-		while (preg_match('/\n|\\|\{\$|\$\{/', $content, $match, PREG_OFFSET_CAPTURE, $pos))
+		while (preg_match('/\n|\\\\|\{\$|\$\{/', $content, $match, PREG_OFFSET_CAPTURE, $pos))
 		{
 			$foundPos = $match[0][1];
-			$cleanContent .= substr($content, $pos, $foundPos - $pos);
+			$cleanContent .= self::cleanLines(substr($content, $pos, $foundPos - $pos));
 			$pos = $foundPos;
 
 			switch ($match[0][0])
@@ -383,5 +383,18 @@ abstract class JEDCheckerHelper
 		}
 
 		return $cleanContent;
+	}
+
+	/**
+	 * Remove all content except of EOLs to preserve line numbers
+	 *
+	 * @param string $content
+	 *
+	 * @return string
+	 * @since 2.4.2
+	 */
+	protected static function cleanLines($content)
+	{
+		return str_repeat("\n", substr_count($content, "\n"));
 	}
 }
