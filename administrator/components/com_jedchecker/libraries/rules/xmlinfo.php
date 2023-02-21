@@ -319,7 +319,7 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 
 		if (isset($xml->languages))
 		{
-			$folder = trim($xml->languages['folder'], '/');
+			$folder = trim((string)$xml->languages['folder'], '/');
 
 			foreach ($xml->languages->language as $language)
 			{
