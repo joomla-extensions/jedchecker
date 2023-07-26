@@ -370,7 +370,7 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 	{
 		if (is_file($file))
 		{
-			$data = parse_ini_file($file);
+			$data = @parse_ini_file($file);
 
 			if (is_array($data))
 			{
