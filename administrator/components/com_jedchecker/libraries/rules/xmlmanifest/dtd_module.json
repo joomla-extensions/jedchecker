@@ -87,6 +87,9 @@
     "files:file": [
       "module"
     ],
+    "folder": [
+      "module"
+    ],
     "languages": [
       "folder"
     ],

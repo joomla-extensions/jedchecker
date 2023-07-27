@@ -132,7 +132,7 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 		$xml = simplexml_load_file($file);
 
 		// Failed to parse the xml file.
-		// Assume that this is not a extension manifest
+		// Assume that this is not an extension manifest
 		if (!$xml)
 		{
 			return false;
@@ -178,12 +178,67 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 				{
 					$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_ATTRIBUTE_VALUE', $xml->getName(), 'client', $client));
 				}
+
+				if ($type === 'module')
+				{
+					// Either <element> or "module" attribute (once only) should be present
+					$elements = $this->collectElements($xml->files, $type);
+
+					if (count($elements) >= 2)
+					{
+						$this->report->addWarning($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_MULTIPLE_ATTRIBUTES', 'module'));
+					}
+
+					if (isset($xml->element))
+					{
+						$element = (string) $xml->element;
+
+						if (count($elements) && $elements[0] !== $element)
+						{
+							$this->report->addWarning($file, JText::_('COM_JEDCHECKER_MANIFEST_MODULE_ELEMENT_MISMATCH'));
+						}
+					}
+					else
+					{
+						if (count($elements) === 0)
+						{
+							$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_MISSED_ELEMENT_ATTRIBUTE', 'module'));
+						}
+					}
+				}
+
+				break;
+
+			case 'plugin':
+				// "plugin" attribute (once only) should be present
+				$elements = $this->collectElements($xml->files, $type);
+
+				if (count($elements) >= 2)
+				{
+					$this->report->addWarning($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_MULTIPLE_ATTRIBUTES', 'plugin'));
+				}
+
+				if (count($elements) === 0)
+				{
+					$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_MISSED_ELEMENT_ATTRIBUTE', 'plugin'));
+				}
+
 				break;
 
 			case 'package':
 				// Check type-specific attributes
-				foreach ($xml->files->file as $item)
+				foreach ($xml->files->children() as $item)
 				{
+					if (!isset($item['type']))
+					{
+						$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_MISSED_ATTRIBUTE', $item->getName(), 'type'));
+					}
+
+					if (!isset($item['id']))
+					{
+						$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_MISSED_ATTRIBUTE', $item->getName(), 'id'));
+					}
+
 					switch ((string) $item['type'])
 					{
 						case 'plugin':
@@ -430,5 +485,30 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 				}
 			}
 		}
+	}
+
+	/**
+	 * Collect values of $type attribute from all children
+	 * @param   SimpleXMLElement  $node  XML node <files>
+	 * @param   string            $type  Extension's type (plugin or module)
+	 *
+	 * @return array List of found attributes
+	 */
+	protected function collectElements($node, $type)
+	{
+		$elements = array();
+
+		if (isset($node))
+		{
+			foreach ($node->children() as $child)
+			{
+				if (isset($child[$type]))
+				{
+					$elements[] = (string) $child[$type];
+				}
+			}
+		}
+
+		return $elements;
 	}
 }

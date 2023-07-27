@@ -75,6 +75,12 @@
       "id",
       "type"
     ],
+    "folder": [
+      "client",
+      "group",
+      "id",
+      "type"
+    ],
     "languages": [
       "folder"
     ],
