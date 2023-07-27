@@ -78,6 +78,7 @@
 
       if (!jed_collapse_init) {
         [...document.querySelectorAll('.card-header[data-bs-toggle]')].forEach(el => {
+          el.classList.add('accordion');
           el.classList.add('accordion-button');
           el.classList.add('collapsed');
           el.setAttribute('href', el.dataset.href);
