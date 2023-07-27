@@ -105,7 +105,7 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 		$xml = simplexml_load_file($file);
 
 		// Failed to parse the xml file.
-		// Assume that this is not a extension manifest
+		// Assume that this is not an extension manifest
 		if (!$xml)
 		{
 			return false;
@@ -125,6 +125,7 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 		if (isset($xml->files))
 		{
 			$node = $xml->files;
+			$this->checkNotEmpty($node);
 
 			// Get path to site files from "folder" attribute
 			$sitedir = $this->getSourceFolder($node);
@@ -138,6 +139,8 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 		if (isset($xml->media))
 		{
 			$node = $xml->media;
+			$this->checkNotEmpty($node);
+
 			$dir = $this->getSourceFolder($node);
 
 			$this->checkFiles($node->filename, $dir);
@@ -149,6 +152,8 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 		if (isset($xml->fonts))
 		{
 			$node = $xml->fonts;
+			$this->checkNotEmpty($node);
+
 			$dir = $this->getSourceFolder($node);
 
 			$this->checkFiles($node->filename, $dir);
@@ -160,6 +165,8 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 		if (isset($xml->languages))
 		{
 			$node = $xml->languages;
+			$this->checkNotEmpty($node);
+
 			$dir = $this->getSourceFolder($node);
 
 			$this->checkFiles($node->language, $dir);
@@ -171,6 +178,7 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 		if (isset($xml->administration->files))
 		{
 			$node = $xml->administration->files;
+			$this->checkNotEmpty($node);
 
 			// Get path to admin files from "folder" attribute
 			$admindir = $this->getSourceFolder($node);
@@ -184,6 +192,8 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 		if (isset($xml->administration->media))
 		{
 			$node = $xml->administration->media;
+			$this->checkNotEmpty($node);
+
 			$dir = $this->getSourceFolder($node);
 
 			$this->checkFiles($node->filename, $dir);
@@ -195,6 +205,8 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 		if (isset($xml->administration->languages))
 		{
 			$node = $xml->administration->languages;
+			$this->checkNotEmpty($node);
+
 			$dir = $this->getSourceFolder($node);
 
 			$this->checkFiles($node->language, $dir);
@@ -205,6 +217,8 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 		if (isset($xml->fileset->files))
 		{
 			$node = $xml->fileset->files;
+			$this->checkNotEmpty($node);
+
 			$dir = $this->getSourceFolder($node);
 
 			$this->checkFiles($node->filename, $dir);
@@ -216,6 +230,8 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 		if (isset($xml->api->files))
 		{
 			$node = $xml->api->files;
+			$this->checkNotEmpty($node);
+
 			$dir = $this->getSourceFolder($node);
 
 			$this->checkFiles($node->filename, $dir);
@@ -345,6 +361,27 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 		$this->warnings[] = JText::sprintf('COM_JEDCHECKER_XML_FILES_FOLDER_NOT_FOUND', $folder);
 
 		return '';
+	}
+
+	/**
+	 * Check list of files/folders is not empty
+	 *
+	 * @param   SimpleXMLElement  $node  Node to check
+	 *
+	 * @return  void
+	 */
+	protected function checkNotEmpty($node)
+	{
+		if (count($node->children()) === 0) {
+			$path = array();
+
+			foreach ($node->xpath("ancestor-or-self::*") as $p)
+			{
+				$path[] = $p->getName();
+			}
+
+			$this->warnings[] = JText::sprintf('COM_JEDCHECKER_XML_FILES_EMPTY_LIST', implode('/', $path));
+		}
 	}
 
 	/**

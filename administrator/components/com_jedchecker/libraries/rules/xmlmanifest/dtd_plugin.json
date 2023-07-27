@@ -88,6 +88,9 @@
     "files:file": [
       "plugin"
     ],
+    "folder": [
+      "plugin"
+    ],
     "languages": [
       "folder"
     ],
