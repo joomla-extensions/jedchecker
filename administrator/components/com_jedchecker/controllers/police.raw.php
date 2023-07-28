@@ -77,9 +77,6 @@ class JedcheckerControllerPolice extends JControllerLegacy
 		$report = $police->get('report');
 
 		echo $report->getHTML();
-
-		flush();
-		ob_flush();
 	}
 
 	/**
