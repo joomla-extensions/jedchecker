@@ -103,4 +103,8 @@
   });
 
   new bootstrap.Tooltip(document.getElementById('jedchecker'), {container: 'body', selector: '[data-bs-toggle=tooltip]'});
+
+  document.addEventListener('DOMContentLoaded', () => {
+    jQuery.fn.scrollspy.noConflict();
+  }, true);
 })();
