@@ -105,6 +105,8 @@
   new bootstrap.Tooltip(document.getElementById('jedchecker'), {container: 'body', selector: '[data-bs-toggle=tooltip]'});
 
   document.addEventListener('DOMContentLoaded', () => {
-    jQuery.fn.scrollspy.noConflict();
+    try {
+      jQuery.fn.scrollspy.noConflict();
+    } catch (e) {}
   }, true);
 })();
