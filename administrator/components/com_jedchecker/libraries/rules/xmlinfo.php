@@ -268,12 +268,12 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 	 * Locate and load extension's .sys.ini translation file
 	 *
 	 * @param   SimpleXMLElement  $xml      Extension's XML manifest
-	 * @param   string            $langDir  The basepath
+	 * @param   string            $rootDir  The basepath
 	 * @param   string            $langTag  The language to load
 	 *
 	 * @return  void
 	 */
-	protected function loadExtensionLanguage($xml, $langDir, $langTag = 'en-GB')
+	protected function loadExtensionLanguage($xml, $rootDir, $langTag = 'en-GB')
 	{
 		// Get extension's element name (simulates work of Joomla's installer)
 		$extension = JEDCheckerHelper::getElementName($xml);
@@ -334,19 +334,25 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 
 		$lookupLangDirs = array_unique($lookupLangDirs);
 
+		$lookupLangFiles = array(
+			$langTag. '.' . $extension . '.sys.ini', // classical filename
+			$extension . '.sys.ini', // modern filename
+		);
+
 		// Looking for language file in specified directories
 		foreach ($lookupLangDirs as $dir)
 		{
-			$langSysFile =
-				$langDir . '/' .
-				($dir === '' ? '' : $dir . '/') .
-				$langTag. '.' . $extension . '.sys.ini';
-			if (is_file($langSysFile))
+			foreach ($lookupLangFiles as $file)
 			{
-				$loadLanguage = new ReflectionMethod($lang, 'loadLanguage');
-				$loadLanguage->setAccessible(true);
-				$loadLanguage->invoke($lang, $langSysFile, $extension);
-				break;
+				$langSysFile = $rootDir . '/' . ($dir === '' ? '' : $dir . '/') . $file;
+
+				if (is_file($langSysFile))
+				{
+					$loadLanguage = new ReflectionMethod($lang, 'loadLanguage');
+					$loadLanguage->setAccessible(true);
+					$loadLanguage->invoke($lang, $langSysFile, $extension);
+					return;
+				}
 			}
 		}
 	}
