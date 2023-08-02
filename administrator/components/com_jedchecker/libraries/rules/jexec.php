@@ -178,11 +178,12 @@ class JedcheckerRulesJexec extends JEDcheckerRule
 	 * Collect php files to check (excluding external library directories)
 	 *
 	 * @param   string $path The path of the folder to read.
+	 * @param   int $level The current hierarchy level.
 	 *
 	 * @return array
 	 * @since 3.0
 	 */
-	protected function files($path)
+	protected function files($path, $level = 0)
 	{
 		$arr = array();
 
@@ -198,17 +199,20 @@ class JedcheckerRulesJexec extends JEDcheckerRule
 
 					if (is_dir($fullpath))
 					{
-						// Detect and skip external library directories
-						foreach ($this->libFiles as $libFile)
+						if ($level > 0)
 						{
-							if (is_file($fullpath . '/' . $libFile))
+							// Detect and skip external library directories
+							foreach ($this->libFiles as $libFile)
 							{
-								// Skip processing of this directory
-								continue 2;
+								if (is_file($fullpath . '/' . $libFile))
+								{
+									// Skip processing of this directory
+									continue 2;
+								}
 							}
 						}
 
-						$arr = array_merge($arr, $this->files($fullpath));
+						$arr = array_merge($arr, $this->files($fullpath, $level + 1));
 					}
 					elseif (preg_match('/\.php$/', $file))
 					{
