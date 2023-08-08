@@ -200,7 +200,7 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 			{
 				$cleanName = preg_replace('/\s+for\s+Joomla!?$/', '', $extensionName);
 
-				if (stripos($cleanName, 'joom') !== false)
+				if (stripos($cleanName, 'joomla') !== false)
 				{
 					// Extensions that use "Joomla" or a derivative of Joomla in the extension name need to be licensed by OSM
 					$this->report->addIssue(JEDcheckerReport::LEVEL_WARNING, 'TM2', $file,
@@ -268,12 +268,12 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 	 * Locate and load extension's .sys.ini translation file
 	 *
 	 * @param   SimpleXMLElement  $xml      Extension's XML manifest
-	 * @param   string            $langDir  The basepath
+	 * @param   string            $rootDir  The basepath
 	 * @param   string            $langTag  The language to load
 	 *
 	 * @return  void
 	 */
-	protected function loadExtensionLanguage($xml, $langDir, $langTag = 'en-GB')
+	protected function loadExtensionLanguage($xml, $rootDir, $langTag = 'en-GB')
 	{
 		// Get extension's element name (simulates work of Joomla's installer)
 		$extension = JEDCheckerHelper::getElementName($xml);
@@ -319,7 +319,7 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 
 		if (isset($xml->languages))
 		{
-			$folder = trim($xml->languages['folder'], '/');
+			$folder = trim((string)$xml->languages['folder'], '/');
 
 			foreach ($xml->languages->language as $language)
 			{
@@ -334,19 +334,25 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 
 		$lookupLangDirs = array_unique($lookupLangDirs);
 
+		$lookupLangFiles = array(
+			$langTag. '.' . $extension . '.sys.ini', // classical filename
+			$extension . '.sys.ini', // modern filename
+		);
+
 		// Looking for language file in specified directories
 		foreach ($lookupLangDirs as $dir)
 		{
-			$langSysFile =
-				$langDir . '/' .
-				($dir === '' ? '' : $dir . '/') .
-				$langTag. '.' . $extension . '.sys.ini';
-			if (is_file($langSysFile))
+			foreach ($lookupLangFiles as $file)
 			{
-				$loadLanguage = new ReflectionMethod($lang, 'loadLanguage');
-				$loadLanguage->setAccessible(true);
-				$loadLanguage->invoke($lang, $langSysFile, $extension);
-				break;
+				$langSysFile = $rootDir . '/' . ($dir === '' ? '' : $dir . '/') . $file;
+
+				if (is_file($langSysFile))
+				{
+					$loadLanguage = new ReflectionMethod($lang, 'loadLanguage');
+					$loadLanguage->setAccessible(true);
+					$loadLanguage->invoke($lang, $langSysFile, $extension);
+					return;
+				}
 			}
 		}
 	}

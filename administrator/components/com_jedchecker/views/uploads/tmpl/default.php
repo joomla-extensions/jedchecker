@@ -2,7 +2,7 @@
 /**
  * @package    Joomla.JEDChecker
  *
- * @copyright  Copyright (C) 2017 - 2021 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2017 - 2022 Open Source Matters, Inc. All rights reserved.
  * 			   Copyright (C) 2008 - 2016 compojoom.com . All rights reserved.
  * @author     Daniel Dimitrov <daniel@compojoom.com>
  *
@@ -11,44 +11,26 @@
 
 defined('_JEXEC') or die('Restricted access');
 
-// Load Joomla framework
-if (version_compare(JVERSION, '3.3.0', '>='))
-{
-	JHtml::_('behavior.core');
-}
-else
-{
-	JHtml::_('behavior.framework', true);
-}
-
-// Load jQuery
-JHtml::_('jquery.framework');
-
-$cssSuffix = JDEBUG ? '.css' : '.min.css';
-
 // Load Bootstrap
 if (version_compare(JVERSION, '4.0', '>='))
 {
 	JHtml::_('bootstrap.collapse');
 	JHtml::_('bootstrap.tab');
 
-  // Tooltips are used by JAMSS reports
+  	// Tooltips are used by JAMSS reports
 	JHtml::_('bootstrap.tooltip');
 }
 else
 {
-	JHtml::stylesheet('media/com_jedchecker/css/j4-style' . $cssSuffix);
-	JHtml::script('media/com_jedchecker/js/bootstrap.bundle.min.js');
+	JHtml::_('behavior.core');
+	JHtml::_('stylesheet', 'com_jedchecker/j4-style.css', array('version' => 'auto', 'relative' => true));
+	JHtml::_('script', 'com_jedchecker/bootstrap.bundle.min.js', array('version' => 'auto', 'relative' => true), array('defer' => true));
 }
 
-JHtml::stylesheet('media/com_jedchecker/css/style' . $cssSuffix);
-JHtml::script('media/com_jedchecker/js/script.js');
-
-// List of rules
-$options = json_encode($this->jsOptions);
-JFactory::getDocument()->addScriptDeclaration("var jed_options = $options;");
-
+JHtml::_('stylesheet', 'com_jedchecker/style.css', array('version' => 'auto', 'relative' => true));
+JHtml::_('script', 'com_jedchecker/script.js', array('version' => 'auto', 'relative' => true), array('defer' => true));
 ?>
+<script id="jed-rules-json" type="application/json"><?php echo json_encode($this->jsOptions); ?></script>
 <div id="jedchecker">
 	<div class="row g-3">
 		<div class="col-12 col-md-8">
@@ -76,8 +58,7 @@ JFactory::getDocument()->addScriptDeclaration("var jed_options = $options;");
 							<input type="file" class="form-control" name="extension" id="extension" required
 									accept=".bz2,.bzip2,.gz,.gzip,.tar,.tbz2,.tgz,.zip"
 									aria-describedby="extension-upload" aria-label="<?php echo JText::_('COM_JEDCHECKER_UPLOAD_FILE'); ?>">
-							<button class="btn btn-success" type="button" id="extension-upload"
-									onclick="add_validation(); jQuery('#jed_uploading_spinner').removeClass('hidden'); Joomla.submitbutton('uploads.upload')">
+							<button class="btn btn-success" type="button" id="extension-upload">
 								<span class="icon-upload "></span> <?php echo JText::_('JSUBMIT'); ?>
 							</button>
 							<div class="invalid-feedback"><?php echo JText::_('COM_JEDCHECKER_EMPTY_UPLOAD_FIELD'); ?></div>

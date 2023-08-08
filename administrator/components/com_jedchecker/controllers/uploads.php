@@ -85,11 +85,7 @@ class JedcheckerControllerUploads extends JControllerLegacy
 				}
 			}
 
-			$filepath = $path . '/' . strtolower($file['name']);
-
-			$object_file           = new JObject($file);
-			$object_file->filepath = $filepath;
-			$file                  = (array) $object_file;
+			$file['filepath'] = $path . '/' . strtolower($file['name']);
 
 			// Let us try to upload
 			if (!JFile::upload($file['tmp_name'], $file['filepath'], false, true))
@@ -192,11 +188,9 @@ class JedcheckerControllerUploads extends JControllerLegacy
 		{
 			if ($file->isFile())
 			{
-				$extension = pathinfo($file->getFilename(), PATHINFO_EXTENSION);
-
-				if ($extension === 'zip')
+				if (preg_match('/\.(?:zip|tar|tgz|tbz2|tar\.(?:gz|gzip|bz2|bzip2))$/', $file->getFilename(), $matches))
 				{
-					$unzip  = $file->getPath() . '/' . $file->getBasename('.' . $extension);
+					$unzip  = $file->getPath() . '/' . $file->getBasename($matches[0]);
 
 					try
 					{

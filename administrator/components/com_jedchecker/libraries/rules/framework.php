@@ -158,6 +158,13 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 			$result = true;
 		}
 
+		// Report spaces/tabs/EOLs at the beginning of file
+		if (strpos(" \t\n\r\v\f", $content[0]) !== false)
+		{
+			$this->report->addNotice($file, JText::_('COM_JEDCHECKER_ERROR_FRAMEWORK_LEADING_SPACES'));
+			$result = true;
+		}
+
 		// Clean non-code
 		$content = JEDCheckerHelper::cleanPhpCode(
 			$content,

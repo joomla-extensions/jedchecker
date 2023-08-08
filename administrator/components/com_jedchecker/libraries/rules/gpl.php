@@ -106,7 +106,7 @@ class JedcheckerRulesGpl extends JEDcheckerRule
 
 		$compatLicenses = (array) file(__DIR__ . '/gpl/compat.txt');
 
-		$extraLicenses = $this->params->get('constants');
+		$extraLicenses = $this->params->get('constants', '');
 		$extraLicenses = explode(',', $extraLicenses);
 
 		$compatLicenses = array_merge($compatLicenses, $extraLicenses);

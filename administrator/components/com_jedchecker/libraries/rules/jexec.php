@@ -116,7 +116,7 @@ class JedcheckerRulesJexec extends JEDcheckerRule
 		$content = preg_replace('/^\xEF\xBB\xBF/', '', $content);
 
 		// Skip empty files
-		if ($content === '' || preg_match('#^<\?php\s+$#', $content))
+		if ($content === '' || preg_match('#^\s*<\?php\s+$#', $content))
 		{
 			return true;
 		}
@@ -147,7 +147,7 @@ class JedcheckerRulesJexec extends JEDcheckerRule
 		}
 
 		$this->regex
-			= '#^' // at the beginning of the file
+			= '#^\s*' // at the beginning of the file
 			. '<\?php\s+' // there is an opening php tag
 			. '(?:declare ?\(strict_types ?= ?1 ?\) ?; ?)?' // optionally followed by declare(strict_types=1) directive
 			. '(?:namespace [0-9A-Za-z_\\\\]+ ?; ?)?' // optionally followed by namespace directive
@@ -178,11 +178,12 @@ class JedcheckerRulesJexec extends JEDcheckerRule
 	 * Collect php files to check (excluding external library directories)
 	 *
 	 * @param   string $path The path of the folder to read.
+	 * @param   int $level The current hierarchy level.
 	 *
 	 * @return array
 	 * @since 3.0
 	 */
-	protected function files($path)
+	protected function files($path, $level = 0)
 	{
 		$arr = array();
 
@@ -198,17 +199,20 @@ class JedcheckerRulesJexec extends JEDcheckerRule
 
 					if (is_dir($fullpath))
 					{
-						// Detect and skip external library directories
-						foreach ($this->libFiles as $libFile)
+						if ($level > 0)
 						{
-							if (is_file($fullpath . '/' . $libFile))
+							// Detect and skip external library directories
+							foreach ($this->libFiles as $libFile)
 							{
-								// Skip processing of this directory
-								continue 2;
+								if (is_file($fullpath . '/' . $libFile))
+								{
+									// Skip processing of this directory
+									continue 2;
+								}
 							}
 						}
 
-						$arr = array_merge($arr, $this->files($fullpath));
+						$arr = array_merge($arr, $this->files($fullpath, $level + 1));
 					}
 					elseif (preg_match('/\.php$/', $file))
 					{

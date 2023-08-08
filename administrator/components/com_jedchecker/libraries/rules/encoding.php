@@ -2,7 +2,7 @@
 /**
  * @package    Joomla.JEDChecker
  *
- * @copyright  Copyright (C) 2017 - 2019 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2017 - 2022 Open Source Matters, Inc. All rights reserved.
  * 			   Copyright (C) 2008 - 2016 compojoom.com . All rights reserved.
  * @author     Daniel Dimitrov <daniel@compojoom.com>
  * 			   02.06.12
@@ -105,6 +105,7 @@ class JedcheckerRulesEncoding extends JEDcheckerRule
 	protected function find($file)
 	{
 		$content = file_get_contents($file);
+		$origContent = JEDCheckerHelper::splitLines($content);
 
 		// Exclude comments
 		$content = JEDCheckerHelper::cleanPhpCode(
@@ -120,7 +121,7 @@ class JedcheckerRulesEncoding extends JEDcheckerRule
 			if (preg_match($this->encodingsRegex, $line))
 			{
 				$found = true;
-				$this->report->addError($file, JText::_('COM_JEDCHECKER_ERROR_ENCODING'), $i + 1, $line);
+				$this->report->addWarning($file, JText::_('COM_JEDCHECKER_ERROR_ENCODING'), $i + 1, $origContent[$i]);
 			}
 		}
 

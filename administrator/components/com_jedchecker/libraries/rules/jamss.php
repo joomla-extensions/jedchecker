@@ -2,7 +2,7 @@
 /**
  * @package    Joomla.JEDChecker
  *
- * @copyright  Copyright (C) 2017 - 2019 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2017 - 2022 Open Source Matters, Inc. All rights reserved.
  * 			   Copyright (C) 2008 - 2016 fasterjoomla.com. All rights reserved.
  * @author     Riccardo Zorn <support@fasterjoomla.com>
  * 			   Bernard Toplak <bernard@orion-web.hr>
@@ -134,19 +134,27 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 						'Detected preg_replace function that evaluates (executes) mathed code. ' .
 						'This means if PHP code is passed it will be executed.',
 						// [3] = description
+						'php',
+						// [4] = scope:
+						//       'full' - entire file,
+						//       'clean' - with stripped PHP comments,
+						//       'php' - with stripped HTML and PHP comments,
+						//       'code' - with stripped HTML, PHP comments, and strings
 						'Part example code from http://sucuri.net/malware/backdoor-phppreg_replaceeval'),
-				// [4] = More Information link
-				array('c999*sh_surl',
+						// [5] = More Information link
+						array('c999*sh_surl',
 						'Backdoor: PHP:C99:045',
 						'2',
 						'Detected the "C99? backdoor that allows attackers to manage (and reinfect) your site remotely. ' .
 						'It is often used as part of a compromise to maintain access to the hacked sites.',
+						'php',
 						'http://sucuri.net/malware/backdoor-phpc99045'),
-				array('preg_match\s*\(\s*\"\s*/\s*bot\s*/\s*\"',
+						array('preg_match\s*\(\s*\"\s*/\s*bot\s*/\s*\"',
 						'Backdoor: PHP:R57:01',
 						'3',
 						'Detected the "R57? backdoor that allows attackers to access, modify and reinfect your site. ' .
 						'It is often hidden in the filesystem and hard to find without access to the server or logs.',
+						'php',
 						'http://sucuri.net/malware/backdoor-phpr5701'),
 						array('eval[\s/\*\#]*\(stripslashes[\s/\*\#]*\([\s/\*\#]*\$_(REQUEST|POST|GET)\s*\[\s*\\\s*[\'\"]\s*asc\s*\\\s*[\'\"]',
 						'Backdoor: PHP:GENERIC:07',
@@ -155,6 +163,7 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 						'upload files, delete files, access, modify and/or reinfect your site. ' .
 						'It is often hidden in the filesystem and hard to find without access to the server or logs. ' .
 						'It also includes uploadify scripts and similars that offer upload options without security. ',
+						'php',
 						'http://sucuri.net/malware/backdoor-phpgeneric07'),
 						/*array('https?\S{1,63}\.ru',
 						 'russian URL',
@@ -167,38 +176,45 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 						'7',
 						'Detected the “Filesman” backdoor that allows attackers to access, modify and reinfect your site. ' .
 						'It is often hidden in the filesystem and hard to find without access to the server or logs.',
+						'php',
 						'http://sucuri.net/malware/backdoor-phpfilesman02'),
 						array('(include|require)(_once)*\s*[\"\'][\w\W\s/\*]*php://input[\w\W\s/\*]*[\"\']',
 						'PHP:\input include',
 						'8',
-						'Detected the method of reading input through PHP protocol handler in include/require statements.',),
+						'Detected the method of reading input through PHP protocol handler in include/require statements.',
+						'php'),
 						array('data:;base64',
 						'data:;base64 include',
 						'9',
-						'Detected the method of executing base64 data in include.',),
+						'Detected the method of executing base64 data in include.',
+						'php'),
 						array('RewriteCond\s*%\{HTTP_REFERER\}',
 						'.HTACCESS RewriteCond-Referer',
 						'10',
 						'Your .htaccess file has a conditional redirection based on "HTTP Referer". ' .
 						'This means it redirects according to site/url from where your visitors came to your site. ' .
 						'Such technique has been used for unwanted redirections after coming from Google or other search engines, ' .
-						'so check this directive carefully.',),
+						'so check this directive carefully.',
+						'full'),
 						array('brute\s*force',
 						'"Brute Force" words',
 						'11',
 						'Detected the "Brute Force" words mentioned in code. <u>Sometimes it\'s a "false positive"</u> because ' .
 						'several developers like to mention it in they code, but it\'s worth double-checking if this file ' .
-						'is untouched (eg. compare it with one in original extension package).'),
+						'is untouched (eg. compare it with one in original extension package).',
+						'full'),
 						array('GIF89a.*[\r\n]*.*<\?php',
 						'PHP file desguised as GIF image',
 						'15',
 						'Detected a PHP file that was most probably uploaded as an image via webform that loosely only checks ' .
-						'file headers.',),
+						'file headers.',
+						'full'),
 						array('\$ip[\w\W\s/\*]*=[\w\W\s/\*]*getenv\(["\']REMOTE_ADDR["\']\);[\w\W\s/\*]*[\r\n]\$message',
 						'Probably malicious PHP script that "calls home"',
 						'16',
-						'Detected script variations often used to inform the attackers about found vulnerable website.',),
-						array('(?:(?:eval|gzuncompress|gzinflate|base64_decode|str_rot13|strrev|strtr|rawurldecode|' .
+						'Detected script variations often used to inform the attackers about found vulnerable website.',
+						'php'),
+						array('(?:\b(?:eval|gzuncompress|gzinflate|base64_decode|str_rot13|strrev|strtr|rawurldecode|' .
 						'assert|unpack|urldecode)[\s/\*\w\W\(]*){2,}',
 						'PHP: multiple encoded, most probably obfuscated code found',
 						'17',
@@ -208,41 +224,49 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 						'serialised object data. ' .
 						'Please inspect the file manually and compare it with the one in the original extension or ' .
 						'Joomla package to verify that this is not a false positive.',
+						'code',
 						'Thanks to Dario Pintarić (dario.pintaric[et}orion-web.hr for this report!'),
 						array('<\s*iframe',
 						'IFRAME element',
 						'18',
 						'Found IFRAME element in code. It\'s mostly benevolent, but often used for bad stuff, ' .
-						'so please check if it\'s a valid code.'),
+						'so please check if it\'s a valid code.',
+						'clean'),
 						array('strrev[\s/\*\#]*\([\s/\*\#]*[\'"]\s*tressa\s*[\'"]\s*\)',
 						'Reversed string "assert"',
 						'19',
-						'Assert function name is being hidden behind strrev().'),
+						'Assert function name is being hidden behind strrev().',
+						'php'),
 						array('is_writable[\s/\*\#]*\([\s/\*\#]*getcwd',
 						'Is the current DIR Writable?',
 						'20',
-						'This could be harmless, but used in some malware'),
+						'This could be harmless, but used in some malware',
+						'code'),
 						array('(?:\\\\x[0-9A-Fa-f]{1,2}|\\\\[0-7]{1,3}){2,}',
 						'At least two characters in hexadecimal or octal notation',
 						'21',
 						'Found at least two characters in hexadecimal or octal notation. It doesn\'t mean it is malicious, ' .
-						'but it could be code hidding behind such notation.'),
+						'but it could be code hidding behind such notation.',
+						'php'),
 						array('\$_F\s*=\s*__FILE__\s*;\s*\$_X\s*=',
 						'SourceCop encoded code',
 						'22',
 						'Found the SourceCop encoded code. It is often used for malicious code ' .
-						'hiding, so go and check the code with some online SourceCop decoders'),
+						'hiding, so go and check the code with some online SourceCop decoders',
+						'code'),
 						array('\b(?:exec|passthru|shell_exec|system|proc_\w+|popen)\b[\w\W\s/\*]*\([\s/\*\#\'\"\w\W\-\_]*(?:\$_GET|\$_POST)',
 						'shell command execution from POST/GET variables',
 						'23',
 						'Found direct shell command execution getting variables from POST/GET, ' .
-						'which is highly dangerous security flaw or a part of malicious webrootkit'),
-						array('\$\w[\w\W\s/\*]*=[\w\W\s/\*]*`.*`',
+						'which is highly dangerous security flaw or a part of malicious webrootkit',
+						'code'),
+						array('`',
 						'PHP execution operator: backticks (``)',
 						'24',
 						'PHP execution operator found. Note that these are not single-quotes! ' .
 						'PHP will attempt to execute the contents of the backticks as a shell ' .
-						'command, which might indicate a part of a webrootkit'),
+						'command, which might indicate a part of a webrootkit',
+						'code'),
 		);
 
 		$jamssFileNames = array(
@@ -300,8 +324,7 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 		 */
 
 		if (in_array(pathinfo($path, PATHINFO_EXTENSION), $ext)
-			&& filesize($path)/* skip empty ones */
-			&& !stripos($path, 'jamss.php')/* skip this file */)
+			&& filesize($path)/* skip empty ones */)
 			{
 			if ($malic_file_descr = array_search(pathinfo($path, PATHINFO_BASENAME), $jamssFileNames))
 			{
@@ -316,21 +339,30 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 			}
 			else
 			{
-				$content = JEDCheckerHelper::cleanPhpCode($content, JEDCheckerHelper::CLEAN_COMMENTS);
+				$origContent = JEDCheckerHelper::splitLines($content);
+				$scopes = array(
+					'full' => $content,
+					'clean' => JEDCheckerHelper::cleanPhpCode($content, JEDCheckerHelper::CLEAN_COMMENTS),
+					'php' =>   JEDCheckerHelper::cleanPhpCode($content, JEDCheckerHelper::CLEAN_COMMENTS | JEDCheckerHelper::CLEAN_HTML),
+					'code' =>  JEDCheckerHelper::cleanPhpCode($content, JEDCheckerHelper::CLEAN_COMMENTS | JEDCheckerHelper::CLEAN_HTML | JEDCheckerHelper::CLEAN_STRINGS)
+				);
 
 				// Do a search for fingerprints
-				foreach ($patterns As $pattern)
+				foreach ($patterns as $pattern)
 				{
+					$scope = (is_array($pattern) && isset($pattern[4])) ? $pattern[4] : 'clean';
+					$scoped_content = $scopes[$scope];
+
 					if (is_array($pattern))
 					{
 						// It's a pattern
 						// RegEx modifiers: i=case-insensitive; s=dot matches also newlines; S=optimization
-						preg_match_all('#' . $pattern[0] . '#isS', $content, $found, PREG_OFFSET_CAPTURE);
+						preg_match_all('#' . $pattern[0] . '#isS', $scoped_content, $found, PREG_OFFSET_CAPTURE);
 					}
 					else
 					{
 						// It's a string
-						preg_match_all('#' . $pattern . '#isS', $content, $found, PREG_OFFSET_CAPTURE);
+						preg_match_all('#' . $pattern . '#isS', $scoped_content, $found, PREG_OFFSET_CAPTURE);
 					}
 
 					// Remove outer array from results
@@ -357,22 +389,22 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 							// The offset is in $match[1]
 							$offset = $match[1];
 							// Note: negative 3rd argument is used for right-to-left search
-							$start = strrpos($content, "\n", -(strlen($content) - $offset));
+							$start = strrpos($scoped_content, "\n", $offset - strlen($scoped_content));
 
 							if ($start === false)
 							{
 								$start = 0;
 							}
 
-							$end = strpos($content, "\n", $offset);
+							$end = strpos($scoped_content, "\n", $offset);
 
 							if ($end === false)
 							{
-								$end = strlen($content);
+								$end = strlen($scoped_content);
 							}
 
-							$first_code = substr($content, $start, min($end - $start, 200));
-							$first_line = $this->calculate_line_number($offset, $content);
+							$first_line = $this->calculate_line_number($offset, $scoped_content);
+							$first_code = $origContent[$first_line - 1];
 							break;
 						}
 
@@ -400,8 +432,6 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 						}
 					}
 				}
-
-				unset($content);
 			}
 		}
 

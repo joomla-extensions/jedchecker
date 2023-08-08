@@ -2,7 +2,7 @@
 /**
  * @package    Joomla.JEDChecker
  *
- * @copyright  Copyright (C) 2017 - 2019 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2017 - 2022 Open Source Matters, Inc. All rights reserved.
  * 			   Copyright (C) 2008 - 2016 compojoom.com . All rights reserved.
  * @author     Daniel Dimitrov <daniel@compojoom.com>
  *
@@ -19,6 +19,9 @@ defined('_JEXEC') or die('Restricted access');
 class Com_JedcheckerInstallerScript
 {
 	protected $extension = 'com_jedchecker';
+	protected $min_php = '5.6.0';
+	protected $min_joomla = '3.7.0';
+	protected $parent;
 
 	/**
 	 * Function executed before the the installation
@@ -29,6 +32,26 @@ class Com_JedcheckerInstallerScript
 	public function preflight($type, $parent)
 	{
 		$this->parent = $parent;
+
+		if (version_compare(PHP_VERSION, $this->min_php, '<'))
+		{
+			$this->loadLanguage();
+
+			$msg = JText::sprintf('COM_JEDCHECKER_PHP_VERSION_INCOMPATIBLE', PHP_VERSION, $this->min_php);
+			JLog::add($msg, JLog::WARNING, 'jerror');
+
+			return false;
+		}
+
+		if (version_compare(JVERSION, $this->min_joomla, '<'))
+		{
+			$this->loadLanguage();
+
+			$msg = JText::sprintf('COM_JEDCHECKER_JOOMLA_VERSION_INCOMPATIBLE', JVERSION, $this->min_joomla);
+			JLog::add($msg, JLog::WARNING, 'jerror');
+
+			return false;
+		}
 	}
 
 	/**
@@ -91,7 +114,7 @@ class Com_JedcheckerInstallerScript
 	{
 		$extension = $this->extension;
 		$jlang = JFactory::getLanguage();
-		$path = $this->parent->getParent()->getPath('source') . '/administrator';
+		$path = $this->parent->getParent()->getPath('source') . '/administrator/components/' . $extension;
 		$jlang->load($extension, $path, 'en-GB', true);
 		$jlang->load($extension, $path, $jlang->getDefault(), true);
 		$jlang->load($extension, $path, null, true);

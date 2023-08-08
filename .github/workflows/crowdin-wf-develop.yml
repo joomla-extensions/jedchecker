@@ -19,11 +19,11 @@ jobs:
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - name: Checkout
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
     
     # Runs the Crowdin action command - https://github.com/crowdin/github-action
     - name: crowdin action
-      uses: crowdin/github-action@1.3.3
+      uses: crowdin/github-action@v1
       with:
         # Upload sources to Crowdin
         upload_sources: true
