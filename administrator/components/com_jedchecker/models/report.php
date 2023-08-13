@@ -12,6 +12,9 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Object\CMSObject;
+
 /**
  * Class JEDcheckerReport
  *
@@ -20,7 +23,7 @@ defined('_JEXEC') or die('Restricted access');
  *
  * @since  1.0
  */
-class JEDcheckerReport extends JObject
+class JEDcheckerReport extends CMSObject
 {
 	/**
 	 * Rule's issue levels
@@ -107,12 +110,12 @@ class JEDcheckerReport extends JObject
 	{
 		// Initialize language strings
 		$this->issueLangTitles = array(
-			self::LEVEL_ERROR   => JText::_('COM_JEDCHECKER_LEVEL_ERROR'),
-			self::LEVEL_WARNING => JText::_('COM_JEDCHECKER_LEVEL_WARNING'),
-			self::LEVEL_COMPAT  => JText::_('COM_JEDCHECKER_LEVEL_COMPATIBILITY'),
-			self::LEVEL_NOTICE  => JText::_('COM_JEDCHECKER_LEVEL_NOTICE'),
-			self::LEVEL_INFO    => JText::_('COM_JEDCHECKER_LEVEL_INFO'),
-			self::LEVEL_PASSED  => JText::_('COM_JEDCHECKER_LEVEL_PASSED'),
+			self::LEVEL_ERROR   => Text::_('COM_JEDCHECKER_LEVEL_ERROR'),
+			self::LEVEL_WARNING => Text::_('COM_JEDCHECKER_LEVEL_WARNING'),
+			self::LEVEL_COMPAT  => Text::_('COM_JEDCHECKER_LEVEL_COMPATIBILITY'),
+			self::LEVEL_NOTICE  => Text::_('COM_JEDCHECKER_LEVEL_NOTICE'),
+			self::LEVEL_INFO    => Text::_('COM_JEDCHECKER_LEVEL_INFO'),
+			self::LEVEL_PASSED  => Text::_('COM_JEDCHECKER_LEVEL_PASSED'),
 		);
 
 		$this->data = array();
@@ -269,7 +272,7 @@ class JEDcheckerReport extends JObject
 		{
 			// No errors or compatibility issues found
 			$html[] = '<div class="alert alert-success">';
-			$html[] = JText::_('COM_JEDCHECKER_EVERYTHING_SEEMS_TO_BE_FINE_WITH_THAT_RULE');
+			$html[] = Text::_('COM_JEDCHECKER_EVERYTHING_SEEMS_TO_BE_FINE_WITH_THAT_RULE');
 			$html[] = '</div>';
 		}
 		else
@@ -343,7 +346,7 @@ class JEDcheckerReport extends JObject
 			// Add line information if given
 			if ($item->line !== null)
 			{
-				$html[] = ' ' . JText::_('COM_JEDCHECKER_IN_LINE') . ': <strong>' . $item->line . '</strong>';
+				$html[] = ' ' . Text::_('COM_JEDCHECKER_IN_LINE') . ': <strong>' . $item->line . '</strong>';
 			}
 
 			$html[] = '<br />';

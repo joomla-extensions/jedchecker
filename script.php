@@ -11,6 +11,12 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Installer\Adapter\ComponentAdapter;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Log\Log;
+
 /**
  * Class Com_JedcheckerInstallerScript
  *
@@ -20,14 +26,14 @@ class Com_JedcheckerInstallerScript
 {
 	protected $extension = 'com_jedchecker';
 	protected $min_php = '5.6.0';
-	protected $min_joomla = '3.7.0';
+	protected $min_joomla = '3.8.0';
 	protected $parent;
 
 	/**
 	 * Function executed before the the installation
 	 *
-	 * @param   string               $type    - the installation type
-	 * @param   JInstallerComponent  $parent  - the parent class
+	 * @param   string            $type    - the installation type
+	 * @param   ComponentAdapter  $parent  - the parent class
 	 */
 	public function preflight($type, $parent)
 	{
@@ -37,8 +43,8 @@ class Com_JedcheckerInstallerScript
 		{
 			$this->loadLanguage();
 
-			$msg = JText::sprintf('COM_JEDCHECKER_PHP_VERSION_INCOMPATIBLE', PHP_VERSION, $this->min_php);
-			JLog::add($msg, JLog::WARNING, 'jerror');
+			$msg = Text::sprintf('COM_JEDCHECKER_PHP_VERSION_INCOMPATIBLE', PHP_VERSION, $this->min_php);
+			Log::add($msg, Log::WARNING, 'jerror');
 
 			return false;
 		}
@@ -47,8 +53,8 @@ class Com_JedcheckerInstallerScript
 		{
 			$this->loadLanguage();
 
-			$msg = JText::sprintf('COM_JEDCHECKER_JOOMLA_VERSION_INCOMPATIBLE', JVERSION, $this->min_joomla);
-			JLog::add($msg, JLog::WARNING, 'jerror');
+			$msg = Text::sprintf('COM_JEDCHECKER_JOOMLA_VERSION_INCOMPATIBLE', JVERSION, $this->min_joomla);
+			Log::add($msg, Log::WARNING, 'jerror');
 
 			return false;
 		}
@@ -57,7 +63,7 @@ class Com_JedcheckerInstallerScript
 	/**
 	 * Update cleans out any old rules.
 	 *
-	 * @param   JInstallerComponent  $parent  Is the class calling this method.
+	 * @param   ComponentAdapter  $parent  Is the class calling this method.
 	 *
 	 * @return  bool|null  If this returns false, Joomla will abort the update and undo everything already done.
 	 */
@@ -76,13 +82,13 @@ class Com_JedcheckerInstallerScript
 			// Remove the rule's php file
 			if (file_exists($rulePhpFile))
 			{
-				if (JFile::delete($rulePhpFile))
+				if (File::delete($rulePhpFile))
 				{
-					$msg = JText::sprintf('COM_JEDCHECKER_OLD_RULE_X_PHP_FILE_REMOVED', $rule);
+					$msg = Text::sprintf('COM_JEDCHECKER_OLD_RULE_X_PHP_FILE_REMOVED', $rule);
 				}
 				else
 				{
-					$msg = JText::sprintf('COM_JEDCHECKER_OLD_RULE_X_PHP_FILE_NOT_REMOVED', $rule);
+					$msg = Text::sprintf('COM_JEDCHECKER_OLD_RULE_X_PHP_FILE_NOT_REMOVED', $rule);
 				}
 
 				echo "<p>$msg</p>";
@@ -91,13 +97,13 @@ class Com_JedcheckerInstallerScript
 			// Remove the rule's ini file
 			if (file_exists($ruleIniFile))
 			{
-				if (JFile::delete($ruleIniFile))
+				if (File::delete($ruleIniFile))
 				{
-					$msg = JText::sprintf('COM_JEDCHECKER_OLD_RULE_X_INI_FILE_REMOVED', $rule);
+					$msg = Text::sprintf('COM_JEDCHECKER_OLD_RULE_X_INI_FILE_REMOVED', $rule);
 				}
 				else
 				{
-					$msg = JText::sprintf('COM_JEDCHECKER_OLD_RULE_X_INI_FILE_NOT_REMOVED', $rule);
+					$msg = Text::sprintf('COM_JEDCHECKER_OLD_RULE_X_INI_FILE_NOT_REMOVED', $rule);
 				}
 
 				echo "<p>$msg</p>";
@@ -113,7 +119,7 @@ class Com_JedcheckerInstallerScript
 	public function loadLanguage()
 	{
 		$extension = $this->extension;
-		$jlang = JFactory::getLanguage();
+		$jlang = Factory::getLanguage();
 		$path = $this->parent->getParent()->getPath('source') . '/administrator/components/' . $extension;
 		$jlang->load($extension, $path, 'en-GB', true);
 		$jlang->load($extension, $path, $jlang->getDefault(), true);

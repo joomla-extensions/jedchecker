@@ -11,6 +11,9 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Filesystem\Folder;
+use Joomla\CMS\Language\Text;
+
 // Include the rule base class
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/models/rule.php';
 
@@ -83,15 +86,15 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 		$regexLeftoverFolders = '^' . $this->regexLeftoverFolders . '$';
 
 		// Get matched files and folder (w/o default exclusion list)
-		$folders = JFolder::folders($this->basedir, $regexLeftoverFolders, true, true, array(), array());
-		$files = JFolder::files($this->basedir, $regexLeftoverFolders, true, true, array(), array());
+		$folders = Folder::folders($this->basedir, $regexLeftoverFolders, true, true, array(), array());
+		$files = Folder::files($this->basedir, $regexLeftoverFolders, true, true, array(), array());
 
 		if ($folders !== false)
 		{
 			// Warn on leftover folders found
 			foreach ($folders as $folder)
 			{
-				$this->report->addWarning($folder, JText::_("COM_JEDCHECKER_ERROR_FRAMEWORK_LEFTOVER_FOLDER"));
+				$this->report->addWarning($folder, Text::_("COM_JEDCHECKER_ERROR_FRAMEWORK_LEFTOVER_FOLDER"));
 			}
 		}
 
@@ -100,11 +103,11 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 			// Warn on leftover files found
 			foreach ($files as $file)
 			{
-				$this->report->addWarning($file, JText::_("COM_JEDCHECKER_ERROR_FRAMEWORK_LEFTOVER_FILE"));
+				$this->report->addWarning($file, Text::_("COM_JEDCHECKER_ERROR_FRAMEWORK_LEFTOVER_FILE"));
 			}
 		}
 
-		$files = JFolder::files($this->basedir, '\.php$', true, true);
+		$files = Folder::files($this->basedir, '\.php$', true, true);
 
 		foreach ($files as $file)
 		{
@@ -154,14 +157,14 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 		// Check BOM
 		if (strncmp($content, "\xEF\xBB\xBF", 3) === 0)
 		{
-			$this->report->addError($file, JText::_('COM_JEDCHECKER_ERROR_FRAMEWORK_BOM_FOUND'));
+			$this->report->addError($file, Text::_('COM_JEDCHECKER_ERROR_FRAMEWORK_BOM_FOUND'));
 			$result = true;
 		}
 
 		// Report spaces/tabs/EOLs at the beginning of file
 		if (strpos(" \t\n\r\v\f", $content[0]) !== false)
 		{
-			$this->report->addNotice($file, JText::_('COM_JEDCHECKER_ERROR_FRAMEWORK_LEADING_SPACES'));
+			$this->report->addNotice($file, Text::_('COM_JEDCHECKER_ERROR_FRAMEWORK_LEADING_SPACES'));
 			$result = true;
 		}
 
@@ -176,7 +179,7 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 		if (preg_match('/<\?\s/', $content, $match, PREG_OFFSET_CAPTURE))
 		{
 			$lineno = substr_count($content, "\n", 0, $match[0][1]);
-			$this->report->addError($file, JText::_('COM_JEDCHECKER_ERROR_FRAMEWORK_SHORT_PHP_TAG'), $lineno + 1, $origContent[$lineno]);
+			$this->report->addError($file, Text::_('COM_JEDCHECKER_ERROR_FRAMEWORK_SHORT_PHP_TAG'), $lineno + 1, $origContent[$lineno]);
 			$result = true;
 		}
 
@@ -230,7 +233,7 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 				if (preg_match('/' . $regex . '/i', $line))
 				{
 					$origLine = str_ireplace($singleTest, '<b>' . $singleTest . '</b>', htmlspecialchars($origLine));
-					$error_message = JText::_('COM_JEDCHECKER_ERROR_FRAMEWORK_' . strtoupper($testObject->group)) . ':<pre>' . $origLine . '</pre>';
+					$error_message = Text::_('COM_JEDCHECKER_ERROR_FRAMEWORK_' . strtoupper($testObject->group)) . ':<pre>' . $origLine . '</pre>';
 
 					switch ($testObject->kind)
 					{

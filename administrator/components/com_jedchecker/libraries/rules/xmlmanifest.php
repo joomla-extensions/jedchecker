@@ -9,6 +9,7 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
 
 // Include the rule base class
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/models/rule.php';
@@ -143,7 +144,7 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 
 		if (!in_array($type, $this->joomlaTypes, true))
 		{
-			$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_TYPE', $type));
+			$this->report->addError($file, Text::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_TYPE', $type));
 
 			return true;
 		}
@@ -159,7 +160,7 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 		// Warn if method="upgrade" attribute is not found
 		if ((string) $xml['method'] !== 'upgrade')
 		{
-			$this->report->addWarning($file, JText::_('COM_JEDCHECKER_MANIFEST_MISSED_METHOD_UPGRADE'));
+			$this->report->addWarning($file, Text::_('COM_JEDCHECKER_MANIFEST_MISSED_METHOD_UPGRADE'));
 		}
 
 		switch ($type)
@@ -172,11 +173,11 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 
 				if (!isset($xml['client']))
 				{
-					$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_MISSED_ATTRIBUTE', $xml->getName(), 'client'));
+					$this->report->addError($file, Text::sprintf('COM_JEDCHECKER_MANIFEST_MISSED_ATTRIBUTE', $xml->getName(), 'client'));
 				}
 				elseif ($client !== 'site' && $client !== 'administrator')
 				{
-					$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_ATTRIBUTE_VALUE', $xml->getName(), 'client', $client));
+					$this->report->addError($file, Text::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_ATTRIBUTE_VALUE', $xml->getName(), 'client', $client));
 				}
 
 				if ($type === 'module')
@@ -186,7 +187,7 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 
 					if (count($elements) >= 2)
 					{
-						$this->report->addWarning($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_MULTIPLE_ATTRIBUTES', 'module'));
+						$this->report->addWarning($file, Text::sprintf('COM_JEDCHECKER_MANIFEST_MULTIPLE_ATTRIBUTES', 'module'));
 					}
 
 					if (isset($xml->element))
@@ -195,14 +196,14 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 
 						if (count($elements) && $elements[0] !== $element)
 						{
-							$this->report->addWarning($file, JText::_('COM_JEDCHECKER_MANIFEST_MODULE_ELEMENT_MISMATCH'));
+							$this->report->addWarning($file, Text::_('COM_JEDCHECKER_MANIFEST_MODULE_ELEMENT_MISMATCH'));
 						}
 					}
 					else
 					{
 						if (count($elements) === 0)
 						{
-							$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_MISSED_ELEMENT_ATTRIBUTE', 'module'));
+							$this->report->addError($file, Text::sprintf('COM_JEDCHECKER_MANIFEST_MISSED_ELEMENT_ATTRIBUTE', 'module'));
 						}
 					}
 				}
@@ -215,12 +216,12 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 
 				if (count($elements) >= 2)
 				{
-					$this->report->addWarning($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_MULTIPLE_ATTRIBUTES', 'plugin'));
+					$this->report->addWarning($file, Text::sprintf('COM_JEDCHECKER_MANIFEST_MULTIPLE_ATTRIBUTES', 'plugin'));
 				}
 
 				if (count($elements) === 0)
 				{
-					$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_MISSED_ELEMENT_ATTRIBUTE', 'plugin'));
+					$this->report->addError($file, Text::sprintf('COM_JEDCHECKER_MANIFEST_MISSED_ELEMENT_ATTRIBUTE', 'plugin'));
 				}
 
 				break;
@@ -231,12 +232,12 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 				{
 					if (!isset($item['type']))
 					{
-						$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_MISSED_ATTRIBUTE', $item->getName(), 'type'));
+						$this->report->addError($file, Text::sprintf('COM_JEDCHECKER_MANIFEST_MISSED_ATTRIBUTE', $item->getName(), 'type'));
 					}
 
 					if (!isset($item['id']))
 					{
-						$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_MISSED_ATTRIBUTE', $item->getName(), 'id'));
+						$this->report->addError($file, Text::sprintf('COM_JEDCHECKER_MANIFEST_MISSED_ATTRIBUTE', $item->getName(), 'id'));
 					}
 
 					switch ((string) $item['type'])
@@ -244,7 +245,7 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 						case 'plugin':
 							if (!isset($item['group']))
 							{
-								$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_MISSED_ATTRIBUTE', $item->getName(), 'group'));
+								$this->report->addError($file, Text::sprintf('COM_JEDCHECKER_MANIFEST_MISSED_ATTRIBUTE', $item->getName(), 'group'));
 							}
 							break;
 
@@ -255,11 +256,11 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 
 							if (!isset($item['client']))
 							{
-								$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_MISSED_ATTRIBUTE', $item->getName(), 'client'));
+								$this->report->addError($file, Text::sprintf('COM_JEDCHECKER_MANIFEST_MISSED_ATTRIBUTE', $item->getName(), 'client'));
 							}
 							elseif ($client !== 'site' && $client !== 'administrator')
 							{
-								$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_ATTRIBUTE_VALUE', $item->getName(), 'client', $client));
+								$this->report->addError($file, Text::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_ATTRIBUTE_VALUE', $item->getName(), 'client', $client));
 							}
 							break;
 
@@ -269,7 +270,7 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 							break;
 
 						default:
-							$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_TYPE', $item['type']));
+							$this->report->addError($file, Text::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_TYPE', $item['type']));
 					}
 				}
 		}
@@ -322,7 +323,7 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 			// No known attributes for this node
 			foreach ($node->attributes() as $attr)
 			{
-				$this->notices[] = JText::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_ATTRIBUTE', $name, (string) $attr->getName());
+				$this->notices[] = Text::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_ATTRIBUTE', $name, (string) $attr->getName());
 			}
 		}
 		elseif ($DTDattributes[0] !== '*') // Skip node with arbitrary attributes (e.g. "field")
@@ -334,7 +335,7 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 				if (!in_array($attrName, $DTDattributes, true))
 				{
 					// The node has unknown attribute
-					$this->notices[] = JText::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_ATTRIBUTE', $name, $attrName);
+					$this->notices[] = Text::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_ATTRIBUTE', $name, $attrName);
 				}
 			}
 		}
@@ -350,7 +351,7 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 			// No known children for this node
 			if ($node->count() > 0)
 			{
-				$this->notices[] = JText::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_CHILDREN', $name);
+				$this->notices[] = Text::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_CHILDREN', $name);
 			}
 		}
 		elseif (!isset($DTDchildRules['*'])) // Skip node with arbitrary children
@@ -377,12 +378,12 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 						if ($count === 0)
 						{
 							// The node doesn't contain required child element
-							$this->errors[] = JText::sprintf('COM_JEDCHECKER_MANIFEST_MISSED_REQUIRED', $name, $child);
+							$this->errors[] = Text::sprintf('COM_JEDCHECKER_MANIFEST_MISSED_REQUIRED', $name, $child);
 						}
 						elseif ($count > 1)
 						{
 							// The node contains multiple child elements when single only is expected
-							$this->errors[] = JText::sprintf('COM_JEDCHECKER_MANIFEST_MULTIPLE_FOUND', $name, $child);
+							$this->errors[] = Text::sprintf('COM_JEDCHECKER_MANIFEST_MULTIPLE_FOUND', $name, $child);
 						}
 
 						break;
@@ -391,12 +392,12 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 						if ($count === 0)
 						{
 							// The node doesn't contain optional child element
-							$this->notices[] = JText::sprintf('COM_JEDCHECKER_MANIFEST_MISSED_OPTIONAL', $name, $child);
+							$this->notices[] = Text::sprintf('COM_JEDCHECKER_MANIFEST_MISSED_OPTIONAL', $name, $child);
 						}
 						elseif ($count > 1)
 						{
 							// The node contains multiple child elements when single only is expected
-							$this->warnings[] = JText::sprintf('COM_JEDCHECKER_MANIFEST_MULTIPLE_FOUND', $name, $child);
+							$this->warnings[] = Text::sprintf('COM_JEDCHECKER_MANIFEST_MULTIPLE_FOUND', $name, $child);
 						}
 
 						break;
@@ -420,14 +421,14 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 				if (!isset($DTDchildToRule[$child]))
 				{
 					// The node contains unknown child element
-					$this->notices[] = JText::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_CHILD', $name, $child);
+					$this->notices[] = Text::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_CHILD', $name, $child);
 				}
 				else
 				{
 					if ($DTDchildRules[$DTDchildToRule[$child]] === '?' && $node->$child->count() > 1)
 					{
 						// The node contains multiple child elements when single only is expected
-						$this->errors[] = JText::sprintf('COM_JEDCHECKER_MANIFEST_MULTIPLE_FOUND', $name, $child);
+						$this->errors[] = Text::sprintf('COM_JEDCHECKER_MANIFEST_MULTIPLE_FOUND', $name, $child);
 					}
 				}
 			}
@@ -437,7 +438,7 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 			{
 				if ($child->count() === 0 && $child->attributes()->count() === 0 && (string) $child === '')
 				{
-					$this->notices[] = JText::sprintf('COM_JEDCHECKER_MANIFEST_EMPTY_CHILD', $child->getName());
+					$this->notices[] = Text::sprintf('COM_JEDCHECKER_MANIFEST_EMPTY_CHILD', $child->getName());
 				}
 			}
 		}
@@ -481,7 +482,7 @@ class JedcheckerRulesXMLManifest extends JEDcheckerRule
 
 				if (in_array($attrName, $skipAttrs, true))
 				{
-					$this->warnings[] = JText::sprintf('COM_JEDCHECKER_MANIFEST_MENU_UNUSED_ATTRIBUTE', $attrName);
+					$this->warnings[] = Text::sprintf('COM_JEDCHECKER_MANIFEST_MENU_UNUSED_ATTRIBUTE', $attrName);
 				}
 			}
 		}
