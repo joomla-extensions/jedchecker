@@ -131,7 +131,7 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 						// [1] = Name / Title
 						'1',
 						// [2] = number
-						'Detected preg_replace function that evaluates (executes) mathed code. ' .
+						'Detected preg_replace function that evaluates (executes) matched code. ' .
 						'This means if PHP code is passed it will be executed.',
 						// [3] = description
 						'php',
