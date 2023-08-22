@@ -246,7 +246,7 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 						'At least two characters in hexadecimal or octal notation',
 						'21',
 						'Found at least two characters in hexadecimal or octal notation. It doesn\'t mean it is malicious, ' .
-						'but it could be code hidding behind such notation.',
+						'but it could be code hiding behind such notation.',
 						'php'),
 						array('\$_F\s*=\s*__FILE__\s*;\s*\$_X\s*=',
 						'SourceCop encoded code',
