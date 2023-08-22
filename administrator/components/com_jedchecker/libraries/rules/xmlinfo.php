@@ -12,6 +12,8 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
 
 // Include the rule base class
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/models/rule.php';
@@ -109,7 +111,7 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 
 		if (!$manifestFound)
 		{
-			$this->report->addError('', JText::_('COM_JEDCHECKER_INFO_XML_NO_MANIFEST'));
+			$this->report->addError('', Text::_('COM_JEDCHECKER_INFO_XML_NO_MANIFEST'));
 		}
 	}
 
@@ -136,7 +138,7 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 		// 1.5 uses 'install', 1.6+ uses 'extension'
 		if ($xml->getName() === 'install')
 		{
-			$this->report->addWarning($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_MANIFEST_OUTDATED'));
+			$this->report->addWarning($file, Text::sprintf('COM_JEDCHECKER_INFO_XML_MANIFEST_OUTDATED'));
 		}
 
 		if ($xml->getName() !== 'extension')
@@ -151,12 +153,12 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 		$this->loadExtensionLanguage($xml, dirname($file));
 
 		// Get the real extension's name now that the language has been loaded
-		$lang = JFactory::getLanguage();
+		$lang = Factory::getLanguage();
 		$extensionName = $lang->_((string) $xml->name);
 
-		$info[] = JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_XML', $extensionName);
-		$info[] = JText::sprintf('COM_JEDCHECKER_INFO_XML_VERSION_XML', (string) $xml->version);
-		$info[] = JText::sprintf('COM_JEDCHECKER_INFO_XML_CREATIONDATE_XML', (string) $xml->creationDate);
+		$info[] = Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_XML', $extensionName);
+		$info[] = Text::sprintf('COM_JEDCHECKER_INFO_XML_VERSION_XML', (string) $xml->version);
+		$info[] = Text::sprintf('COM_JEDCHECKER_INFO_XML_CREATIONDATE_XML', (string) $xml->creationDate);
 
 		$this->report->addInfo($file, implode('<br />', $info));
 
@@ -165,7 +167,7 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 			// JED allows components, modules, plugins, and packages (as a container) only
 			if (!in_array($type, $this->jedTypes, true))
 			{
-				$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_MANIFEST_TYPE_NOT_ACCEPTED', $type));
+				$this->report->addError($file, Text::sprintf('COM_JEDCHECKER_MANIFEST_TYPE_NOT_ACCEPTED', $type));
 			}
 
 			// NM3 - Listing name contains “module” or “plugin”
@@ -173,20 +175,20 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 			if (preg_match('/\b(?:module|plugin|component|template|extension|free)\b/i', $extensionName, $match))
 			{
 				$this->report->addIssue(JEDcheckerReport::LEVEL_ERROR, 'NM3', $file,
-				                        JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_RESERVED_KEYWORDS', $extensionName, strtolower($match[0])));
+				                        Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_RESERVED_KEYWORDS', $extensionName, strtolower($match[0])));
 			}
 
 			// Extension name shouldn't start with extension type prefix
 			if (preg_match('/^\s*(?:mod|com|plg|tpl|pkg)_/i', $extensionName))
 			{
-				$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_PREFIXED', $extensionName));
+				$this->report->addError($file, Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_PREFIXED', $extensionName));
 			}
 
 			// NM5 - Version in name/title
 			if (preg_match('/(?:\bversion\b|\d\.\d)/i', $extensionName))
 			{
 				$this->report->addIssue(JEDcheckerReport::LEVEL_ERROR, 'NM5', $file,
-				                        JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_VERSION', $extensionName));
+				                        Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_VERSION', $extensionName));
 			}
 
 			// Check for "Joomla" in the name
@@ -194,7 +196,7 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 			{
 				// An extension name can't start with the word "Joomla"
 				$this->report->addIssue(JEDcheckerReport::LEVEL_ERROR, 'TM2', $file,
-				                        JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_JOOMLA', $extensionName));
+				                        Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_JOOMLA', $extensionName));
 			}
 			else
 			{
@@ -204,14 +206,14 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 				{
 					// Extensions that use "Joomla" or a derivative of Joomla in the extension name need to be licensed by OSM
 					$this->report->addIssue(JEDcheckerReport::LEVEL_WARNING, 'TM2', $file,
-					                        JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_JOOMLA_DERIVATIVE', $extensionName, 'https://tm.joomla.org/approved-domains.html'));
+					                        Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_JOOMLA_DERIVATIVE', $extensionName, 'https://tm.joomla.org/approved-domains.html'));
 				}
 			}
 
 			// Check extension name consists of ASCII characters only
 			if (preg_match('/[^\x20-\x7E]/', $extensionName))
 			{
-				$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_NON_ASCII', $extensionName));
+				$this->report->addError($file, Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_NON_ASCII', $extensionName));
 			}
 
 			// Extension name shouldn't be too long
@@ -219,11 +221,11 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 
 			if ($nameLen > 80)
 			{
-				$this->report->addError($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_TOO_LONG', $extensionName));
+				$this->report->addError($file, Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_TOO_LONG', $extensionName));
 			}
 			elseif ($nameLen > 40)
 			{
-				$this->report->addWarning($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_TOO_LONG', $extensionName));
+				$this->report->addWarning($file, Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_TOO_LONG', $extensionName));
 			}
 		}
 
@@ -241,7 +243,7 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 			// Do name the Component's admin menu the same as the extension name
 			if ($extensionName !== $menuName)
 			{
-				$this->report->addWarning($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_ADMIN_MENU', $menuName, $extensionName));
+				$this->report->addWarning($file, Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_ADMIN_MENU', $menuName, $extensionName));
 			}
 		}
 
@@ -256,7 +258,7 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 				&& !(isset($this->pluginsGroupMap[$extensionNameGroup]) && $this->pluginsGroupMap[$extensionNameGroup] === $group)
 			)
 			{
-				$this->report->addWarning($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_NAME_PLUGIN_FORMAT', $extensionName));
+				$this->report->addWarning($file, Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_PLUGIN_FORMAT', $extensionName));
 			}
 		}
 
@@ -287,7 +289,7 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 		}
 
 		// Load the language of the extension (if any)
-		$lang = JFactory::getLanguage();
+		$lang = Factory::getLanguage();
 
 		// Populate list of directories to look for
 		$lookupLangDirs = array();
@@ -373,7 +375,7 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 		{
 			// Extensions that use "Joomla" or a derivative of Joomla in the domain name need to be licensed by OSM
 			$this->report->addIssue(JEDcheckerReport::LEVEL_ERROR, 'TM1', $file,
-			                        JText::sprintf('COM_JEDCHECKER_INFO_XML_URL_JOOMLA_DERIVATIVE', $url, 'https://tm.joomla.org/approved-domains.html'));
+			                        Text::sprintf('COM_JEDCHECKER_INFO_XML_URL_JOOMLA_DERIVATIVE', $url, 'https://tm.joomla.org/approved-domains.html'));
 		}
 	}
 }

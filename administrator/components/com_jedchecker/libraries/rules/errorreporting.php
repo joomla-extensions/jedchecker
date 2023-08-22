@@ -11,6 +11,9 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Filesystem\Folder;
+use Joomla\CMS\Language\Text;
+
 // Include the rule base class
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/models/rule.php';
 
@@ -82,7 +85,7 @@ class JedcheckerRulesErrorreporting extends JEDcheckerRule
 		$this->errorreportingRegex = '/' . implode('|', $codes) . '/i';
 
 		// Find all php files of the extension
-		$files = JFolder::files($this->basedir, '\.php$', true, true);
+		$files = Folder::files($this->basedir, '\.php$', true, true);
 
 		// Iterate through all files
 		foreach ($files as $file)
@@ -122,7 +125,7 @@ class JedcheckerRulesErrorreporting extends JEDcheckerRule
 			if (preg_match($this->errorreportingRegex, $line))
 			{
 				$found = true;
-				$this->report->addWarning($file, JText::_('COM_JEDCHECKER_ERROR_ERRORREPORTING'), $i + 1, $origContent[$i]);
+				$this->report->addWarning($file, Text::_('COM_JEDCHECKER_ERROR_ERRORREPORTING'), $i + 1, $origContent[$i]);
 			}
 		}
 

@@ -12,6 +12,8 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+
 // Include the rule base class
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/models/rule.php';
 
@@ -193,7 +195,7 @@ class JedcheckerRulesXMLUpdateServer extends JEDcheckerRule
 		// Check if there is an updateservers tag
 		if (!isset($xml->updateservers))
 		{
-			$this->report->addError($file, JText::_('COM_JEDCHECKER_ERROR_XML_UPDATE_SERVER_NOT_FOUND'));
+			$this->report->addError($file, Text::_('COM_JEDCHECKER_ERROR_XML_UPDATE_SERVER_NOT_FOUND'));
 
 			return false;
 		}
@@ -201,7 +203,7 @@ class JedcheckerRulesXMLUpdateServer extends JEDcheckerRule
 		// Check if server tag(s) exist
 		if (!isset($xml->updateservers->server))
 		{
-			$this->report->addError($file, JText::_('COM_JEDCHECKER_ERROR_XML_UPDATE_SERVER_NOT_FOUND'));
+			$this->report->addError($file, Text::_('COM_JEDCHECKER_ERROR_XML_UPDATE_SERVER_NOT_FOUND'));
 
 			return false;
 
@@ -212,13 +214,13 @@ class JedcheckerRulesXMLUpdateServer extends JEDcheckerRule
 		{
 			if (stripos($server, 'http') === false)
 			{
-				$this->report->addError($file, JText::_('COM_JEDCHECKER_ERROR_XML_UPDATE_SERVER_LINK_NOT_FOUND'));
+				$this->report->addError($file, Text::_('COM_JEDCHECKER_ERROR_XML_UPDATE_SERVER_LINK_NOT_FOUND'));
 
 				return false;
 			}
 			else
 			{
-				$this->report->addPassed($file, JText::sprintf('COM_JEDCHECKER_INFO_XML_UPDATE_SERVER_LINK', (string) $server));
+				$this->report->addPassed($file, Text::sprintf('COM_JEDCHECKER_INFO_XML_UPDATE_SERVER_LINK', (string) $server));
 			}
 		}
 

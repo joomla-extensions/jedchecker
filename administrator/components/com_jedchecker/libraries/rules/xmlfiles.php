@@ -9,6 +9,7 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
 
 // Include the rule base class
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/models/rule.php';
@@ -304,7 +305,7 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 
 							if (!is_dir($folder))
 							{
-								$this->errors[] = JText::sprintf('COM_JEDCHECKER_XML_FILES_FOLDER_NOT_FOUND', $attrPath);
+								$this->errors[] = Text::sprintf('COM_JEDCHECKER_XML_FILES_FOLDER_NOT_FOUND', $attrPath);
 							}
 						}
 					}
@@ -319,7 +320,7 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 
 			if (!is_dir($this->basedir . $admindir . $folder) && !is_dir($this->basedir . $sitedir . $folder))
 			{
-				$this->errors[] = JText::sprintf('COM_JEDCHECKER_XML_FILES_FOLDER_NOT_FOUND', $folder);
+				$this->errors[] = Text::sprintf('COM_JEDCHECKER_XML_FILES_FOLDER_NOT_FOUND', $folder);
 			}
 		}
 
@@ -358,7 +359,7 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 			return $folder . '/';
 		}
 
-		$this->warnings[] = JText::sprintf('COM_JEDCHECKER_XML_FILES_FOLDER_NOT_FOUND', $folder);
+		$this->warnings[] = Text::sprintf('COM_JEDCHECKER_XML_FILES_FOLDER_NOT_FOUND', $folder);
 
 		return '';
 	}
@@ -380,7 +381,7 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 				$path[] = $p->getName();
 			}
 
-			$this->warnings[] = JText::sprintf('COM_JEDCHECKER_XML_FILES_EMPTY_LIST', implode('/', $path));
+			$this->warnings[] = Text::sprintf('COM_JEDCHECKER_XML_FILES_EMPTY_LIST', implode('/', $path));
 		}
 	}
 
@@ -409,7 +410,7 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 				continue;
 			}
 
-			$this->errors[] = JText::sprintf('COM_JEDCHECKER_XML_FILES_FILE_NOT_FOUND', $dir . $file);
+			$this->errors[] = Text::sprintf('COM_JEDCHECKER_XML_FILES_FILE_NOT_FOUND', $dir . $file);
 		}
 	}
 
@@ -427,7 +428,7 @@ class JedcheckerRulesXMLFiles extends JEDcheckerRule
 		{
 			if (!is_dir($this->basedir . $dir . $folder))
 			{
-				$this->errors[] = JText::sprintf('COM_JEDCHECKER_XML_FILES_FOLDER_NOT_FOUND', $dir . $folder);
+				$this->errors[] = Text::sprintf('COM_JEDCHECKER_XML_FILES_FOLDER_NOT_FOUND', $dir . $folder);
 			}
 		}
 	}

@@ -11,14 +11,20 @@
 
 defined('_JEXEC') or die('Restricted access');
 
-jimport('joomla.application.component.viewlegacy');
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Filesystem\Folder;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Uri\Uri;
 
 /**
  * Class JedcheckerViewUploads
  *
  * @since  1.0
  */
-class JedcheckerViewUploads extends JViewLegacy
+class JedcheckerViewUploads extends HtmlView
 {
 	/** @var string */
 	protected $path;
@@ -35,13 +41,13 @@ class JedcheckerViewUploads extends JViewLegacy
 	 */
 	public function display($tpl = null)
 	{
-		$this->path = JFactory::getConfig()->get('tmp_path') . '/jed_checker';
+		$this->path = Factory::getConfig()->get('tmp_path') . '/jed_checker';
 
 		// Load translation for "JED Checker" title from sys.ini file
-		JFactory::getLanguage()->load('com_jedchecker.sys', JPATH_ADMINISTRATOR);
+		Factory::getLanguage()->load('com_jedchecker.sys', JPATH_ADMINISTRATOR);
 
 		$this->setToolbar();
-		$this->jsOptions['url'] = JUri::base();
+		$this->jsOptions['url'] = Uri::base();
 		$this->jsOptions['rules'] = $this->getRules();
 		parent::display($tpl);
 	}
@@ -54,7 +60,7 @@ class JedcheckerViewUploads extends JViewLegacy
 	public function getRules()
 	{
 		$rules = array();
-		$files = JFolder::files(JPATH_COMPONENT_ADMINISTRATOR . '/libraries/rules', '\.php$', false, false);
+		$files = Folder::files(JPATH_COMPONENT_ADMINISTRATOR . '/libraries/rules', '\.php$', false, false);
 
 		JLoader::discover('jedcheckerRules', JPATH_COMPONENT_ADMINISTRATOR . '/libraries/rules/');
 
@@ -84,19 +90,19 @@ class JedcheckerViewUploads extends JViewLegacy
 	{
 		if ($this->filesExist('unzipped'))
 		{
-			JToolbarHelper::custom('check', 'search', 'search', JText::_('COM_JEDCHECKER_TOOLBAR_CHECK'), false);
+			ToolbarHelper::custom('check', 'search', 'search', Text::_('COM_JEDCHECKER_TOOLBAR_CHECK'), false);
 		}
 
-		JToolbarHelper::title(JText::_('COM_JEDCHECKER'));
+		ToolbarHelper::title(Text::_('COM_JEDCHECKER'));
 
 		if (file_exists($this->path))
 		{
-			JToolbarHelper::custom('uploads.clear', 'delete', 'delete', JText::_('COM_JEDCHECKER_TOOLBAR_CLEAR'), false);
+			ToolbarHelper::custom('uploads.clear', 'delete', 'delete', Text::_('COM_JEDCHECKER_TOOLBAR_CLEAR'), false);
 		}
 
-		if (JFactory::getUser()->authorise('core.admin', 'com_jedchecker'))
+		if (Factory::getUser()->authorise('core.admin', 'com_jedchecker'))
 		{
-			JToolbarHelper::preferences('com_jedchecker');
+			ToolbarHelper::preferences('com_jedchecker');
 		}
 	}
 
@@ -109,20 +115,20 @@ class JedcheckerViewUploads extends JViewLegacy
 	 */
 	private function filesExist($type)
 	{
-		$path = JFactory::getConfig()->get('tmp_path') . '/jed_checker/' . $type;
+		$path = Factory::getConfig()->get('tmp_path') . '/jed_checker/' . $type;
 
-		if (JFolder::exists($path))
+		if (Folder::exists($path))
 		{
-			if (JFolder::folders($path) || JFolder::files($path))
+			if (Folder::folders($path) || Folder::files($path))
 			{
 				return true;
 			}
 		}
 		else
 		{
-			$local = JFactory::getConfig()->get('tmp_path') . '/jed_checker/local.txt';
+			$local = Factory::getConfig()->get('tmp_path') . '/jed_checker/local.txt';
 
-			if ($type === 'unzipped' && JFile::exists($local))
+			if ($type === 'unzipped' && File::exists($local))
 			{
 				return true;
 			}

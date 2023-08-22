@@ -11,18 +11,17 @@
  */
 
 defined('_JEXEC') or die('Restricted access');
-jimport('joomla.application.component.controllerlegacy');
 
-if (!JFactory::getUser()->authorise('core.manage', 'com_jedchecker'))
+use Joomla\CMS\Factory;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Controller\BaseController;
+
+if (!Factory::getUser()->authorise('core.manage', 'com_jedchecker'))
 {
-	throw new Exception(JText::_('JERROR_ALERTNOAUTHOR'));
+	throw new Exception(Text::_('JERROR_ALERTNOAUTHOR'));
 }
 
-// We'll need JFile and JFolder all through the component so let us load them here
-jimport('joomla.filesystem.folder');
-jimport('joomla.filesystem.file');
-
-$input = JFactory::getApplication()->input;
+$input = Factory::getApplication()->input;
 $view = $input->getCmd('view', '');
 
 if ($view === '' && $input->getCmd('task', '') === '')
@@ -30,6 +29,6 @@ if ($view === '' && $input->getCmd('task', '') === '')
 	$input->set('view', 'uploads');
 }
 
-$controller = JControllerLegacy::getInstance('jedchecker');
+$controller = BaseController::getInstance('jedchecker');
 $controller->execute($input->getCmd('task', ''));
 $controller->redirect();

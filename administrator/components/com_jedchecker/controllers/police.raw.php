@@ -11,17 +11,18 @@
 
 defined('_JEXEC') or die('Restricted access');
 
-
-jimport('joomla.filesystem');
-jimport('joomla.filesystem.folder');
-jimport('joomla.filesystem.archive');
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Filesystem\Folder;
+use Joomla\CMS\Filesystem\Path;
+use Joomla\CMS\MVC\Controller\BaseController;
 
 /**
  * Class jedcheckerControllerPolice
  *
  * @since  1.0
  */
-class JedcheckerControllerPolice extends JControllerLegacy
+class JedcheckerControllerPolice extends BaseController
 {
 	/**
 	 * Runs all the rules on the given directory
@@ -30,11 +31,11 @@ class JedcheckerControllerPolice extends JControllerLegacy
 	 */
 	public function check()
 	{
-		$rule = JFactory::getApplication()->input->get('rule');
+		$rule = Factory::getApplication()->input->get('rule');
 
 		JLoader::discover('jedcheckerRules', JPATH_COMPONENT_ADMINISTRATOR . '/libraries/rules/');
 
-		$path  = JFactory::getConfig()->get('tmp_path') . '/jed_checker/unzipped';
+		$path  = Factory::getConfig()->get('tmp_path') . '/jed_checker/unzipped';
 		$class = 'jedcheckerRules' . ucfirst($rule);
 
 		// Stop if the class does not exist
@@ -65,7 +66,7 @@ class JedcheckerControllerPolice extends JControllerLegacy
 	protected function police($class, $folder)
 	{
 		// Prepare rule properties
-		$properties = array('basedir' => JPath::clean($folder));
+		$properties = array('basedir' => Path::clean($folder));
 
 		// Create instance of the rule
 		$police = new $class($properties);
@@ -89,8 +90,8 @@ class JedcheckerControllerPolice extends JControllerLegacy
 		$folders = array();
 
 		// Add the folders in the "jed_checked/unzipped" folder
-		$path        = JFactory::getConfig()->get('tmp_path') . '/jed_checker/unzipped';
-		$tmp_folders = JFolder::folders($path);
+		$path        = Factory::getConfig()->get('tmp_path') . '/jed_checker/unzipped';
+		$tmp_folders = Folder::folders($path);
 
 		if (!empty($tmp_folders))
 		{
@@ -101,9 +102,9 @@ class JedcheckerControllerPolice extends JControllerLegacy
 		}
 
 		// Parse the local.txt file and parse it
-		$local = JFactory::getConfig()->get('tmp_path') . '/jed_checker/local.txt';
+		$local = Factory::getConfig()->get('tmp_path') . '/jed_checker/local.txt';
 
-		if (JFile::exists($local))
+		if (File::exists($local))
 		{
 			$content = file_get_contents($local);
 
@@ -119,11 +120,11 @@ class JedcheckerControllerPolice extends JControllerLegacy
 
 						if (!empty($line))
 						{
-							if (JFolder::exists(JPATH_ROOT . '/' . $line))
+							if (Folder::exists(JPATH_ROOT . '/' . $line))
 							{
 								$folders[] = JPATH_ROOT . '/' . $line;
 							}
-							elseif (JFolder::exists($line))
+							elseif (Folder::exists($line))
 							{
 								$folders[] = $line;
 							}

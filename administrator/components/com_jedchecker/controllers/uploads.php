@@ -12,18 +12,20 @@
 
 defined('_JEXEC') or die('Restricted access');
 
-jimport('joomla.filesystem');
-jimport('joomla.filesystem.folder');
-jimport('joomla.filesystem.archive');
-
 use Joomla\Archive\Archive;
+use Joomla\CMS\Factory;
+use Joomla\CMS\Filesystem\File;
+use Joomla\CMS\Filesystem\Folder;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\MVC\Controller\BaseController;
+use Joomla\CMS\Session\Session;
 
 /**
  * Class JedcheckerControllerUploads
  *
  * @since  1.0
  */
-class JedcheckerControllerUploads extends JControllerLegacy
+class JedcheckerControllerUploads extends BaseController
 {
 	/** @var string */
 	public $path;
@@ -40,7 +42,7 @@ class JedcheckerControllerUploads extends JControllerLegacy
 	 */
 	public function __construct()
 	{
-		$this->path         = JFactory::getConfig()->get('tmp_path') . '/jed_checker';
+		$this->path         = Factory::getConfig()->get('tmp_path') . '/jed_checker';
 		$this->pathArchive  = $this->path . '/archives';
 		$this->pathUnzipped = $this->path . '/unzipped';
 		parent::__construct();
@@ -53,11 +55,11 @@ class JedcheckerControllerUploads extends JControllerLegacy
 	 */
 	public function upload()
 	{
-		$appl  = JFactory::getApplication();
+		$appl  = Factory::getApplication();
 		$input = $appl->input;
 
 		// Check the sent token by the form
-		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+		Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
 		// Gets the uploaded file from the sent form
 		$file = $input->files->get('extension', null, 'raw');
@@ -67,18 +69,18 @@ class JedcheckerControllerUploads extends JControllerLegacy
 			$path = $this->pathArchive;
 
 			// If the archive folder doesn't exist - create it!
-			if (!JFolder::exists($path))
+			if (!Folder::exists($path))
 			{
-				JFolder::create($path);
+				Folder::create($path);
 			}
 			else
 			{
 				// Let us remove all previous uploads
-				$archiveFiles = JFolder::files($path);
+				$archiveFiles = Folder::files($path);
 
 				foreach ($archiveFiles as $archive)
 				{
-					if (!JFile::delete($this->pathArchive . '/' . $archive))
+					if (!File::delete($this->pathArchive . '/' . $archive))
 					{
 						echo 'could not delete' . $archive;
 					}
@@ -88,10 +90,10 @@ class JedcheckerControllerUploads extends JControllerLegacy
 			$file['filepath'] = $path . '/' . strtolower($file['name']);
 
 			// Let us try to upload
-			if (!JFile::upload($file['tmp_name'], $file['filepath'], false, true))
+			if (!File::upload($file['tmp_name'], $file['filepath'], false, true))
 			{
 				// Error in upload - redirect back with an error notice
-				$appl->enqueueMessage(JText::_('COM_JEDCHECKER_ERROR_UNABLE_TO_UPLOAD_FILE'), 'error');
+				$appl->enqueueMessage(Text::_('COM_JEDCHECKER_ERROR_UNABLE_TO_UPLOAD_FILE'), 'error');
 				$appl->redirect('index.php?option=com_jedchecker&view=uploads');
 
 				return false;
@@ -119,28 +121,28 @@ class JedcheckerControllerUploads extends JControllerLegacy
 	 */
 	public function unzip()
 	{
-		$appl  = JFactory::getApplication();
+		$appl  = Factory::getApplication();
 
 		// Form check token
-		JSession::checkToken() or jexit(JText::_('JINVALID_TOKEN'));
+		Session::checkToken() or jexit(Text::_('JINVALID_TOKEN'));
 
 		// If folder doesn't exist - create it!
-		if (!JFolder::exists($this->pathUnzipped))
+		if (!Folder::exists($this->pathUnzipped))
 		{
-			JFolder::create($this->pathUnzipped);
+			Folder::create($this->pathUnzipped);
 		}
 		else
 		{
 			// Let us remove all previous unzipped files
-			$folders = JFolder::folders($this->pathUnzipped);
+			$folders = Folder::folders($this->pathUnzipped);
 
 			foreach ($folders as $folder)
 			{
-				JFolder::delete($this->pathUnzipped . '/' . $folder);
+				Folder::delete($this->pathUnzipped . '/' . $folder);
 			}
 		}
 
-		$file   = JFolder::files($this->pathArchive);
+		$file   = Folder::files($this->pathArchive);
 
 		$origin = $this->pathArchive . DIRECTORY_SEPARATOR . $file[0];
 		$destination = $this->pathUnzipped . DIRECTORY_SEPARATOR . $file[0];
@@ -150,7 +152,7 @@ class JedcheckerControllerUploads extends JControllerLegacy
 			$archive = new Archive;
 			$result = $archive->extract($origin, $destination);
 		}
-		catch (\Exception $e)
+		catch (Exception $e)
 		{
 			$result = false;
 		}
@@ -160,14 +162,14 @@ class JedcheckerControllerUploads extends JControllerLegacy
 			// Scan unzipped folders if we find zip file -> unzip them as well
 			$this->unzipAll($this->pathUnzipped . '/' . $file[0]);
 			$message = 'COM_JEDCHECKER_UNZIP_SUCCESS';
-			$appl->enqueueMessage(JText::_($message));
+			$appl->enqueueMessage(Text::_($message));
 		}
 		else
 		{
 			$message = 'COM_JEDCHECKER_UNZIP_FAILED';
 		}
 
-		// $appl->redirect('index.php?option=com_jedchecker&view=uploads', JText::_($message));
+		// $appl->redirect('index.php?option=com_jedchecker&view=uploads', Text::_($message));
 		$message = 'COM_JEDCHECKER_UNZIP_FAILED';
 
 		return $message;
@@ -197,7 +199,7 @@ class JedcheckerControllerUploads extends JControllerLegacy
 						$archive = new Archive;
 						$result = $archive->extract($file->getPathname(), $unzip);
 					}
-					catch (\Exception $e)
+					catch (Exception $e)
 					{
 						$result = false;
 					}
@@ -205,7 +207,7 @@ class JedcheckerControllerUploads extends JControllerLegacy
 					// Delete the archive once we extract it
 					if ($result)
 					{
-						JFile::delete($file->getPathname());
+						File::delete($file->getPathname());
 
 						// Now check the new extracted folder for archive files
 						$this->unzipAll($unzip);
@@ -228,7 +230,7 @@ class JedcheckerControllerUploads extends JControllerLegacy
 	{
 		if (file_exists($this->path))
 		{
-			$result = JFolder::delete($this->path);
+			$result = Folder::delete($this->path);
 
 			if (!$result)
 			{
@@ -238,7 +240,7 @@ class JedcheckerControllerUploads extends JControllerLegacy
 
 			$message = 'COM_JEDCHECKER_DELETE_SUCCESS';
 
-			// JFactory::getApplication()->redirect('index.php?option=com_jedchecker&view=uploads', JText::_($message));
+			// Factory::getApplication()->redirect('index.php?option=com_jedchecker&view=uploads', Text::_($message));
 			$this->setRedirect('index.php?option=com_jedchecker&view=uploads');
 		}
 	}

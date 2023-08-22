@@ -13,7 +13,7 @@
 defined('_JEXEC') or die('Restricted access');
 
 use Joomla\Registry\Registry;
-
+use Joomla\CMS\Object\CMSObject;
 
 /**
  * class JEDcheckerRule
@@ -22,7 +22,7 @@ use Joomla\Registry\Registry;
  *
  * @since  1.0
  */
-class JEDcheckerRule extends JObject
+class JEDcheckerRule extends CMSObject
 {
 	/**
 	 * The formal ID of this rule. For example: SE1.
