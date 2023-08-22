@@ -21,7 +21,7 @@ require_once JPATH_COMPONENT_ADMINISTRATOR . '/libraries/helper.php';
 /**
  * class JedcheckerRulesXMLlicense
  *
- * This class searches all xml manifestes for a valid license.
+ * This class searches all xml manifests for a valid license.
  *
  * @since  1.0
  */
