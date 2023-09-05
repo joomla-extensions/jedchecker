@@ -293,11 +293,11 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 					$newTest->kind = $test;
 					$newTest->tests = array();
 
-					foreach (explode(",", $this->params->get($group)) as $test)
+					foreach (explode(",", $this->params->get($group)) as $match)
 					{
-						if (strpos($test, '=>') !== false)
+						if (strpos($match, '=>') !== false)
 						{
-							list($test, $replacement) = explode('=>', $test, 2);
+							list($match, $replacement) = explode('=>', $match, 2);
 						}
 						else
 						{
@@ -305,10 +305,10 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 						}
 
 						$testObj = new stdClass;
-						$testObj->test = $test;
-						$testObj->regex = $this->generateRegex($test);
+						$testObj->test = $match;
+						$testObj->regex = $this->generateRegex($match);
 						$testObj->replacement = $replacement;
-						$testObj->keepStrings = strpos($test, "'") !== false;
+						$testObj->keepStrings = strpos($match, "'") !== false;
 
 						$newTest->tests[] = $testObj;
 					}
