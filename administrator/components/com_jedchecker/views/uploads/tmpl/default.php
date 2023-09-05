@@ -101,7 +101,7 @@ HTMLHelper::_('script', 'com_jedchecker/script.js', array('version' => 'auto', '
 								$rule = new $class;
 								?>
 								<a role="tab" id="jed-<?php echo $rulename; ?>" data-bs-toggle="tab" href="#jedtab-<?php echo $rulename; ?>"
-								   class="list-group-item list-group-item-action d-flex justify-content-between<?php echo $i === 0 ? ' active' : ''; ?>">
+								   class="list-group-item list-group-item-action d-flex justify-content-between bg-light<?php echo $i === 0 ? ' active' : ''; ?>">
 									<?php echo Text::_($rule->get('title')); ?>
 									<span class="text-nowrap ps-1">
 										<span class="badge bg-danger rounded-pill border-error"></span>
