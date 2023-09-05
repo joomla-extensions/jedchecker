@@ -319,7 +319,7 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 
 			$newTest = new stdClass;
 			$newTest->group = 'j5legacy';
-			$newTest->kind = 'warning';
+			$newTest->kind = 'compatibility';
 			$newTest->tests = array();
 
 			// Too many tests for j5legacy group, so that they are extracted to separate file
