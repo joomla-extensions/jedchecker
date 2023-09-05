@@ -254,8 +254,8 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 					}
 				}
 
-				// If you scored 10 errors on a single file, that's enough for now.
-				if ($error_count > 10)
+				// If you scored 100 errors on a single file, that's enough for now.
+				if ($error_count > 100)
 				{
 					return true;
 				}
