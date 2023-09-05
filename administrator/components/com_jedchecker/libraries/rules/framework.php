@@ -316,6 +316,27 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 					$this->tests[] = $newTest;
 				}
 			}
+
+			$newTest = new stdClass;
+			$newTest->group = 'j5legacy';
+			$newTest->kind = 'warning';
+			$newTest->tests = array();
+
+			// Too many tests for j5legacy group, so that they are extracted to separate file
+			$j5legacy = parse_ini_file(__DIR__ . '/framework_j5legacy.ini');
+
+			foreach ($j5legacy as $oldClass => $newClass)
+			{
+				$testObj = new stdClass;
+				$testObj->test = $oldClass;
+				$testObj->regex = $this->generateRegex($oldClass, true);
+				$testObj->replacement = $newClass;
+				$testObj->keepStrings = false;
+
+				$newTest->tests[] = $testObj;
+			}
+
+			$this->tests[] = $newTest;
 		}
 
 		return $this->tests;
