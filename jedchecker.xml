@@ -2,7 +2,7 @@
 <extension type="component" version="4.0" method="upgrade">
   <name>COM_JEDCHECKER</name>
   <author>Joomla! Extensions Directory</author>
-  <creationDate>2023-09-08</creationDate>
+  <creationDate>2023-09-21</creationDate>
   <copyright>Copyright (C) 2017 - 2023 Open Source Matters, Inc. All rights reserved.</copyright>
   <authorEmail>extensions@extensions.joomla.org</authorEmail>
   <authorUrl>https://github.com/joomla-extensions/jedchecker</authorUrl>
