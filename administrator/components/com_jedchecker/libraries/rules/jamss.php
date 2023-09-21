@@ -12,6 +12,9 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Filesystem\Folder;
+use Joomla\CMS\Language\Text;
+
 // Include the rule base class
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/models/rule.php';
 
@@ -67,7 +70,7 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 	 */
 	public function check()
 	{
-		$files = JFolder::files($this->basedir, '', true, true);
+		$files = Folder::files($this->basedir, '', true, true);
 
 		$this->init_jamss();
 
@@ -131,7 +134,7 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 						// [1] = Name / Title
 						'1',
 						// [2] = number
-						'Detected preg_replace function that evaluates (executes) mathed code. ' .
+						'Detected preg_replace function that evaluates (executes) matched code. ' .
 						'This means if PHP code is passed it will be executed.',
 						// [3] = description
 						'php',
@@ -246,7 +249,7 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 						'At least two characters in hexadecimal or octal notation',
 						'21',
 						'Found at least two characters in hexadecimal or octal notation. It doesn\'t mean it is malicious, ' .
-						'but it could be code hidding behind such notation.',
+						'but it could be code hiding behind such notation.',
 						'php'),
 						array('\$_F\s*=\s*__FILE__\s*;\s*\$_X\s*=',
 						'SourceCop encoded code',
@@ -328,12 +331,12 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 			{
 			if ($malic_file_descr = array_search(pathinfo($path, PATHINFO_BASENAME), $jamssFileNames))
 			{
-				$this->jamssWarning($path, JText::_('COM_JEDCHECKER_ERROR_JAMSS_SUSPICIOUS_FILENAME'), $malic_file_descr, '', 0);
+				$this->jamssWarning($path, Text::_('COM_JEDCHECKER_ERROR_JAMSS_SUSPICIOUS_FILENAME'), $malic_file_descr, '', 0);
 			}
 
 			if (!($content = file_get_contents($path)))
 			{
-				$this->report->addError($path, JText::_('COM_JEDCHECKER_ERROR_JAMSS_CANNOT_OPEN') . $malic_file_descr, 0);
+				$this->report->addError($path, Text::_('COM_JEDCHECKER_ERROR_JAMSS_CANNOT_OPEN') . $malic_file_descr, 0);
 
 				return true;
 			}
@@ -413,7 +416,7 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 							// Then it has some additional comments
 							$this->jamssWarning(
 									$path,
-									JText::_('COM_JEDCHECKER_ERROR_JAMSS_PATTERN') . "#$pattern[2] - $pattern[1]",
+									Text::_('COM_JEDCHECKER_ERROR_JAMSS_PATTERN') . "#$pattern[2] - $pattern[1]",
 									$pattern[3],
 									$first_code,
 									$first_line
@@ -424,7 +427,7 @@ class JedcheckerRulesJamss extends JEDcheckerRule
 							// It's a string, no comments available
 							$this->jamssWarning(
 									$path,
-									JText::_('COM_JEDCHECKER_ERROR_JAMSS_STRING') . $pattern,
+									Text::_('COM_JEDCHECKER_ERROR_JAMSS_STRING') . $pattern,
 									'',
 									$first_code,
 									$first_line

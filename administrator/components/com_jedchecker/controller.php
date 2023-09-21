@@ -12,11 +12,13 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\MVC\Controller\BaseController;
+
 /**
  * Class JedcheckerController
  *
  * @since  1.0
  */
-class JedcheckerController extends JControllerLegacy
+class JedcheckerController extends BaseController
 {
 }

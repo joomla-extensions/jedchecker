@@ -9,6 +9,8 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Filesystem\Folder;
+use Joomla\CMS\Filter\InputFilter;
 
 /**
  * class JedcheckerHelper
@@ -34,7 +36,7 @@ abstract class JEDCheckerHelper
 	public static function findManifests($basedir)
 	{
 		// Find all XML files of the extension
-		$files = JFolder::files($basedir, '\.xml$', true, true);
+		$files = Folder::files($basedir, '\.xml$', true, true);
 
 		$excludeList = array();
 
@@ -134,7 +136,7 @@ abstract class JEDCheckerHelper
 			}
 		}
 
-		$extension = strtolower(JFilterInput::getInstance()->clean($extension, 'cmd'));
+		$extension = strtolower(InputFilter::getInstance()->clean($extension, 'cmd'));
 
 		if ($type === 'component' && strpos($extension, 'com_') !== 0)
 		{

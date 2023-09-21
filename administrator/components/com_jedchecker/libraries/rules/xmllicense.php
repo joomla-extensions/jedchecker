@@ -12,6 +12,8 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Language\Text;
+
 // Include the rule base class
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/models/rule.php';
 
@@ -21,7 +23,7 @@ require_once JPATH_COMPONENT_ADMINISTRATOR . '/libraries/helper.php';
 /**
  * class JedcheckerRulesXMLlicense
  *
- * This class searches all xml manifestes for a valid license.
+ * This class searches all xml manifests for a valid license.
  *
  * @since  1.0
  */
@@ -96,7 +98,7 @@ class JedcheckerRulesXMLlicense extends JEDcheckerRule
 		// Check if there's a license tag
 		if (!isset($xml->license))
 		{
-			$this->report->addError($file, JText::_('COM_JEDCHECKER_ERROR_XML_LICENSE_NOT_FOUND'));
+			$this->report->addError($file, Text::_('COM_JEDCHECKER_ERROR_XML_LICENSE_NOT_FOUND'));
 
 			return false;
 		}
@@ -105,7 +107,7 @@ class JedcheckerRulesXMLlicense extends JEDcheckerRule
 		if (stripos($xml->license, 'gpl') === false
 			&& stripos($xml->license, 'general public license') === false)
 		{
-			$this->report->addCompat($file, JText::_('COM_JEDCHECKER_ERROR_XML_LICENSE_NOT_GPL'));
+			$this->report->addCompat($file, Text::_('COM_JEDCHECKER_ERROR_XML_LICENSE_NOT_GPL'));
 
 			return false;
 		}

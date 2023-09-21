@@ -11,6 +11,8 @@
 
 defined('_JEXEC') or die('Restricted access');
 
+use Joomla\CMS\Filesystem\Folder;
+use Joomla\CMS\Language\Text;
 
 // Include the rule base class
 require_once JPATH_COMPONENT_ADMINISTRATOR . '/models/rule.php';
@@ -80,7 +82,7 @@ class JedcheckerRulesGpl extends JEDcheckerRule
 		$this->init();
 
 		// Find all php files of the extension
-		$files = JFolder::files($this->basedir, '\.php$', true, true);
+		$files = Folder::files($this->basedir, '\.php$', true, true);
 
 		// Iterate through all files
 		foreach ($files as $file)
@@ -89,7 +91,7 @@ class JedcheckerRulesGpl extends JEDcheckerRule
 			if (!$this->find($file))
 			{
 				// Add as error to the report if it was not found
-				$this->report->addError($file, JText::_('COM_JEDCHECKER_ERROR_GPL_NOT_FOUND'));
+				$this->report->addError($file, Text::_('COM_JEDCHECKER_ERROR_GPL_NOT_FOUND'));
 			}
 		}
 	}
@@ -214,7 +216,7 @@ class JedcheckerRulesGpl extends JEDcheckerRule
 			$lineno = substr_count($content, "\n", 0, $match[0][1]) + 1;
 			$this->report->addPassed(
 				$file,
-				JText::_('COM_JEDCHECKER_PH1_LICENSE_FOUND'),
+				Text::_('COM_JEDCHECKER_PH1_LICENSE_FOUND'),
 				$lineno,
 				$match[0][0]
 			);
@@ -227,7 +229,7 @@ class JedcheckerRulesGpl extends JEDcheckerRule
 			$lineno = substr_count($content, "\n", 0, $match[0][1]) + 1;
 			$this->report->addWarning(
 				$file,
-				JText::_('COM_JEDCHECKER_GPL_COMPATIBLE_LICENSE_WAS_FOUND'),
+				Text::_('COM_JEDCHECKER_GPL_COMPATIBLE_LICENSE_WAS_FOUND'),
 				$lineno,
 				$match[0][0]
 			);
