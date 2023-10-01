@@ -173,6 +173,7 @@ class JedcheckerRulesFramework extends JEDcheckerRule
 			$content,
 			JEDCheckerHelper::CLEAN_HTML | JEDCheckerHelper::CLEAN_COMMENTS | JEDCheckerHelper::CLEAN_STRINGS
 		);
+		$cleanContent = JEDCheckerHelper::resolveAliases($cleanContent);
 
 		// Check short PHP tag
 		if (preg_match('/<\?\s/', $cleanContent, $match, PREG_OFFSET_CAPTURE))
