@@ -52,6 +52,18 @@
     },
     "updateservers": {
       "server": "*"
+    },
+    "config": {
+      "fields": "!"
+    },
+    "fields": {
+      "fieldset": "+"
+    },
+    "fieldset": {
+      "field": "+"
+    },
+    "field": {
+      "*": "*"
     }
   },
   "attributes": {
@@ -93,6 +105,37 @@
       "name",
       "priority",
       "type"
+    ],
+    "config": [
+      "addfieldpath",
+      "addfieldprefix",
+      "addformpath",
+      "addformprefix",
+      "addrulepath",
+      "addruleprefix"
+    ],
+    "fields": [
+      "addfieldpath",
+      "addfieldprefix",
+      "addformpath",
+      "addformprefix",
+      "addrulepath",
+      "addruleprefix",
+      "name"
+    ],
+    "fieldset": [
+      "addfieldpath",
+      "addfieldprefix",
+      "addformpath",
+      "addformprefix",
+      "addrulepath",
+      "addruleprefix",
+      "description",
+      "label",
+      "name"
+    ],
+    "field": [
+      "*"
     ],
     "help": [
       "key",
