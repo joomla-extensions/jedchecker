@@ -241,7 +241,7 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 			if (!preg_match('/^"((?>[^"\\\\]+|\\\\.)*)"\s*(;[^"]*)?$/', $value, $matches))
 			{
 				// The value doesn't match INI format
-				$this->report->addWarning($file, Text::_('COM_JEDCHECKER_LANG_TRANSLATION_ERROR'), $startLineno, $line);
+				$this->report->addError($file, Text::_('COM_JEDCHECKER_LANG_TRANSLATION_ERROR'), $startLineno, $line);
 				continue;
 			}
 
