@@ -400,6 +400,14 @@ abstract class JEDCheckerHelper
 		return str_repeat("\n", substr_count($content, "\n"));
 	}
 
+	/**
+	 * Resolve all aliases in the PHP file
+	 *
+	 * @param string $content
+	 *
+	 * @return string
+	 * @since 2.4.4
+	 */
 	public static function resolveAliases($content)
 	{
 		if (preg_match_all('/\buse\s+([\\\\\w]+)(?:\s+as\s+(\w+))?\s*;/i', $content, $matches, PREG_SET_ORDER)) {
