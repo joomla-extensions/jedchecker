@@ -238,32 +238,18 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 			// Validate value
 			$value = ltrim($value);
 
-			// Parse multiline values
-			while (!preg_match('/^((?>\'[^\']*\'|"(?>[^"\\\\]+|\\\\.)*"|[^\'";]+)*)(;.*)?$/', $value, $matches))
+			if (!preg_match('/^"((?>[^"\\\\]+|\\\\.)*)"\s*(;[^"]*)?$/', $value, $matches))
 			{
-				if ($lineno + 1 >= $nLines)
-				{
-					break;
-				}
-
-				$lineno++;
-				$chunk = "\n" . trim($lines[$lineno]);
-				$line .= $chunk;
-				$value .= $chunk;
-			}
-
-			// The value doesn't match INI format
-			if (!isset($matches[0]))
-			{
+				// The value doesn't match INI format
 				$this->report->addWarning($file, Text::_('COM_JEDCHECKER_LANG_TRANSLATION_ERROR'), $startLineno, $line);
 				continue;
 			}
 
 			// Get value w/o comment
-			$value = trim($matches[1]);
+			$value = $matches[1];
 
 			// Check for empty value
-			if ($value === '""')
+			if ($value === '')
 			{
 				$this->report->addNotice($file, Text::_('COM_JEDCHECKER_LANG_TRANSLATION_EMPTY'), $startLineno, $line);
 				continue;
@@ -277,49 +263,10 @@ class JedcheckerRulesLanguage extends JEDcheckerRule
 				$this->report->addWarning($file, Text::_('COM_JEDCHECKER_LANG_INVALID_UTF8'), $startLineno, $line);
 			}
 
-			// Check for unquoted values
-			if (strlen($value) < 2 || ($value[0] !== '"' && substr($value, -1) !== '"'))
+			// Process backwards compatibility break introduced in Joomla 5.0.1
+			if (preg_match('/\\\\[\\\\\\$]/', $value))
 			{
-				$this->report->addWarning($file, Text::_('COM_JEDCHECKER_LANG_TRANSLATION_QUOTES'), $startLineno, $line);
-				continue;
-			}
-
-			if ($value[0] !== '"')
-			{
-				$msg = Text::_('COM_JEDCHECKER_LANG_TRANSLATION_QUOTES') . ' ' . Text::_('COM_JEDCHECKER_LANG_TRANSLATION_MISSED_LEFT_QUOTE');
-				$this->report->addWarning($file, $msg, $startLineno, $line);
-				continue;
-			}
-
-			if (substr($value, -1) !== '"')
-			{
-				$msg = Text::_('COM_JEDCHECKER_LANG_TRANSLATION_QUOTES') . ' ' . Text::_('COM_JEDCHECKER_LANG_TRANSLATION_MISSED_RIGHT_QUOTE');
-				$this->report->addWarning($file, $msg, $startLineno, $line);
-				continue;
-			}
-
-			// Remove quotes around
-			$value = substr($value, 1, -1);
-
-			// Check for legacy "_QQ_" code (deprecated since Joomla! 3.9 in favour of escaped double quote \"; removed in Joomla! 4)
-			if (strpos($value, '"_QQ_"') !== false)
-			{
-				$this->report->addCompat($file, Text::sprintf('COM_JEDCHECKER_LANG_QQDEPRECATED', '<code>"_QQ_"</code>', '<code>\\"</code>'), $startLineno, $line);
-			}
-
-			// Convert "_QQ_" to escaped quotes for further analysis
-			$value = str_replace('"_QQ_"', '\"', $value);
-
-			// Check for unescaped quote
-			if (preg_match('/[^\\\\]"/', $value))
-			{
-				$this->report->addWarning($file, Text::_('COM_JEDCHECKER_LANG_UNESCAPED_QUOTE'), $startLineno, $line);
-			}
-
-			// Check for value interpolation (see https://www.php.net/manual/en/function.parse-ini-file.php for details)
-			if (strpos($value, '${') !== false)
-			{
-				$this->report->addWarning($file, Text::_('COM_JEDCHECKER_LANG_VARIABLE_REF'), $startLineno, $line);
+				$this->report->addWarning($file, Text::_('COM_JEDCHECKER_LANG_JOOMLA501_BC'), $startLineno, $line);
 			}
 
 			// The code below detects incorrect format of numbered placeholders (e.g. "%1s" instead of "%1$s")
