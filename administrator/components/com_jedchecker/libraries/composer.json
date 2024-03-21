@@ -1,0 +1,8 @@
+{
+    "config": {
+        "platform-check": false
+    },
+    "require": {
+        "nikic/php-parser": "^4.13"
+    }
+}
