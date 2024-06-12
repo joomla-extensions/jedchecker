@@ -38,7 +38,7 @@ HTMLHelper::_('script', 'com_jedchecker/script.js', array('version' => 'auto', '
 <div id="jedchecker">
 	<div class="row g-3">
 		<div class="col-12 col-md-8">
-			<div class="card bg-light">
+			<div class="card">
 				<div class="card-header" data-bs-toggle="collapse" data-bs-target="#jedchecker-welcome" role="button">
 					<?php echo Text::_('COM_JEDCHECKER'); ?>
 				</div>
@@ -91,7 +91,7 @@ HTMLHelper::_('script', 'com_jedchecker/script.js', array('version' => 'auto', '
 		</div>
 
 		<div class="col-12 col-md-3 jedchecker-results hidden">
-			<div class="card bg-light">
+			<div class="card">
 				<div class="card-header"><?php echo Text::_('COM_JEDCHECKER_RESULTS'); ?></div>
 					<div role="tablist" class="list-group list-group-flush">
 							<?php
@@ -101,7 +101,7 @@ HTMLHelper::_('script', 'com_jedchecker/script.js', array('version' => 'auto', '
 								$rule = new $class;
 								?>
 								<a role="tab" id="jed-<?php echo $rulename; ?>" data-bs-toggle="tab" href="#jedtab-<?php echo $rulename; ?>"
-								   class="list-group-item list-group-item-action d-flex justify-content-between bg-light<?php echo $i === 0 ? ' active' : ''; ?>">
+								   class="list-group-item list-group-item-action d-flex justify-content-between<?php echo $i === 0 ? ' active' : ''; ?>">
 									<?php echo Text::_($rule->get('title')); ?>
 									<span class="text-nowrap ps-1">
 										<span class="badge bg-danger rounded-pill border-error"></span>
@@ -135,7 +135,7 @@ HTMLHelper::_('script', 'com_jedchecker/script.js', array('version' => 'auto', '
 				$rule = new $class;
 				?>
 				<div role="tabpanel" class="tab-pane fade<?php echo $i === 0 ? ' show active' : ''; ?>" id="jedtab-<?php echo $rulename; ?>">
-				<div class="card bg-light">
+				<div class="card">
 					<div class="card-header" id="heading<?php echo $rule->get('id'); ?>">
 						<?php echo Text::_($rule->get('title')); ?>
 					</div>
