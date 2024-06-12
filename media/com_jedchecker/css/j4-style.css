@@ -430,10 +430,11 @@
   flex-direction: column;
   min-width: 0;
   word-wrap: break-word;
-  background-color: #fff;
+  background-color: #f8f9fa;
   background-clip: border-box;
   border: 0 solid transparent;
   border-radius: 0.25rem;
+  box-shadow: 0 2px 10px -8px #4d79b3;
 }
 #jedchecker .card > .list-group {
   border-top: inherit;
