@@ -150,7 +150,16 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 		$type = (string) $xml['type'];
 
 		// Load the language of the extension (if any)
-		$this->loadExtensionLanguage($xml, dirname($file));
+		if (!$this->loadExtensionLanguage($xml, dirname($file))) {
+			$lang_file = JEDCheckerHelper::getElementName($xml) . '.sys.ini';
+
+			if ($type === 'plugin' && isset($xml['group']) && strpos($lang_file, 'plg_') !== 0)
+			{
+				$lang_file = 'plg_' . $xml['group'] . '_' . $lang_file;
+			}
+
+			$this->report->addNotice($file, Text::sprintf('COM_JEDCHECKER_INFO_XML_NO_LANGUAGE_FILE_FOUND', $lang_file, 'en-GB'));
+		}
 
 		// Get the real extension's name now that the language has been loaded
 		$lang = Factory::getLanguage();
@@ -273,7 +282,7 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 	 * @param   string            $rootDir  The basepath
 	 * @param   string            $langTag  The language to load
 	 *
-	 * @return  void
+	 * @return  bool    True if language file found, and false otherwise
 	 */
 	protected function loadExtensionLanguage($xml, $rootDir, $langTag = 'en-GB')
 	{
@@ -353,10 +362,12 @@ class JedcheckerRulesXMLinfo extends JEDcheckerRule
 					$loadLanguage = new ReflectionMethod($lang, 'loadLanguage');
 					$loadLanguage->setAccessible(true);
 					$loadLanguage->invoke($lang, $langSysFile, $extension);
-					return;
+					return true;
 				}
 			}
 		}
+
+		return false;
 	}
 
 	/**

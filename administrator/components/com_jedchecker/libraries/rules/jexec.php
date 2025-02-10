@@ -148,12 +148,15 @@ class JedcheckerRulesJexec extends JEDcheckerRule
 			$defines[$i] = preg_quote(trim($define), '#');
 		}
 
+		$use_single_ns = '[0-9A-Za-z_\\\\]+(?: as [0-9A-Za-z_]+?)? ?';
+		$use_group_ns = '[0-9A-Za-z_\\\\]+\\\\\\{ ?' . $use_single_ns . '(?:, ?' . $use_single_ns . ' ?)*\\} ?';
+		$use_ns = '(?:' . $use_single_ns . '|' . $use_group_ns . ')(?:, ?(?:' . $use_single_ns . '|' . $use_group_ns . '))*';
 		$this->regex
 			= '#^\s*' // at the beginning of the file
 			. '<\?php\s+' // there is an opening php tag
 			. '(?:declare ?\(strict_types ?= ?1 ?\) ?; ?)?' // optionally followed by declare(strict_types=1) directive
 			. '(?:namespace [0-9A-Za-z_\\\\]+ ?; ?)?' // optionally followed by namespace directive
-			. '(?:use [0-9A-Za-z_\\\\]+ ?(?:as [0-9A-Za-z_]+ ?)?; ?)*' // optionally followed by use directives
+			. '(?:use (?:function |const )?' . $use_ns . '; ?)*' // optionally followed by use directives
 			. '\\\\?defined ?\( ?' // followed by defined test
 			. '([\'"])(?:' . implode('|', $defines) . ')\1' // of any of given constant
 			. ' ?\) ?(?:or |\|\| ?)(?:die|exit)\b' // or exit

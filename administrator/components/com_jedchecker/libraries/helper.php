@@ -399,4 +399,33 @@ abstract class JEDCheckerHelper
 	{
 		return str_repeat("\n", substr_count($content, "\n"));
 	}
+
+	/**
+	 * Resolve all aliases in the PHP file
+	 *
+	 * @param string $content
+	 *
+	 * @return string
+	 * @since 2.4.4
+	 */
+	public static function resolveAliases($content)
+	{
+		if (preg_match_all('/\buse\s+([\\\\\w]+)(?:\s+as\s+(\w+))?\s*;/i', $content, $matches, PREG_SET_ORDER)) {
+			foreach ($matches as $match) {
+				$fqn = $match[1];
+
+				if (isset($match[2])) {
+					$alias = $match[2];
+				} else {
+					$path = explode('\\', $fqn);
+					$alias = $path[count($path) - 1];
+				}
+
+				$content = str_replace($match[0], self::cleanLines($match[0]), $content);
+				$content = preg_replace('/\b' . $alias . '\b/', $fqn, $content);
+			}
+		}
+
+		return $content;
+	}
 }
