@@ -22,7 +22,9 @@
       "updateservers": "?",
       "dlid": "?",
       "help": "?",
-      "config": "?"
+      "config": "?",
+      "parent": "?",
+      "inheritable": "?"
     },
     "positions": {
       "position": "*"
