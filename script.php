@@ -6,7 +6,7 @@
  *             Copyright (C) 2008 - 2016 compojoom.com . All rights reserved.
  * @author     Daniel Dimitrov <daniel@compojoom.com>
  *
- * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ * @license    GNU General Public Licence version 2 or later; see LICENCE.txt
  */
 
 defined('_JEXEC') or die('Restricted access');
@@ -25,8 +25,8 @@ use Joomla\CMS\Log\Log;
 class Com_JedcheckerInstallerScript
 {
 	protected $extension = 'com_jedchecker';
-	protected $min_php = '5.6.0';
-	protected $min_joomla = '5.0.0';
+	protected $min_php = '8.1.0';
+	protected $min_joomla = '5.4.0';
 	protected $parent;
 
 	/**
@@ -61,7 +61,7 @@ class Com_JedcheckerInstallerScript
 	}
 
 	/**
-	 * Update cleans out any old rules.
+	 * Update cleans out legacy directories and old rules.
 	 *
 	 * @param   ComponentAdapter  $parent  Is the class calling this method.
 	 *
@@ -71,42 +71,48 @@ class Com_JedcheckerInstallerScript
 	{
 		$this->loadLanguage();
 
-		// Doing it this way in case there are other old rules to be deleted
-		$oldRules = array('htmlindexes');
+		$componentPath = JPATH_ADMINISTRATOR . '/components/' . $this->extension;
+
+		// Remove legacy top-level files replaced by src/ structure
+		$legacyFiles = [
+			$componentPath . '/controller.php',
+			$componentPath . '/jedchecker.php',
+		];
+
+		foreach ($legacyFiles as $legacyFile)
+		{
+			if (file_exists($legacyFile))
+			{
+				File::delete($legacyFile);
+			}
+		}
+
+		// Remove legacy directories replaced by src/ structure
+		$legacyDirs = [
+			$componentPath . '/controllers',
+			$componentPath . '/models',
+			$componentPath . '/libraries',
+			$componentPath . '/views',
+		];
+
+		foreach ($legacyDirs as $legacyDir)
+		{
+			if (is_dir($legacyDir))
+			{
+				\Joomla\Filesystem\Folder::delete($legacyDir);
+			}
+		}
+
+		// Remove any old individual rules that are no longer included
+		$oldRules = ['htmlindexes'];
 
 		foreach ($oldRules as $rule)
 		{
-			$rulePhpFile = JPATH_ADMINISTRATOR . '/components/' . $this->extension . '/libraries/rules/' . $rule . '.php';
-			$ruleIniFile = JPATH_ADMINISTRATOR . '/components/' . $this->extension . '/libraries/rules/' . $rule . '.ini';
+			$rulePhpFile = $componentPath . '/src/Rule/Rules/' . ucfirst($rule) . 'Rule.php';
 
-			// Remove the rule's php file
 			if (file_exists($rulePhpFile))
 			{
-				if (File::delete($rulePhpFile))
-				{
-					$msg = Text::sprintf('COM_JEDCHECKER_OLD_RULE_X_PHP_FILE_REMOVED', $rule);
-				}
-				else
-				{
-					$msg = Text::sprintf('COM_JEDCHECKER_OLD_RULE_X_PHP_FILE_NOT_REMOVED', $rule);
-				}
-
-				echo "<p>$msg</p>";
-			}
-
-			// Remove the rule's ini file
-			if (file_exists($ruleIniFile))
-			{
-				if (File::delete($ruleIniFile))
-				{
-					$msg = Text::sprintf('COM_JEDCHECKER_OLD_RULE_X_INI_FILE_REMOVED', $rule);
-				}
-				else
-				{
-					$msg = Text::sprintf('COM_JEDCHECKER_OLD_RULE_X_INI_FILE_NOT_REMOVED', $rule);
-				}
-
-				echo "<p>$msg</p>";
+				File::delete($rulePhpFile);
 			}
 		}
 	}

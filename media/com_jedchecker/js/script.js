@@ -24,7 +24,7 @@
   }
 
   function check(url, rule) {
-    fetch(`${url}index.php?option=com_jedchecker&task=police.check&format=raw&rule=${rule}`)
+    fetch(`${url}index.php?option=com_jedchecker&task=uploads.check&format=raw&rule=${rule}`)
       .then(response => {
         if (!response.ok) {
           throw new Error(`${response.status} ${response.statusCode}`);
