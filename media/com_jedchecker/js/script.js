@@ -4,7 +4,9 @@
   let jedOptions;
   try {
     jedOptions = JSON.parse(document.getElementById('jed-rules-json').innerHTML);
-    if (!jedOptions) throw new Error();
+        if (!jedOptions) {
+            throw new Error();
+        }
   } catch (e) {
     throw new Error('Initialization data is missing');
   }
@@ -24,7 +26,7 @@
   }
 
   function check(url, rule) {
-    fetch(`${url}index.php?option=com_jedchecker&task=police.check&format=raw&rule=${rule}`)
+    fetch(`${url}index.php?option=com_jedchecker&task=uploads.check&format=raw&rule=${rule}`)
       .then(response => {
         if (!response.ok) {
           throw new Error(`${response.status} ${response.statusCode}`);

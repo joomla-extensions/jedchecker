@@ -1,31 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension type="component" version="4.0" method="upgrade">
-  <name>COM_JEDCHECKER</name>
+<extension type="component"  method="upgrade">
+  <name>JedChecker</name>
   <author>Joomla! Extensions Directory</author>
-  <creationDate>2023-09-21</creationDate>
-  <copyright>Copyright (C) 2017 - 2025 Open Source Matters, Inc. All rights reserved.</copyright>
+  <creationDate>2026-04-25</creationDate>
+  <copyright>Copyright (C) 2026 Open Source Matters, Inc. All rights reserved.</copyright>
   <authorEmail>extensions@extensions.joomla.org</authorEmail>
   <authorUrl>https://github.com/joomla-extensions/jedchecker</authorUrl>
-  <version>2.4.5</version>
+  <version>3.0.0</version>
   <license>http://www.gnu.org/copyleft/gpl.html GNU/GPL</license>
   <description><![CDATA[JED Checker will check your extension files and will let you know in advance if there are any possible problems with your extension for submitting to the JED]]>
   </description>
+  <namespace path="src">Joomla\Component\Jedchecker</namespace>
   <scriptfile>script.php</scriptfile>
   <administration>
     <menu>COM_JEDCHECKER</menu>
-    <files folder="administrator/components/com_jedchecker">
+    <files>
       <file>access.xml</file>
       <file>config.xml</file>
-      <file>controller.php</file>
-      <folder>controllers</folder>
-      <file>jedchecker.php</file>
+      <folder>services</folder>
+      <folder>src</folder>
+      <folder>tmpl</folder>
       <folder>language</folder>
-      <folder>libraries</folder>
-      <folder>models</folder>
-      <folder>views</folder>
     </files>
 
-    <languages folder="administrator/components/com_jedchecker/language">
+    <languages folder="language">
       <language tag="af-ZA">af-ZA/af-ZA.com_jedchecker.ini</language>
       <language tag="af-ZA">af-ZA/af-ZA.com_jedchecker.sys.ini</language>
       <language tag="ar-SA">ar-SA/ar-SA.com_jedchecker.ini</language>
