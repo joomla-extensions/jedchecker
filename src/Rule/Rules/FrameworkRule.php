@@ -1,8 +1,9 @@
 <?php
+
 /**
  * @package    Joomla.JEDChecker
  *
- * @copyright  Copyright (C) 2017 - 2025 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2017 - 2026 Open Source Matters, Inc. All rights reserved.
  *             Copyright (C) 2008 - 2016 fasterjoomla.com. All rights reserved.
  * @author     Riccardo Zorn <support@fasterjoomla.com>
  *
@@ -11,339 +12,434 @@
 
 namespace Joomla\Component\Jedchecker\Administrator\Rule\Rules;
 
-defined('_JEXEC') or die('Restricted access');
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Language\Text;
 use Joomla\Component\Jedchecker\Administrator\Helper\CheckerHelper;
 use Joomla\Component\Jedchecker\Administrator\Rule\AbstractRule;
 use Joomla\Filesystem\Folder;
+use stdClass;
 
 /**
  * FrameworkRule identifies deprecated code, unsafe code, and leftover development files.
  *
- * @since  3.0
+ * @since  3.0.0
  */
 class FrameworkRule extends AbstractRule
 {
-	protected string $id          = 'Framework';
-	protected string $title       = 'COM_JEDCHECKER_RULE_FRAMEWORK';
-	protected string $description = 'COM_JEDCHECKER_RULE_FRAMEWORK_DESC';
+    /**
+     * Data files remain in libraries/rules/ during the transitional migration period
+     *
+     * @var string
+     * @since 3.0.0
+     */
+    private const DATA_DIR = '/components/com_jedchecker/src/Rule/Rules/data/';
+    /**
+     * Rule ordering.
+     *
+     * @var integer
+     * @since 3.0.0
+     */
+    public static int $ordering = 700;
+    /**
+     * Rule ID.
+     *
+     * @var string
+     * @since 3.0.0
+     */
+    protected string $id = 'Framework';
+    /**
+     * Rule title.
+     *
+     * @var string
+     * @since 3.0.0
+     */
+    protected string $title = 'COM_JEDCHECKER_RULE_FRAMEWORK';
+    /**
+     * Description of the rule.
+     *
+     * @var string
+     * @since 3.0.0
+     */
+    protected string $description = 'COM_JEDCHECKER_RULE_FRAMEWORK_DESC';
+    /**
+     * Whether the tests have been loaded
+     *
+     * @var bool
+     * @since 3.0.0
+     */
+    protected $tests = false;
+    /**
+     * Regex of leftover folders
+     *
+     * @var string
+     * @since 3.0.0
+     */
+    protected string $regexLeftoverFolders;
 
-	public static int $ordering = 700;
+    /**
+     * check
+     *
+     * Runs the rule.
+     *
+     * @since  3.0.0
+     */
+    public function check(): void
+    {
+        $leftoverFolders          = $this->params->get('leftover_folders');
+        $leftoverFoldersWhitelist = $this->params->get('leftover_folders_whitelist');
 
-	protected $tests = false;
-	protected string $regexLeftoverFolders;
+        $this->regexLeftoverFolders = '';
 
-	/** Data files remain in libraries/rules/ during the transitional migration period */
-	private const DATA_DIR = '/libraries/rules/';
+        if (! empty($leftoverFoldersWhitelist)) {
+            $this->regexLeftoverFolders .=
+                    '(?!(?:'
+                    . str_replace([',', '\*'], ['|', '.*'], preg_quote($leftoverFoldersWhitelist, '/'))
+                     . '))';
+        }
 
-	public function check(): void
-	{
-		$leftoverFolders          = $this->params->get('leftover_folders');
-		$leftoverFoldersWhitelist = $this->params->get('leftover_folders_whitelist');
+        $this->regexLeftoverFolders .= '(?:' . str_replace(
+            [',', '\*'],
+            ['|', '.*'],
+            preg_quote($leftoverFolders, '/')
+        ) . ')';
 
-		$this->regexLeftoverFolders = '';
+        $regexLeftoverFolders = '^' . $this->regexLeftoverFolders . '$';
 
-		if (!empty($leftoverFoldersWhitelist))
-		{
-			$this->regexLeftoverFolders .=
-				'(?!(?:'
-				. str_replace([',', '\*'], ['|', '.*'], preg_quote($leftoverFoldersWhitelist, '/'))
-				. '))';
-		}
+        $folders = Folder::folders($this->basedir, $regexLeftoverFolders, true, true, [], []);
+        $files   = Folder::files($this->basedir, $regexLeftoverFolders, true, true, [], []);
 
-		$this->regexLeftoverFolders .= '(?:' . str_replace([',', '\*'], ['|', '.*'], preg_quote($leftoverFolders, '/')) . ')';
+        if (is_array($folders)) {
+            foreach ($folders as $folder) {
+                $this->report->addWarning($folder, Text::_("COM_JEDCHECKER_ERROR_FRAMEWORK_LEFTOVER_FOLDER"));
+            }
+        }
 
-		$regexLeftoverFolders = '^' . $this->regexLeftoverFolders . '$';
+        if (is_array($files)) {
+            foreach ($files as $file) {
+                $this->report->addWarning($file, Text::_("COM_JEDCHECKER_ERROR_FRAMEWORK_LEFTOVER_FILE"));
+            }
+        }
 
-		$folders = Folder::folders($this->basedir, $regexLeftoverFolders, true, true, [], []);
-		$files   = Folder::files($this->basedir, $regexLeftoverFolders, true, true, [], []);
+        $files = Folder::files($this->basedir, '\.php$', true, true);
 
-		if (is_array($folders))
-		{
-			foreach ($folders as $folder)
-			{
-				$this->report->addWarning($folder, Text::_("COM_JEDCHECKER_ERROR_FRAMEWORK_LEFTOVER_FOLDER"));
-			}
-		}
+        foreach ($files as $file) {
+            if (! $this->excludeResource($file)) {
+                $this->find($file);
+            }
+        }
+    }
 
-		if (is_array($files))
-		{
-			foreach ($files as $file)
-			{
-				$this->report->addWarning($file, Text::_("COM_JEDCHECKER_ERROR_FRAMEWORK_LEFTOVER_FILE"));
-			}
-		}
+    /**
+     * excludeResource
+     *
+     * Check if a file should be excluded based on leftover folder regex
+     *
+     * @param   string  $file
+     *
+     * @return bool
+     *
+     * @since  3.0.0
+     */
+    private function excludeResource(string $file): bool
+    {
+        return (bool)preg_match('/\/' . $this->regexLeftoverFolders . '\//', $file);
+    }
 
-		$files = Folder::files($this->basedir, '\.php$', true, true);
+    protected function find(string $file): bool
+    {
+        $origContent = (array)file($file);
 
-		foreach ($files as $file)
-		{
-			if (!$this->excludeResource($file))
-			{
-				$this->find($file);
-			}
-		}
-	}
+        if (count($origContent) === 0) {
+            return false;
+        }
 
-	private function excludeResource(string $file): bool
-	{
-		return (bool) preg_match('/\/' . $this->regexLeftoverFolders . '\//', $file);
-	}
+        $result  = false;
+        $content = file_get_contents($file);
 
-	protected function find(string $file): bool
-	{
-		$origContent = (array) file($file);
+        if (strncmp($content, "\xEF\xBB\xBF", 3) === 0) {
+            $this->report->addError($file, Text::_('COM_JEDCHECKER_ERROR_FRAMEWORK_BOM_FOUND'));
+            $result = true;
+        }
 
-		if (count($origContent) === 0)
-		{
-			return false;
-		}
+        if (strpos(" \t\n\r\v\f", $content[0]) !== false) {
+            $this->report->addNotice($file, Text::_('COM_JEDCHECKER_ERROR_FRAMEWORK_LEADING_SPACES'));
+            $result = true;
+        }
 
-		$result  = false;
-		$content = file_get_contents($file);
+        $cleanContent = CheckerHelper::cleanPhpCode(
+            $content,
+            CheckerHelper::CLEAN_HTML | CheckerHelper::CLEAN_COMMENTS | CheckerHelper::CLEAN_STRINGS
+        );
+        $cleanContent = CheckerHelper::resolveAliases($cleanContent);
 
-		if (strncmp($content, "\xEF\xBB\xBF", 3) === 0)
-		{
-			$this->report->addError($file, Text::_('COM_JEDCHECKER_ERROR_FRAMEWORK_BOM_FOUND'));
-			$result = true;
-		}
+        if (preg_match('/<\?\s/', $cleanContent, $match, PREG_OFFSET_CAPTURE)) {
+            $lineno = substr_count($cleanContent, "\n", 0, $match[0][1]);
+            $this->report->addError(
+                $file,
+                Text::_('COM_JEDCHECKER_ERROR_FRAMEWORK_SHORT_PHP_TAG'),
+                $lineno + 1,
+                $origContent[$lineno]
+            );
+            $result = true;
+        }
 
-		if (strpos(" \t\n\r\v\f", $content[0]) !== false)
-		{
-			$this->report->addNotice($file, Text::_('COM_JEDCHECKER_ERROR_FRAMEWORK_LEADING_SPACES'));
-			$result = true;
-		}
+        $cleanContentKeepStrings = CheckerHelper::cleanPhpCode(
+            $content,
+            CheckerHelper::CLEAN_HTML | CheckerHelper::CLEAN_COMMENTS
+        );
 
-		$cleanContent = CheckerHelper::cleanPhpCode(
-			$content,
-			CheckerHelper::CLEAN_HTML | CheckerHelper::CLEAN_COMMENTS | CheckerHelper::CLEAN_STRINGS
-		);
-		$cleanContent = CheckerHelper::resolveAliases($cleanContent);
+        $cleanContent            = CheckerHelper::splitLines($cleanContent);
+        $cleanContentKeepStrings = CheckerHelper::splitLines($cleanContentKeepStrings);
 
-		if (preg_match('/<\?\s/', $cleanContent, $match, PREG_OFFSET_CAPTURE))
-		{
-			$lineno = substr_count($cleanContent, "\n", 0, $match[0][1]);
-			$this->report->addError($file, Text::_('COM_JEDCHECKER_ERROR_FRAMEWORK_SHORT_PHP_TAG'), $lineno + 1, $origContent[$lineno]);
-			$result = true;
-		}
+        foreach ($this->getTests() as $testObject) {
+            if ($this->runTest($file, $origContent, $cleanContent, $cleanContentKeepStrings, $testObject)) {
+                $result = true;
+            }
+        }
 
-		$cleanContentKeepStrings = CheckerHelper::cleanPhpCode(
-			$content,
-			CheckerHelper::CLEAN_HTML | CheckerHelper::CLEAN_COMMENTS
-		);
+        return $result;
+    }
 
-		$cleanContent            = CheckerHelper::splitLines($cleanContent);
-		$cleanContentKeepStrings = CheckerHelper::splitLines($cleanContentKeepStrings);
+    /**
+     * getTests
+     *
+     * Retrieve the test objects for the framework rule
+     *
+     * @return array
+     *
+     * @since  3.0.0
+     */
+    private function getTests(): array
+    {
+        if (! $this->tests) {
+            $this->tests = [];
+            $testNames   = ['error', 'warning', 'notice', 'compatibility'];
 
-		foreach ($this->getTests() as $testObject)
-		{
-			if ($this->runTest($file, $origContent, $cleanContent, $cleanContentKeepStrings, $testObject))
-			{
-				$result = true;
-			}
-		}
+            foreach ($testNames as $test) {
+                foreach (explode(",", $this->params->get($test . '_groups')) as $group) {
+                    $newTest        = new stdClass();
+                    $newTest->group = $group;
+                    $newTest->kind  = $test;
+                    $newTest->tests = [];
 
-		return $result;
-	}
+                    foreach (explode(",", $this->params->get($group)) as $match) {
+                        if (strpos($match, '=>') !== false) {
+                            [$match, $replacement] = explode('=>', $match, 2);
+                        } else {
+                            $replacement = false;
+                        }
 
-	private function runTest(string $file, array $origContent, array $cleanContent, array $cleanContentKeepStrings, object $testObject): bool
-	{
-		$error_count = 0;
+                        $testObj              = new stdClass();
+                        $testObj->test        = $match;
+                        $testObj->regex       = $this->generateRegex($match);
+                        $testObj->replacement = $replacement;
+                        $testObj->keepStrings = strpos($match, "'") !== false;
 
-		foreach ($cleanContent as $line_number => $line)
-		{
-			$origLine = $origContent[$line_number];
+                        $newTest->tests[] = $testObj;
+                    }
 
-			foreach ($testObject->tests as $singleTest)
-			{
-				$lineContent = $singleTest->keepStrings ? $cleanContentKeepStrings[$line_number] : $line;
+                    $this->tests[] = $newTest;
+                }
+            }
 
-				if (preg_match($singleTest->regex, $lineContent))
-				{
-					$highlightedLine = str_ireplace($singleTest->test, '<b>' . $singleTest->test . '</b>', $origLine);
-					$highlightedLine = htmlspecialchars($highlightedLine, ENT_NOQUOTES);
-					$highlightedLine = str_replace(['&lt;b&gt;', '&lt;/b&gt;'], ['<b>', '</b>'], $highlightedLine);
+            $newTest        = new stdClass();
+            $newTest->group = 'legacy_aliases';
+            $newTest->kind  = 'compatibility';
+            $newTest->tests = [];
 
-					if (isset($testObject->version) && preg_match('/^(deprecated|removed)-in-j-/', $testObject->group))
-					{
-						$langKey       = (strpos($testObject->group, 'deprecated') === 0) ? 'COM_JEDCHECKER_ERROR_FRAMEWORK_DEPRECATED' : 'COM_JEDCHECKER_ERROR_FRAMEWORK_REMOVED';
-						$error_message = sprintf(Text::_($langKey), $testObject->version) . ':<pre>' . $highlightedLine . '</pre>';
-					}
-					else
-					{
-						$error_message = Text::_('COM_JEDCHECKER_ERROR_FRAMEWORK_' . strtoupper($testObject->group)) . ':<pre>' . $highlightedLine . '</pre>';
-					}
+            $legacyAliases = parse_ini_file(
+                JPATH_ADMINISTRATOR . self::DATA_DIR . 'framework_legacy_aliases.ini',
+                true
+            );
 
-					if ($singleTest->replacement !== false)
-					{
-						$error_message .= Text::_('COM_JEDCHECKER_ERROR_FRAMEWORK_INSTEAD_USE') . ': ' . $singleTest->replacement;
-					}
+            foreach ($legacyAliases as $version => $aliases) {
+                foreach ($aliases as $oldClass => $newClass) {
+                    $testObj              = new stdClass();
+                    $testObj->test        = $oldClass;
+                    $testObj->regex       = $this->generateRegex($oldClass, true);
+                    $testObj->replacement = $newClass;
+                    $testObj->keepStrings = false;
 
-					switch ($testObject->kind)
-					{
-						case 'error':
-							$this->report->addError($file, $error_message, $line_number);
-							break;
-						case 'warning':
-							$this->report->addWarning($file, $error_message, $line_number);
-							break;
-						case 'compatibility':
-							$this->report->addCompat($file, $error_message, $line_number);
-							break;
-						default:
-							$this->report->addNotice($file, $error_message, $line_number);
-							break;
-					}
-				}
+                    $newTest->tests[] = $testObj;
+                }
+            }
 
-				if ($error_count > 100)
-				{
-					return true;
-				}
-			}
-		}
+            $this->tests[] = $newTest;
 
-		return $error_count > 0;
-	}
+            $this->loadDeprecatedPatterns();
+        }
 
-	private function getTests(): array
-	{
-		if (!$this->tests)
-		{
-			$this->tests = [];
-			$testNames   = ['error', 'warning', 'notice', 'compatibility'];
+        return $this->tests;
+    }
 
-			foreach ($testNames as $test)
-			{
-				foreach (explode(",", $this->params->get($test . '_groups')) as $group)
-				{
-					$newTest        = new \stdClass;
-					$newTest->group = $group;
-					$newTest->kind  = $test;
-					$newTest->tests = [];
+    /**
+     * runTest
+     *
+     * Run a test on a file to check for deprecated framework usage
+     *
+     * @param   string  $file
+     * @param   array   $origContent
+     * @param   array   $cleanContent
+     * @param   array   $cleanContentKeepStrings
+     * @param   object  $testObject
+     *
+     * @return bool
+     *
+     * @since  3.0.0
+     */
+    private function runTest(
+        string $file,
+        array $origContent,
+        array $cleanContent,
+        array $cleanContentKeepStrings,
+        object $testObject
+    ): bool {
+        $error_count = 0;
 
-					foreach (explode(",", $this->params->get($group)) as $match)
-					{
-						if (strpos($match, '=>') !== false)
-						{
-							[$match, $replacement] = explode('=>', $match, 2);
-						}
-						else
-						{
-							$replacement = false;
-						}
+        foreach ($cleanContent as $line_number => $line) {
+            $origLine = $origContent[$line_number];
 
-						$testObj              = new \stdClass;
-						$testObj->test        = $match;
-						$testObj->regex       = $this->generateRegex($match);
-						$testObj->replacement = $replacement;
-						$testObj->keepStrings = strpos($match, "'") !== false;
+            foreach ($testObject->tests as $singleTest) {
+                $lineContent = $singleTest->keepStrings ? $cleanContentKeepStrings[$line_number] : $line;
 
-						$newTest->tests[] = $testObj;
-					}
+                if (preg_match($singleTest->regex, $lineContent)) {
+                    $highlightedLine = str_ireplace($singleTest->test, '<b>' . $singleTest->test . '</b>', $origLine);
+                    $highlightedLine = htmlspecialchars($highlightedLine, ENT_NOQUOTES);
+                    $highlightedLine = str_replace(['&lt;b&gt;', '&lt;/b&gt;'], ['<b>', '</b>'], $highlightedLine);
 
-					$this->tests[] = $newTest;
-				}
-			}
+                    if (
+                        isset($testObject->version) && preg_match(
+                            '/^(deprecated|removed)-in-j-/',
+                            $testObject->group
+                        )
+                    ) {
+                        $langKey       = (strpos(
+                            $testObject->group,
+                            'deprecated'
+                        ) === 0) ? 'COM_JEDCHECKER_ERROR_FRAMEWORK_DEPRECATED' :
+                                'COM_JEDCHECKER_ERROR_FRAMEWORK_REMOVED';
+                        $error_message = sprintf(
+                            Text::_($langKey),
+                            $testObject->version
+                        ) . ':<pre>' . $highlightedLine . '</pre>';
+                    } else {
+                        $error_message = Text::_(
+                            'COM_JEDCHECKER_ERROR_FRAMEWORK_' . strtoupper($testObject->group)
+                        ) . ':<pre>' . $highlightedLine . '</pre>';
+                    }
 
-			$newTest        = new \stdClass;
-			$newTest->group = 'legacy_aliases';
-			$newTest->kind  = 'compatibility';
-			$newTest->tests = [];
+                    if ($singleTest->replacement !== false) {
+                        $error_message .= Text::_(
+                            'COM_JEDCHECKER_ERROR_FRAMEWORK_INSTEAD_USE'
+                        ) . ': ' . $singleTest->replacement;
+                    }
 
-			$legacyAliases = parse_ini_file(JPATH_COMPONENT_ADMINISTRATOR . self::DATA_DIR . 'framework_legacy_aliases.ini', true);
+                    switch ($testObject->kind) {
+                        case 'error':
+                            $this->report->addError($file, $error_message, $line_number);
+                            break;
+                        case 'warning':
+                            $this->report->addWarning($file, $error_message, $line_number);
+                            break;
+                        case 'compatibility':
+                            $this->report->addCompat($file, $error_message, $line_number);
+                            break;
+                        default:
+                            $this->report->addNotice($file, $error_message, $line_number);
+                            break;
+                    }
+                }
 
-			foreach ($legacyAliases as $version => $aliases)
-			{
-				foreach ($aliases as $oldClass => $newClass)
-				{
-					$testObj              = new \stdClass;
-					$testObj->test        = $oldClass;
-					$testObj->regex       = $this->generateRegex($oldClass, true);
-					$testObj->replacement = $newClass;
-					$testObj->keepStrings = false;
+                if ($error_count > 100) {
+                    return true;
+                }
+            }
+        }
 
-					$newTest->tests[] = $testObj;
-				}
-			}
+        return $error_count > 0;
+    }
 
-			$this->tests[] = $newTest;
+    /**
+     * generateRegex
+     *
+     *  Creates a regular expression for a given test string.
+     *
+     * @param   string  $test
+     * @param   bool    $matchCase
+     *
+     * @return string
+     *
+     * @since  3.0.0
+     */
+    private function generateRegex(string $test, bool $matchCase = false): string
+    {
+        $regex = preg_quote($test, '/');
 
-			$this->loadDeprecatedPatterns();
-		}
+        if (ctype_alpha($test[0])) {
+            $regex = '\b' . $regex;
+        }
 
-		return $this->tests;
-	}
+        if (ctype_alpha($test[strlen($test) - 1])) {
+            $regex .= '\b';
+        }
 
-	private function loadDeprecatedPatterns(): void
-	{
-		$deprecatedFile = JPATH_COMPONENT_ADMINISTRATOR . self::DATA_DIR . 'framework_deprecated.json';
+        return '/' . $regex . '/' . ($matchCase ? '' : 'i');
+    }
 
-		if (!file_exists($deprecatedFile))
-		{
-			return;
-		}
+    /**
+     * loadDeprecatedPatterns
+     *
+     * Loads deprecated patterns from a JSON file and populates the internal data structure.
+     *
+     *
+     * @since  3.0.0
+     */
+    private function loadDeprecatedPatterns(): void
+    {
+        $deprecatedFile = JPATH_ADMINISTRATOR . self::DATA_DIR . 'framework_deprecated.json';
 
-		$jsonContent = file_get_contents($deprecatedFile);
+        if (! file_exists($deprecatedFile)) {
+            return;
+        }
 
-		if ($jsonContent === false)
-		{
-			return;
-		}
+        $jsonContent = file_get_contents($deprecatedFile);
 
-		$sections = json_decode($jsonContent, true);
+        if ($jsonContent === false) {
+            return;
+        }
 
-		if (!is_array($sections))
-		{
-			return;
-		}
+        $sections = json_decode($jsonContent, true);
 
-		foreach ($sections as $sectionName => $patterns)
-		{
-			$newTest        = new \stdClass;
-			$newTest->group = $sectionName;
-			$newTest->kind  = 'compatibility';
-			$newTest->tests = [];
+        if (! is_array($sections)) {
+            return;
+        }
 
-			if (preg_match('/(?:deprecated|removed)-in-j-(.+)/', $sectionName, $matches))
-			{
-				$newTest->version = $matches[1];
-			}
-			else
-			{
-				$newTest->version = null;
-			}
+        foreach ($sections as $sectionName => $patterns) {
+            $newTest        = new stdClass();
+            $newTest->group = $sectionName;
+            $newTest->kind  = 'compatibility';
+            $newTest->tests = [];
 
-			foreach ($patterns as $pattern => $replacement)
-			{
-				$testObj              = new \stdClass;
-				$testObj->test        = $pattern;
-				$testObj->regex       = $this->generateRegex($pattern);
-				$testObj->replacement = ($replacement !== '') ? $replacement : false;
-				$testObj->keepStrings = strpos($pattern, "'") !== false;
+            if (preg_match('/(?:deprecated|removed)-in-j-(.+)/', $sectionName, $matches)) {
+                $newTest->version = $matches[1];
+            } else {
+                $newTest->version = null;
+            }
 
-				$newTest->tests[] = $testObj;
-			}
+            foreach ($patterns as $pattern => $replacement) {
+                $testObj              = new stdClass();
+                $testObj->test        = $pattern;
+                $testObj->regex       = $this->generateRegex($pattern);
+                $testObj->replacement = ($replacement !== '') ? $replacement : false;
+                $testObj->keepStrings = strpos($pattern, "'") !== false;
 
-			$this->tests[] = $newTest;
-		}
-	}
+                $newTest->tests[] = $testObj;
+            }
 
-	private function generateRegex(string $test, bool $matchCase = false): string
-	{
-		$regex = preg_quote($test, '/');
-
-		if (ctype_alpha($test[0]))
-		{
-			$regex = '\b' . $regex;
-		}
-
-		if (ctype_alpha($test[strlen($test) - 1]))
-		{
-			$regex .= '\b';
-		}
-
-		return '/' . $regex . '/' . ($matchCase ? '' : 'i');
-	}
+            $this->tests[] = $newTest;
+        }
+    }
 }

@@ -1,8 +1,9 @@
 <?php
+
 /**
  * @package    Joomla.JEDChecker
  *
- * @copyright  Copyright (C) 2017 - 2025 Open Source Matters, Inc. All rights reserved.
+ * @copyright  Copyright (C) 2017 - 2026 Open Source Matters, Inc. All rights reserved.
  *             Copyright (C) 2008 - 2016 mijosoft.com . All rights reserved.
  * @author     Denis Dulici <denis@mijosoft.com>
  *
@@ -11,7 +12,9 @@
 
 namespace Joomla\Component\Jedchecker\Administrator\Rule\Rules;
 
-defined('_JEXEC') or die('Restricted access');
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Language\Text;
 use Joomla\Component\Jedchecker\Administrator\Helper\CheckerHelper;
@@ -21,59 +24,89 @@ use Joomla\Filesystem\Folder;
 /**
  * ErrorReportingRule searches all files for the PHP error_reporting() function.
  *
- * @since  3.0
+ * @since  3.0.0
  */
 class ErrorReportingRule extends AbstractRule
 {
-	protected string $id          = 'errorreporting';
-	protected string $title       = 'COM_JEDCHECKER_RULE_ERRORREPORTING';
-	protected string $description = 'COM_JEDCHECKER_RULE_ERRORREPORTING_DESC';
+    /**
+     * Rule ordering.
+     *
+     * @var integer
+     * @since 3.0.0
+     */
+    public static int $ordering = 800;
+    /**
+     * Rule ID.
+     *
+     * @var string
+     * @since 3.0.0
+     */
+    protected string $id = 'errorreporting';
+    /**
+     * Rule title.
+     *
+     * @var string
+     * @since 3.0.0
+     */
+    protected string $title = 'COM_JEDCHECKER_RULE_ERRORREPORTING';
+    /**
+     * Description of the rule.
+     *
+     * @var string
+     * @since 3.0.0
+     */
+    protected string $description = 'COM_JEDCHECKER_RULE_ERRORREPORTING_DESC';
+    protected string $errorreportingRegex;
 
-	public static int $ordering = 800;
+    /**
+     * check
+     *
+     * Runs the rule.
+     *
+     * @since  3.0.0
+     */
+    public function check(): void
+    {
+        $codes = explode(',', $this->params->get('errorreportings'));
 
-	protected string $errorreportingRegex;
+        foreach ($codes as $i => $encoding) {
+            $codes[$i] = preg_quote(trim($encoding), '/');
+        }
 
-	public function check(): void
-	{
-		$codes = explode(',', $this->params->get('errorreportings'));
+        $this->errorreportingRegex = '/' . implode('|', $codes) . '/i';
 
-		foreach ($codes as $i => $encoding)
-		{
-			$codes[$i] = preg_quote(trim($encoding), '/');
-		}
+        $files = Folder::files($this->basedir, '\.php$', true, true);
 
-		$this->errorreportingRegex = '/' . implode('|', $codes) . '/i';
+        foreach ($files as $file) {
+            $this->find($file);
+        }
+    }
 
-		$files = Folder::files($this->basedir, '\.php$', true, true);
+    protected function find(string $file): bool
+    {
+        $content = file_get_contents($file);
+        $origContent = CheckerHelper::splitLines($content);
 
-		foreach ($files as $file)
-		{
-			$this->find($file);
-		}
-	}
+        $content = CheckerHelper::cleanPhpCode(
+            $content,
+            CheckerHelper::CLEAN_HTML | CheckerHelper::CLEAN_COMMENTS | CheckerHelper::CLEAN_STRINGS
+        );
+        $content = CheckerHelper::splitLines($content);
 
-	protected function find(string $file): bool
-	{
-		$content     = file_get_contents($file);
-		$origContent = CheckerHelper::splitLines($content);
+        $found = false;
 
-		$content = CheckerHelper::cleanPhpCode(
-			$content,
-			CheckerHelper::CLEAN_HTML | CheckerHelper::CLEAN_COMMENTS | CheckerHelper::CLEAN_STRINGS
-		);
-		$content = CheckerHelper::splitLines($content);
+        foreach ($content as $i => $line) {
+            if (preg_match($this->errorreportingRegex, $line)) {
+                $found = true;
+                $this->report->addWarning(
+                    $file,
+                    Text::_('COM_JEDCHECKER_ERROR_ERRORREPORTING'),
+                    $i + 1,
+                    $origContent[$i]
+                );
+            }
+        }
 
-		$found = false;
-
-		foreach ($content as $i => $line)
-		{
-			if (preg_match($this->errorreportingRegex, $line))
-			{
-				$found = true;
-				$this->report->addWarning($file, Text::_('COM_JEDCHECKER_ERROR_ERRORREPORTING'), $i + 1, $origContent[$i]);
-			}
-		}
-
-		return $found;
-	}
+        return $found;
+    }
 }

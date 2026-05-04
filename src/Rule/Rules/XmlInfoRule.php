@@ -1,10 +1,11 @@
 <?php
+
 /**
  * @package    Joomla.JEDChecker
  *
- * @copyright  Copyright (C) 2017 - 2025 Open Source Matters, Inc. All rights reserved.
- *             Copyright (C) 2008 - 2016 compojoom.com . All rights reserved.
  * @author     Daniel Dimitrov <daniel@compojoom.com>
+ * @copyright  Copyright (C) 2017 - 2026 Open Source Matters, Inc. All rights reserved.
+ *             Copyright (C) 2008 - 2016 compjoom.com All rights reserved.
  *             eaxs <support@projectfork.net>
  *
  * @license    GNU General Public Licence version 2 or later; see LICENCE.txt
@@ -12,288 +13,380 @@
 
 namespace Joomla\Component\Jedchecker\Administrator\Rule\Rules;
 
-defined('_JEXEC') or die('Restricted access');
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\Component\Jedchecker\Administrator\Helper\CheckerHelper;
 use Joomla\Component\Jedchecker\Administrator\Report\Report;
 use Joomla\Component\Jedchecker\Administrator\Rule\AbstractRule;
+use ReflectionMethod;
+use SimpleXMLElement;
 
 /**
  * XmlInfoRule searches all XML manifests for specific tags.
  *
- * @since  3.0
+ * @since  3.0.0
  */
 class XmlInfoRule extends AbstractRule
 {
-	protected string $id          = 'INFO_XML';
-	protected string $title       = 'COM_JEDCHECKER_INFO_XML';
-	protected string $description = 'COM_JEDCHECKER_INFO_XML_DESC';
+    /**
+     * Rule ordering.
+     *
+     * @var integer
+     * @since 3.0.0
+     */
+    public static int $ordering = 0;
+    /**
+     * Rule ID.
+     *
+     * @var string
+     * @since 3.0.0
+     */
+    protected string $id = 'INFO_XML';
+    /**
+     * Rule title.
+     *
+     * @var string
+     * @since 3.0.0
+     */
+    protected string $title = 'COM_JEDCHECKER_INFO_XML';
+    /**
+     * Description of the rule.
+     *
+     * @var string
+     * @since 3.0.0
+     */
+    protected string $description = 'COM_JEDCHECKER_INFO_XML_DESC';
+    /**
+     * List of Joomla types.
+     *
+     * @var array
+     * @since 3.0.0
+     */
+    protected array $joomlatypes = [
+            'component',
+            'module',
+            'package',
+            'plugin',
+            'library',
+    ];
 
-	public static int $ordering = 0;
+    /**
+     * Map of plugin groups to their respective directories.
+     *
+     * @var array|string[]
+     * @since 3.0.0
+     */
+    protected array $pluginsGroupMap = [
+            'button'                  => 'editors-xtd',
+            'editor'                  => 'editors',
+            'smartsearch'             => 'finder',
+            'twofactorauthentication' => 'twofactorauth',
+    ];
 
-	protected array $jedTypes = [
-		'component', 'module', 'package', 'plugin', 'library',
-	];
+    /**
+     * check
+     *
+     * Runs the rule.
+     *
+     * @since  3.0.0
+     */
+    public function check(): void
+    {
+        $this->report->setDefaultSubtype($this->id);
 
-	protected array $pluginsGroupMap = [
-		'button'                 => 'editors-xtd',
-		'editor'                 => 'editors',
-		'smartsearch'            => 'finder',
-		'twofactorauthentication' => 'twofactorauth',
-	];
+        $files = CheckerHelper::findManifests($this->basedir);
 
-	public function check(): void
-	{
-		$this->report->setDefaultSubtype($this->id);
+        $manifestFound = false;
 
-		$files = CheckerHelper::findManifests($this->basedir);
+        if (count($files)) {
+            $topLevelDepth = substr_count($files[0], '/');
 
-		$manifestFound = false;
+            foreach ($files as $file) {
+                $isTopLevel = substr_count($file, '/') === $topLevelDepth;
 
-		if (count($files))
-		{
-			$topLevelDepth = substr_count($files[0], '/');
+                if ($this->find($file, $isTopLevel)) {
+                    $manifestFound = true;
+                }
+            }
+        }
 
-			foreach ($files as $file)
-			{
-				$isTopLevel = substr_count($file, '/') === $topLevelDepth;
+        if (! $manifestFound) {
+            $this->report->addError('', Text::_('COM_JEDCHECKER_INFO_XML_NO_MANIFEST'));
+        }
+    }
 
-				if ($this->find($file, $isTopLevel))
-				{
-					$manifestFound = true;
-				}
-			}
-		}
+    /**
+     * find
+     *
+     * Finds and processes a manifest file.
+     *
+     * @param   string  $file
+     * @param   bool    $isTopLevel
+     *
+     * @return bool
+     * @since  3.0.0
+     * @throws \Exception
+     *
+     */
+    protected function find(string $file, bool $isTopLevel): bool
+    {
+        $xml = simplexml_load_file($file);
 
-		if (!$manifestFound)
-		{
-			$this->report->addError('', Text::_('COM_JEDCHECKER_INFO_XML_NO_MANIFEST'));
-		}
-	}
+        if (! $xml) {
+            return false;
+        }
 
-	protected function find(string $file, bool $isTopLevel): bool
-	{
-		$xml = simplexml_load_file($file);
+        if ($xml->getName() === 'install') {
+            $this->report->addWarning($file, Text::sprintf('COM_JEDCHECKER_INFO_XML_MANIFEST_OUTDATED'));
+        }
 
-		if (!$xml)
-		{
-			return false;
-		}
+        if ($xml->getName() !== 'extension') {
+            return false;
+        }
 
-		if ($xml->getName() === 'install')
-		{
-			$this->report->addWarning($file, Text::sprintf('COM_JEDCHECKER_INFO_XML_MANIFEST_OUTDATED'));
-		}
+        $type = (string)$xml['type'];
 
-		if ($xml->getName() !== 'extension')
-		{
-			return false;
-		}
+        if (! $this->loadExtensionLanguage($xml, dirname($file))) {
+            $lang_file = CheckerHelper::getElementName($xml) . '.sys.ini';
 
-		$type = (string) $xml['type'];
+            if ($type === 'plugin' && isset($xml['group']) && strpos($lang_file, 'plg_') !== 0) {
+                $lang_file = 'plg_' . $xml['group'] . '_' . $lang_file;
+            }
 
-		if (!$this->loadExtensionLanguage($xml, dirname($file)))
-		{
-			$lang_file = CheckerHelper::getElementName($xml) . '.sys.ini';
+            $this->report->addNotice(
+                $file,
+                Text::sprintf('COM_JEDCHECKER_INFO_XML_NO_LANGUAGE_FILE_FOUND', $lang_file, 'en-GB')
+            );
+        }
 
-			if ($type === 'plugin' && isset($xml['group']) && strpos($lang_file, 'plg_') !== 0)
-			{
-				$lang_file = 'plg_' . $xml['group'] . '_' . $lang_file;
-			}
+        $lang          = Factory::getApplication()->getLanguage();
+        $extensionName = $lang->_((string)$xml->name);
 
-			$this->report->addNotice($file, Text::sprintf('COM_JEDCHECKER_INFO_XML_NO_LANGUAGE_FILE_FOUND', $lang_file, 'en-GB'));
-		}
+        $info   = [];
+        $info[] = Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_XML', $extensionName);
+        $info[] = Text::sprintf('COM_JEDCHECKER_INFO_XML_VERSION_XML', (string)$xml->version);
+        $info[] = Text::sprintf('COM_JEDCHECKER_INFO_XML_CREATIONDATE_XML', (string)$xml->creationDate);
 
-		$lang          = Factory::getApplication()->getLanguage();
-		$extensionName = $lang->_((string) $xml->name);
+        $this->report->addInfo($file, implode('<br />', $info));
 
-		$info   = [];
-		$info[] = Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_XML', $extensionName);
-		$info[] = Text::sprintf('COM_JEDCHECKER_INFO_XML_VERSION_XML', (string) $xml->version);
-		$info[] = Text::sprintf('COM_JEDCHECKER_INFO_XML_CREATIONDATE_XML', (string) $xml->creationDate);
+        if ($isTopLevel) {
+            if (! in_array($type, $this->joomlatypes, true)) {
+                $this->report->addError($file, Text::sprintf('COM_JEDCHECKER_MANIFEST_TYPE_NOT_ACCEPTED', $type));
+            }
 
-		$this->report->addInfo($file, implode('<br />', $info));
+            if (preg_match('/\b(?:module|plugin|component|template|extension|free)\b/i', $extensionName, $match)) {
+                $this->report->addIssue(
+                    Report::LEVEL_ERROR,
+                    'NM3',
+                    $file,
+                    Text::sprintf(
+                        'COM_JEDCHECKER_INFO_XML_NAME_RESERVED_KEYWORDS',
+                        $extensionName,
+                        strtolower($match[0])
+                    )
+                );
+            }
 
-		if ($isTopLevel)
-		{
-			if (!in_array($type, $this->jedTypes, true))
-			{
-				$this->report->addError($file, Text::sprintf('COM_JEDCHECKER_MANIFEST_TYPE_NOT_ACCEPTED', $type));
-			}
+            if (preg_match('/^\s*(?:mod|com|plg|tpl|pkg)_/i', $extensionName)) {
+                $this->report->addError($file, Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_PREFIXED', $extensionName));
+            }
 
-			if (preg_match('/\b(?:module|plugin|component|template|extension|free)\b/i', $extensionName, $match))
-			{
-				$this->report->addIssue(Report::LEVEL_ERROR, 'NM3', $file,
-					Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_RESERVED_KEYWORDS', $extensionName, strtolower($match[0])));
-			}
+            if (preg_match('/(?:\bversion\b|\d\.\d)/i', $extensionName)) {
+                $this->report->addIssue(
+                    Report::LEVEL_ERROR,
+                    'NM5',
+                    $file,
+                    Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_VERSION', $extensionName)
+                );
+            }
 
-			if (preg_match('/^\s*(?:mod|com|plg|tpl|pkg)_/i', $extensionName))
-			{
-				$this->report->addError($file, Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_PREFIXED', $extensionName));
-			}
+            if (stripos($extensionName, 'joomla') === 0) {
+                $this->report->addIssue(
+                    Report::LEVEL_ERROR,
+                    'TM2',
+                    $file,
+                    Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_JOOMLA', $extensionName)
+                );
+            } else {
+                $cleanName = preg_replace('/\s+for\s+Joomla!?$/', '', $extensionName);
 
-			if (preg_match('/(?:\bversion\b|\d\.\d)/i', $extensionName))
-			{
-				$this->report->addIssue(Report::LEVEL_ERROR, 'NM5', $file,
-					Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_VERSION', $extensionName));
-			}
+                if (stripos($cleanName, 'joomla') !== false) {
+                    $this->report->addIssue(
+                        Report::LEVEL_WARNING,
+                        'TM2',
+                        $file,
+                        Text::sprintf(
+                            'COM_JEDCHECKER_INFO_XML_NAME_JOOMLA_DERIVATIVE',
+                            $extensionName,
+                            'https://tm.joomla.org/approved-domains.html'
+                        )
+                    );
+                }
+            }
 
-			if (stripos($extensionName, 'joomla') === 0)
-			{
-				$this->report->addIssue(Report::LEVEL_ERROR, 'TM2', $file,
-					Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_JOOMLA', $extensionName));
-			}
-			else
-			{
-				$cleanName = preg_replace('/\s+for\s+Joomla!?$/', '', $extensionName);
+            if (preg_match('/[^\x20-\x7E]/', $extensionName)) {
+                $this->report->addError($file, Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_NON_ASCII', $extensionName));
+            }
 
-				if (stripos($cleanName, 'joomla') !== false)
-				{
-					$this->report->addIssue(Report::LEVEL_WARNING, 'TM2', $file,
-						Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_JOOMLA_DERIVATIVE', $extensionName, 'https://tm.joomla.org/approved-domains.html'));
-				}
-			}
+            $nameLen = strlen($extensionName);
 
-			if (preg_match('/[^\x20-\x7E]/', $extensionName))
-			{
-				$this->report->addError($file, Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_NON_ASCII', $extensionName));
-			}
+            if ($nameLen > 80) {
+                $this->report->addError($file, Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_TOO_LONG', $extensionName));
+            } elseif ($nameLen > 40) {
+                $this->report->addWarning(
+                    $file,
+                    Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_TOO_LONG', $extensionName)
+                );
+            }
+        }
 
-			$nameLen = strlen($extensionName);
+        $this->validateDomain($file, (string)$xml->authorUrl);
 
-			if ($nameLen > 80)
-			{
-				$this->report->addError($file, Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_TOO_LONG', $extensionName));
-			}
-			elseif ($nameLen > 40)
-			{
-				$this->report->addWarning($file, Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_TOO_LONG', $extensionName));
-			}
-		}
+        if ($type === 'package' && (string)$xml->packagerurl !== (string)$xml->authorUrl) {
+            $this->validateDomain($file, (string)$xml->packagerurl);
+        }
 
-		$this->validateDomain($file, (string) $xml->authorUrl);
+        if ($type === 'component' && isset($xml->administration->menu)) {
+            $menuName = $lang->_((string)$xml->administration->menu);
 
-		if ($type === 'package' && (string) $xml->packagerurl !== (string) $xml->authorUrl)
-		{
-			$this->validateDomain($file, (string) $xml->packagerurl);
-		}
+            if ($extensionName !== $menuName) {
+                $this->report->addWarning(
+                    $file,
+                    Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_ADMIN_MENU', $menuName, $extensionName)
+                );
+            }
+        }
 
-		if ($type === 'component' && isset($xml->administration->menu))
-		{
-			$menuName = $lang->_((string) $xml->administration->menu);
+        if ($isTopLevel && $type === 'plugin') {
+            $parts              = explode(' - ', $extensionName, 2);
+            $extensionNameGroup = isset($parts[1]) ? strtolower(preg_replace('/\s/', '', $parts[0])) : false;
+            $group              = (string)$xml['group'];
 
-			if ($extensionName !== $menuName)
-			{
-				$this->report->addWarning($file, Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_ADMIN_MENU', $menuName, $extensionName));
-			}
-		}
+            if (
+                    $extensionNameGroup !== $group && $extensionNameGroup !== str_replace('-', '', $group)
+                    && ! (isset($this->pluginsGroupMap[$extensionNameGroup]) && $this->pluginsGroupMap[$extensionNameGroup] === $group)
+            ) {
+                $this->report->addWarning(
+                    $file,
+                    Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_PLUGIN_FORMAT', $extensionName)
+                );
+            }
+        }
 
-		if ($isTopLevel && $type === 'plugin')
-		{
-			$parts              = explode(' - ', $extensionName, 2);
-			$extensionNameGroup = isset($parts[1]) ? strtolower(preg_replace('/\s/', '', $parts[0])) : false;
-			$group              = (string) $xml['group'];
+        return true;
+    }
 
-			if ($extensionNameGroup !== $group && $extensionNameGroup !== str_replace('-', '', $group)
-				&& !(isset($this->pluginsGroupMap[$extensionNameGroup]) && $this->pluginsGroupMap[$extensionNameGroup] === $group))
-			{
-				$this->report->addWarning($file, Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_PLUGIN_FORMAT', $extensionName));
-			}
-		}
+    /**
+     * loadExtensionLanguage
+     *
+     * Loads and validates the language files for an extension.
+     *
+     * @param   SimpleXMLElement  $xml
+     * @param   string            $rootDir
+     * @param   string            $langTag
+     *
+     * @return bool
+     * @since  3.0.0
+     * @throws \ReflectionException
+     *
+     */
+    protected function loadExtensionLanguage(SimpleXMLElement $xml, string $rootDir, string $langTag = 'en-GB'): bool
+    {
+        $extension = CheckerHelper::getElementName($xml);
+        $type      = (string)$xml['type'];
 
-		return true;
-	}
+        if ($type === 'plugin' && isset($xml['group']) && strpos($extension, 'plg_') !== 0) {
+            $extension = 'plg_' . $xml['group'] . '_' . $extension;
+        }
 
-	protected function loadExtensionLanguage(\SimpleXMLElement $xml, string $rootDir, string $langTag = 'en-GB'): bool
-	{
-		$extension = CheckerHelper::getElementName($xml);
-		$type      = (string) $xml['type'];
+        $lang = Factory::getApplication()->getLanguage();
 
-		if ($type === 'plugin' && isset($xml['group']) && strpos($extension, 'plg_') !== 0)
-		{
-			$extension = 'plg_' . $xml['group'] . '_' . $extension;
-		}
+        $lookupLangDirs = [];
 
-		$lang = Factory::getApplication()->getLanguage();
+        if (isset($xml->administration->files['folder'])) {
+            $lookupLangDirs[] = trim($xml->administration->files['folder'], '/') . '/language/' . $langTag;
+        }
 
-		$lookupLangDirs = [];
+        if (isset($xml->files['folder'])) {
+            $lookupLangDirs[] = trim($xml->files['folder'], '/') . '/language/' . $langTag;
+        }
 
-		if (isset($xml->administration->files['folder']))
-		{
-			$lookupLangDirs[] = trim($xml->administration->files['folder'], '/') . '/language/' . $langTag;
-		}
+        $lookupLangDirs[] = 'language/' . $langTag;
 
-		if (isset($xml->files['folder']))
-		{
-			$lookupLangDirs[] = trim($xml->files['folder'], '/') . '/language/' . $langTag;
-		}
+        if (isset($xml->administration->languages)) {
+            $folder = trim($xml->administration->languages['folder'], '/');
 
-		$lookupLangDirs[] = 'language/' . $langTag;
+            foreach ($xml->administration->languages->language as $language) {
+                if (trim($language['tag']) === $langTag) {
+                    $lookupLangDirs[] = trim($folder . '/' . dirname($language), '/');
+                }
+            }
+        }
 
-		if (isset($xml->administration->languages))
-		{
-			$folder = trim($xml->administration->languages['folder'], '/');
+        if (isset($xml->languages)) {
+            $folder = trim((string)$xml->languages['folder'], '/');
 
-			foreach ($xml->administration->languages->language as $language)
-			{
-				if (trim($language['tag']) === $langTag)
-				{
-					$lookupLangDirs[] = trim($folder . '/' . dirname($language), '/');
-				}
-			}
-		}
+            foreach ($xml->languages->language as $language) {
+                if (trim($language['tag']) === $langTag) {
+                    $lookupLangDirs[] = trim($folder . '/' . dirname($language), '/');
+                }
+            }
+        }
 
-		if (isset($xml->languages))
-		{
-			$folder = trim((string) $xml->languages['folder'], '/');
+        $lookupLangDirs[] = '';
+        $lookupLangDirs   = array_unique($lookupLangDirs);
 
-			foreach ($xml->languages->language as $language)
-			{
-				if (trim($language['tag']) === $langTag)
-				{
-					$lookupLangDirs[] = trim($folder . '/' . dirname($language), '/');
-				}
-			}
-		}
+        $lookupLangFiles = [
+                $langTag . ' . ' . $extension . '.sys.ini',
+                $extension . '.sys.ini',
+        ];
 
-		$lookupLangDirs[] = '';
-		$lookupLangDirs   = array_unique($lookupLangDirs);
+        foreach ($lookupLangDirs as $dir) {
+            foreach ($lookupLangFiles as $file) {
+                $langSysFile = $rootDir . '/' . ($dir === '' ? '' : $dir . '/') . $file;
 
-		$lookupLangFiles = [
-			$langTag . '.' . $extension . '.sys.ini',
-			$extension . '.sys.ini',
-		];
+                if (is_file($langSysFile)) {
+                    $loadLanguage = new ReflectionMethod($lang, 'loadLanguage');
+                    $loadLanguage->setAccessible(true);
+                    $loadLanguage->invoke($lang, $langSysFile, $extension);
 
-		foreach ($lookupLangDirs as $dir)
-		{
-			foreach ($lookupLangFiles as $file)
-			{
-				$langSysFile = $rootDir . '/' . ($dir === '' ? '' : $dir . '/') . $file;
+                    return true;
+                }
+            }
+        }
 
-				if (is_file($langSysFile))
-				{
-					$loadLanguage = new \ReflectionMethod($lang, 'loadLanguage');
-					$loadLanguage->setAccessible(true);
-					$loadLanguage->invoke($lang, $langSysFile, $extension);
+        return false;
+    }
 
-					return true;
-				}
-			}
-		}
+    /**
+     * validateDomain
+     *
+     * Validates the domain of a URL.
+     *
+     * @param   string  $file
+     * @param   string  $url
+     *
+     * @since  3.0.0
+     */
+    protected function validateDomain(string $file, string $url): void
+    {
+        $domain = (strpos($url, '//') === false) ? $url : parse_url(trim($url), PHP_URL_HOST);
 
-		return false;
-	}
-
-	protected function validateDomain(string $file, string $url): void
-	{
-		$domain = (strpos($url, '//') === false) ? $url : parse_url(trim($url), PHP_URL_HOST);
-
-		if (stripos($domain, 'joomla') !== false)
-		{
-			$this->report->addIssue(Report::LEVEL_ERROR, 'TM1', $file,
-				Text::sprintf('COM_JEDCHECKER_INFO_XML_URL_JOOMLA_DERIVATIVE', $url, 'https://tm.joomla.org/approved-domains.html'));
-		}
-	}
+        if (stripos($domain, 'joomla') !== false) {
+            $this->report->addIssue(
+                Report::LEVEL_ERROR,
+                'TM1',
+                $file,
+                Text::sprintf(
+                    'COM_JEDCHECKER_INFO_XML_URL_JOOMLA_DERIVATIVE',
+                    $url,
+                    'https://tm.joomla.org/approved-domains.html'
+                )
+            );
+        }
+    }
 }

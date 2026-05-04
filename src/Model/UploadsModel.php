@@ -1,18 +1,22 @@
 <?php
+
 /**
  * @package    Joomla.JEDChecker
  *
- * @copyright  Copyright (C) 2017 - 2025 Open Source Matters, Inc. All rights reserved.
- *             Copyright (C) 2008 - 2016 compojoom.com . All rights reserved.
  * @author     Daniel Dimitrov <daniel@compojoom.com>
+ * @copyright  Copyright (C) 2017 - 2026 Open Source Matters, Inc. All rights reserved.
+ *             Copyright (C) 2008 - 2016 compjoom.com All rights reserved.
  *
  * @license    GNU General Public Licence version 2 or later; see LICENCE.txt
  */
 
 namespace Joomla\Component\Jedchecker\Administrator\Model;
 
-defined('_JEXEC') or die('Restricted access');
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
+use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\BaseModel;
 use Joomla\Component\Jedchecker\Administrator\Rule\RuleDiscovery;
@@ -22,183 +26,234 @@ use Joomla\Filesystem\Path;
 /**
  * UploadsModel manages upload paths, rule execution, and folder discovery.
  *
- * @since  3.0
+ * @since  3.0.0
  */
 class UploadsModel extends BaseModel
 {
-	protected string $path;
-	protected string $pathArchive;
-	protected string $pathUnzipped;
+    /**
+     * The base path for JEDChecker operations.
+     *
+     * @var string
+     *
+     * @since 3.0.0
+     */
+    protected string $path;
 
-	public function __construct($config = [])
-	{
-		parent::__construct($config);
+    /**
+     * Path to the folder where uploaded archives are stored.
+     *
+     * @var string
+     * @since 3.0.0
+     */
+    protected string $pathArchive;
 
-		$tmpPath            = Factory::getApplication()->getConfig()->get('tmp_path');
-		$this->path         = $tmpPath . '/jed_checker';
-		$this->pathArchive  = $this->path . '/archives';
-		$this->pathUnzipped = $this->path . '/unzipped';
-	}
+    /**
+     * Path to the folder where unzipped archives are stored.
+     *
+     * @var string
+     * @since 3.0.0
+     */
+    protected string $pathUnzipped;
 
-	public function getArchivePath(): string
-	{
-		return $this->pathArchive;
-	}
+    /**
+     * Delete the jed_checker temp directory.
+     *
+     * @return  boolean
+     *
+     * @since 3.0.0
+     */
+    public function clearPaths(): bool
+    {
+        if (is_dir($this->path)) {
+            return Folder::delete($this->path);
+        }
 
-	public function getUnzippedPath(): string
-	{
-		return $this->pathUnzipped;
-	}
+        return true;
+    }
 
-	public function getBasePath(): string
-	{
-		return $this->path;
-	}
+    /**
+     * getArchivePath
+     *
+     * Returns the path where uploaded archives are stored.
+     *
+     * @return string
+     *
+     * @since  3.0.0
+     */
+    public function getArchivePath(): string
+    {
+        return $this->pathArchive;
+    }
 
-	/**
-	 * Discover all folders that should be checked (unzipped subfolders + local.txt entries).
-	 *
-	 * @return  string[]
-	 */
-	public function getFolders(): array
-	{
-		$folders    = [];
-		$tmpFolders = Folder::folders($this->pathUnzipped);
+    /**
+     * getBasePath
+     *
+     * Returns the base path for JEDChecker operations.
+     *
+     * @return string
+     *
+     * @since  3.0.0
+     */
+    public function getBasePath(): string
+    {
+        return $this->path;
+    }
 
-		if (!empty($tmpFolders))
-		{
-			foreach ($tmpFolders as $tmpFolder)
-			{
-				$folders[] = $this->pathUnzipped . '/' . $tmpFolder;
-			}
-		}
+    /**
+     * getUnzippedPath
+     *
+     * Returns the path where unzipped archives are stored.
+     *
+     * @return string
+     *
+     * @since  3.0.0
+     */
+    public function getUnzippedPath(): string
+    {
+        return $this->pathUnzipped;
+    }
 
-		$local = $this->path . '/local.txt';
+    /**
+     * Run all rules against all discovered folders and return structured results.
+     *
+     * @param   string  $folder  The folder to check (single folder from getFolders())
+     *
+     * @return  array  Per-rule result arrays with keys: id, title, description, data, html
+     *
+     * @since 3.0.0
+     */
+    public function runChecks(string $folder): array
+    {
+        $ruleClasses = RuleDiscovery::getRules();
+        $results     = [];
 
-		if (is_file($local))
-		{
-			$content = file_get_contents($local);
+        foreach ($ruleClasses as $ruleClass) {
+            $instance = new $ruleClass(Path::clean($folder));
+            $instance->check();
 
-			if (!empty($content))
-			{
-				foreach (explode("\n", $content) as $line)
-				{
-					$line = trim($line);
+            $report    = $instance->getReport();
+            $results[] = [
+                    'id'          => $instance->getId(),
+                    'title'       => $instance->getTitle(),
+                    'description' => $instance->getDescription(),
+                    'data'        => $report->getData(),
+                    'html'        => $report->getHTML(),
+            ];
+        }
 
-					if ($line === '')
-					{
-						continue;
-					}
+        return $results;
+    }
 
-					if (is_dir(JPATH_ROOT . '/' . $line))
-					{
-						$folders[] = JPATH_ROOT . '/' . $line;
-					}
-					elseif (is_dir($line))
-					{
-						$folders[] = $line;
-					}
-				}
-			}
-		}
+    /**
+     * Run a single rule (identified by short name) against all folders and return HTML.
+     *
+     * @param   string  $shortName  Lowercase rule name, e.g. 'jexec', 'xmlmanifest'
+     *
+     * @return  string  Rendered HTML from the rule report
+     *
+     * @since 3.0.0
+     */
+    public function runRule(string $shortName): string
+    {
+        $ruleClass = $this->findRuleClass($shortName);
 
-		return $folders;
-	}
+        if ($ruleClass === null) {
+            return '';
+        }
 
-	/**
-	 * Run all rules against all discovered folders and return structured results.
-	 *
-	 * @param   string  $folder  The folder to check (single folder from getFolders())
-	 *
-	 * @return  array  Per-rule result arrays with keys: id, title, description, data, html
-	 */
-	public function runChecks(string $folder): array
-	{
-		$ruleClasses = RuleDiscovery::getRules();
-		$results     = [];
+        $folders = $this->getFolders();
+        $html    = '';
 
-		foreach ($ruleClasses as $ruleClass)
-		{
-			$instance = new $ruleClass(Path::clean($folder));
-			$instance->check();
+        foreach ($folders as $folder) {
+            $instance = new $ruleClass(Path::clean($folder));
+            $instance->check();
+            echo $instance->getReport()->getHTML();
+        }
 
-			$report    = $instance->getReport();
-			$results[] = [
-				'id'          => $instance->getId(),
-				'title'       => $instance->getTitle(),
-				'description' => $instance->getDescription(),
-				'data'        => $report->getData(),
-				'html'        => $report->getHTML(),
-			];
-		}
+        return '';
+    }
 
-		return $results;
-	}
+    /**
+     * Find the FQCN for a rule by its lowercase short name.
+     *
+     * @param   string  $shortName  e.g. 'jexec', 'xmlmanifest'
+     *
+     * @return  string|null  FQCN or null if not found
+     *
+     * @since 3.0.0
+     */
+    protected function findRuleClass(string $shortName): ?string
+    {
+        foreach (RuleDiscovery::getRules() as $fqcn) {
+            $parts     = explode('\\', $fqcn);
+            $className = strtolower(preg_replace('/Rule$/', '', end($parts)));
 
-	/**
-	 * Run a single rule (identified by short name) against all folders and return HTML.
-	 *
-	 * @param   string  $shortName  Lowercase rule name, e.g. 'jexec', 'xmlmanifest'
-	 *
-	 * @return  string  Rendered HTML from the rule report
-	 */
-	public function runRule(string $shortName): string
-	{
-		$ruleClass = $this->findRuleClass($shortName);
+            if ($className === strtolower($shortName)) {
+                return $fqcn;
+            }
+        }
 
-		if ($ruleClass === null)
-		{
-			return '';
-		}
+        return null;
+    }
 
-		$folders = $this->getFolders();
-		$html    = '';
+    /**
+     * Discover all folders that should be checked (unzipped subfolders + local.txt entries).
+     *
+     * @return  string[]
+     *
+     * @since 3.0.0
+     */
+    public function getFolders(): array
+    {
+        $folders    = [];
+        $tmpFolders = Folder::folders($this->pathUnzipped);
 
-		foreach ($folders as $folder)
-		{
-			$instance = new $ruleClass(Path::clean($folder));
-			$instance->check();
-			echo $instance->getReport()->getHTML();
-		}
+        if (! empty($tmpFolders)) {
+            foreach ($tmpFolders as $tmpFolder) {
+                $folders[] = $this->pathUnzipped . '/' . $tmpFolder;
+            }
+        }
 
-		return '';
-	}
+        $local = $this->path . '/local.txt';
 
-	/**
-	 * Delete the jed_checker temp directory.
-	 *
-	 * @return  bool
-	 */
-	public function clearPaths(): bool
-	{
-		if (is_dir($this->path))
-		{
-			return Folder::delete($this->path);
-		}
+        if (is_file($local)) {
+            $content = file_get_contents($local);
 
-		return true;
-	}
+            if (! empty($content)) {
+                foreach (explode("\n", $content) as $line) {
+                    $line = trim($line);
 
-	/**
-	 * Find the FQCN for a rule by its lowercase short name.
-	 *
-	 * @param   string  $shortName  e.g. 'jexec', 'xmlmanifest'
-	 *
-	 * @return  string|null  FQCN or null if not found
-	 */
-	protected function findRuleClass(string $shortName): ?string
-	{
-		foreach (RuleDiscovery::getRules() as $fqcn)
-		{
-			$parts     = explode('\\', $fqcn);
-			$className = strtolower(preg_replace('/Rule$/', '', end($parts)));
+                    if ($line === '') {
+                        continue;
+                    }
 
-			if ($className === strtolower($shortName))
-			{
-				return $fqcn;
-			}
-		}
+                    if (is_dir(JPATH_ROOT . '/' . $line)) {
+                        $folders[] = JPATH_ROOT . '/' . $line;
+                    } elseif (is_dir($line)) {
+                        $folders[] = $line;
+                    }
+                }
+            }
+        }
 
-		return null;
-	}
+        return $folders;
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param $config
+     *
+     * @since 3.0.0
+     * @throws Exception
+     */
+    public function __construct($config = [])
+    {
+        parent::__construct($config);
+
+        $tmpPath            = Factory::getApplication()->getConfig()->get('tmp_path');
+        $this->path         = $tmpPath . '/jed_checker';
+        $this->pathArchive  = $this->path . '/archives';
+        $this->pathUnzipped = $this->path . '/unzipped';
+    }
 }

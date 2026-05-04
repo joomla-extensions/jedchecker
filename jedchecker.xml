@@ -14,7 +14,7 @@
   <scriptfile>script.php</scriptfile>
   <administration>
     <menu>COM_JEDCHECKER</menu>
-    <files folder="administrator/components/com_jedchecker">
+    <files>
       <file>access.xml</file>
       <file>config.xml</file>
       <folder>services</folder>
