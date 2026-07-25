@@ -157,15 +157,20 @@ class XmlInfoRule extends AbstractRule
 
             $this->report->addNotice(
                 $file,
-                Text::sprintf('COM_JEDCHECKER_INFO_XML_NO_LANGUAGE_FILE_FOUND', $lang_file, 'en-GB')
+                Text::sprintf(
+                    'COM_JEDCHECKER_INFO_XML_NO_LANGUAGE_FILE_FOUND',
+                    htmlspecialchars($lang_file, ENT_QUOTES),
+                    'en-GB'
+                )
             );
         }
 
-        $lang          = Factory::getApplication()->getLanguage();
-        $extensionName = $lang->_((string)$xml->name);
+        $lang              = Factory::getApplication()->getLanguage();
+        $extensionName     = $lang->_((string)$xml->name);
+        $extensionNameSafe = htmlspecialchars($extensionName, ENT_QUOTES);
 
         $info   = [];
-        $info[] = Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_XML', $extensionName);
+        $info[] = Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_XML', $extensionNameSafe);
         $info[] = Text::sprintf('COM_JEDCHECKER_INFO_XML_VERSION_XML', (string)$xml->version);
         $info[] = Text::sprintf('COM_JEDCHECKER_INFO_XML_CREATIONDATE_XML', (string)$xml->creationDate);
 
@@ -173,7 +178,10 @@ class XmlInfoRule extends AbstractRule
 
         if ($isTopLevel) {
             if (! \in_array($type, $this->joomlatypes, true)) {
-                $this->report->addError($file, Text::sprintf('COM_JEDCHECKER_MANIFEST_TYPE_NOT_ACCEPTED', $type));
+                $this->report->addError(
+                    $file,
+                    Text::sprintf('COM_JEDCHECKER_MANIFEST_TYPE_NOT_ACCEPTED', htmlspecialchars($type, ENT_QUOTES))
+                );
             }
 
             if (preg_match('/\b(?:module|plugin|component|template|extension|free)\b/i', $extensionName, $match)) {
@@ -183,14 +191,17 @@ class XmlInfoRule extends AbstractRule
                     $file,
                     Text::sprintf(
                         'COM_JEDCHECKER_INFO_XML_NAME_RESERVED_KEYWORDS',
-                        $extensionName,
+                        $extensionNameSafe,
                         strtolower($match[0])
                     )
                 );
             }
 
             if (preg_match('/^\s*(?:mod|com|plg|tpl|pkg)_/i', $extensionName)) {
-                $this->report->addError($file, Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_PREFIXED', $extensionName));
+                $this->report->addError(
+                    $file,
+                    Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_PREFIXED', $extensionNameSafe)
+                );
             }
 
             if (preg_match('/(?:\bversion\b|\d\.\d)/i', $extensionName)) {
@@ -198,7 +209,7 @@ class XmlInfoRule extends AbstractRule
                     Report::LEVEL_ERROR,
                     'NM5',
                     $file,
-                    Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_VERSION', $extensionName)
+                    Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_VERSION', $extensionNameSafe)
                 );
             }
 
@@ -207,7 +218,7 @@ class XmlInfoRule extends AbstractRule
                     Report::LEVEL_ERROR,
                     'TM2',
                     $file,
-                    Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_JOOMLA', $extensionName)
+                    Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_JOOMLA', $extensionNameSafe)
                 );
             } else {
                 $cleanName = preg_replace('/\s+for\s+Joomla!?$/', '', $extensionName);
@@ -219,7 +230,7 @@ class XmlInfoRule extends AbstractRule
                         $file,
                         Text::sprintf(
                             'COM_JEDCHECKER_INFO_XML_NAME_JOOMLA_DERIVATIVE',
-                            $extensionName,
+                            $extensionNameSafe,
                             'https://tm.joomla.org/approved-domains.html'
                         )
                     );
@@ -227,17 +238,23 @@ class XmlInfoRule extends AbstractRule
             }
 
             if (preg_match('/[^\x20-\x7E]/', $extensionName)) {
-                $this->report->addError($file, Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_NON_ASCII', $extensionName));
+                $this->report->addError(
+                    $file,
+                    Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_NON_ASCII', $extensionNameSafe)
+                );
             }
 
             $nameLen = \strlen($extensionName);
 
             if ($nameLen > 80) {
-                $this->report->addError($file, Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_TOO_LONG', $extensionName));
+                $this->report->addError(
+                    $file,
+                    Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_TOO_LONG', $extensionNameSafe)
+                );
             } elseif ($nameLen > 40) {
                 $this->report->addWarning(
                     $file,
-                    Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_TOO_LONG', $extensionName)
+                    Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_TOO_LONG', $extensionNameSafe)
                 );
             }
         }
@@ -254,7 +271,11 @@ class XmlInfoRule extends AbstractRule
             if ($extensionName !== $menuName) {
                 $this->report->addWarning(
                     $file,
-                    Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_ADMIN_MENU', $menuName, $extensionName)
+                    Text::sprintf(
+                        'COM_JEDCHECKER_INFO_XML_NAME_ADMIN_MENU',
+                        htmlspecialchars($menuName, ENT_QUOTES),
+                        $extensionNameSafe
+                    )
                 );
             }
         }
@@ -270,7 +291,7 @@ class XmlInfoRule extends AbstractRule
             ) {
                 $this->report->addWarning(
                     $file,
-                    Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_PLUGIN_FORMAT', $extensionName)
+                    Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_PLUGIN_FORMAT', $extensionNameSafe)
                 );
             }
         }

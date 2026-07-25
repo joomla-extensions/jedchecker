@@ -194,7 +194,10 @@ class XmlUpdateServerRule extends AbstractRule
 
             $this->report->addPassed(
                 $file,
-                Text::sprintf('COM_JEDCHECKER_INFO_XML_UPDATE_SERVER_LINK', (string)$server)
+                Text::sprintf(
+                    'COM_JEDCHECKER_INFO_XML_UPDATE_SERVER_LINK',
+                    htmlspecialchars((string)$server, ENT_QUOTES)
+                )
             );
         }
 

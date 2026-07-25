@@ -316,9 +316,9 @@ class Report
             $num   = $i + 1;
             $title = $alertName . (empty($item->subtype) ? '' : ': ' . $item->subtype);
 
-            $html[] = '<div class="alert alert-' . $alertStyle . '" data-level="' . $title . '">';
+            $html[] = '<div class="alert alert-' . $alertStyle . '" data-level="' . htmlspecialchars($title, ENT_QUOTES) . '">';
             $html[] = '<strong>#' . str_pad($num, 3, '0', STR_PAD_LEFT) . '</strong> ';
-            $html[] = $item->location;
+            $html[] = htmlspecialchars($item->location, ENT_QUOTES);
 
             if ($item->line !== null) {
                 $html[] = ' ' . Text::_('COM_JEDCHECKER_IN_LINE') . ': <strong>' . $item->line . '</strong>';

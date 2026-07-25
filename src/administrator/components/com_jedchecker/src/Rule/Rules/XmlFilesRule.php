@@ -240,7 +240,10 @@ class XmlFilesRule extends AbstractRule
                             $folder = $this->manifestDir . $sitedir . substr($folder, \strlen($extensionPath));
 
                             if (! is_dir($folder)) {
-                                $this->errors[] = Text::sprintf('COM_JEDCHECKER_XML_FILES_FOLDER_NOT_FOUND', $attrPath);
+                                $this->errors[] = Text::sprintf(
+                                    'COM_JEDCHECKER_XML_FILES_FOLDER_NOT_FOUND',
+                                    htmlspecialchars($attrPath, ENT_QUOTES)
+                                );
                             }
                         }
                     }
@@ -252,7 +255,10 @@ class XmlFilesRule extends AbstractRule
             $folder = (string)$xml->namespace['path'];
 
             if (! is_dir($this->manifestDir . $admindir . $folder) && ! is_dir($this->manifestDir . $sitedir . $folder)) {
-                $this->errors[] = Text::sprintf('COM_JEDCHECKER_XML_FILES_FOLDER_NOT_FOUND', $folder);
+                $this->errors[] = Text::sprintf(
+                    'COM_JEDCHECKER_XML_FILES_FOLDER_NOT_FOUND',
+                    htmlspecialchars($folder, ENT_QUOTES)
+                );
             }
         }
 
@@ -285,7 +291,10 @@ class XmlFilesRule extends AbstractRule
                 $path[] = $p->getName();
             }
 
-            $this->warnings[] = Text::sprintf('COM_JEDCHECKER_XML_FILES_EMPTY_LIST', implode('/', $path));
+            $this->warnings[] = Text::sprintf(
+                'COM_JEDCHECKER_XML_FILES_EMPTY_LIST',
+                htmlspecialchars(implode('/', $path), ENT_QUOTES)
+            );
         }
     }
 
@@ -312,7 +321,10 @@ class XmlFilesRule extends AbstractRule
             return $folder . '/';
         }
 
-        $this->warnings[] = Text::sprintf('COM_JEDCHECKER_XML_FILES_FOLDER_NOT_FOUND', $folder);
+        $this->warnings[] = Text::sprintf(
+            'COM_JEDCHECKER_XML_FILES_FOLDER_NOT_FOUND',
+            htmlspecialchars($folder, ENT_QUOTES)
+        );
 
         return '';
     }
@@ -344,7 +356,10 @@ class XmlFilesRule extends AbstractRule
                 continue;
             }
 
-            $this->errors[] = Text::sprintf('COM_JEDCHECKER_XML_FILES_FILE_NOT_FOUND', $dir . $file);
+            $this->errors[] = Text::sprintf(
+                'COM_JEDCHECKER_XML_FILES_FILE_NOT_FOUND',
+                htmlspecialchars($dir . $file, ENT_QUOTES)
+            );
         }
     }
 
@@ -362,7 +377,10 @@ class XmlFilesRule extends AbstractRule
     {
         foreach ($folders as $folder) {
             if (! is_dir($this->manifestDir . $dir . $folder)) {
-                $this->errors[] = Text::sprintf('COM_JEDCHECKER_XML_FILES_FOLDER_NOT_FOUND', $dir . $folder);
+                $this->errors[] = Text::sprintf(
+                    'COM_JEDCHECKER_XML_FILES_FOLDER_NOT_FOUND',
+                    htmlspecialchars($dir . $folder, ENT_QUOTES)
+                );
             }
         }
     }

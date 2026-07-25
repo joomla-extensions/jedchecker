@@ -157,7 +157,7 @@ class SecurityRule extends AbstractRule
 
         if ($chars !== false) {
             $char        = $chars[0];
-            $displayChar = ($char === ' ') ? 'space' : $char;
+            $displayChar = ($char === ' ') ? 'space' : htmlspecialchars($char, ENT_QUOTES);
             $this->report->addNotice(
                 $file,
                 Text::sprintf('COM_JEDCHECKER_ERROR_SECURITY_BAD_FILENAME_CHAR', $displayChar)
@@ -215,7 +215,13 @@ class SecurityRule extends AbstractRule
         }
 
         if (preg_match($this->obfuscatedRegex, $content, $matches)) {
-            $this->report->addError($file, Text::sprintf('COM_JEDCHECKER_ERROR_SECURITY_OBFUSCATED_CODE', $matches[0]));
+            $this->report->addError(
+                $file,
+                Text::sprintf(
+                    'COM_JEDCHECKER_ERROR_SECURITY_OBFUSCATED_CODE',
+                    htmlspecialchars($matches[0], ENT_QUOTES)
+                )
+            );
         }
     }
 

@@ -147,7 +147,10 @@ class XmlManifestRule extends AbstractRule
         $type = (string)$xml['type'];
 
         if (! \in_array($type, $this->joomlaTypes, true)) {
-            $this->report->addError($file, Text::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_TYPE', $type));
+            $this->report->addError(
+                $file,
+                Text::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_TYPE', htmlspecialchars($type, ENT_QUOTES))
+            );
 
             return true;
         }
@@ -180,7 +183,7 @@ class XmlManifestRule extends AbstractRule
                             'COM_JEDCHECKER_MANIFEST_UNKNOWN_ATTRIBUTE_VALUE',
                             $xml->getName(),
                             'client',
-                            $client
+                            htmlspecialchars($client, ENT_QUOTES)
                         )
                     );
                 }
@@ -286,7 +289,7 @@ class XmlManifestRule extends AbstractRule
                                         'COM_JEDCHECKER_MANIFEST_UNKNOWN_ATTRIBUTE_VALUE',
                                         $item->getName(),
                                         'client',
-                                        $client
+                                        htmlspecialchars($client, ENT_QUOTES)
                                     )
                                 );
                             }
@@ -300,7 +303,10 @@ class XmlManifestRule extends AbstractRule
                         default:
                             $this->report->addError(
                                 $file,
-                                Text::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_TYPE', $item['type'])
+                                Text::sprintf(
+                                    'COM_JEDCHECKER_MANIFEST_UNKNOWN_TYPE',
+                                    htmlspecialchars((string)$item['type'], ENT_QUOTES)
+                                )
                             );
                     }
                 }
