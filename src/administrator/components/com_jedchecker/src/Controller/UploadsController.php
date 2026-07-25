@@ -123,7 +123,16 @@ class UploadsController extends BaseController
 
         $this->protectDirectory($archivePath);
 
-        $file['filepath'] = $archivePath . '/' . strtolower($file['name']);
+        $filename = basename($file['name']);
+
+        if (! preg_match('/\.(?:zip|tar|tgz|tbz2|gz|gzip|bz2|bzip2)$/i', $filename)) {
+            $app->enqueueMessage(Text::_('COM_JEDCHECKER_ERROR_UNABLE_TO_UPLOAD_FILE'), 'error');
+            $app->redirect('index.php?option=com_jedchecker&view=uploads');
+
+            return false;
+        }
+
+        $file['filepath'] = $archivePath . '/' . strtolower($filename);
 
         if (! File::upload($file['tmp_name'], $file['filepath'], false)) {
             $app->enqueueMessage(Text::_('COM_JEDCHECKER_ERROR_UNABLE_TO_UPLOAD_FILE'), 'error');
