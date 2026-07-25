@@ -13,14 +13,14 @@
 
 namespace Joomla\Component\Jedchecker\Administrator\Rule\Rules;
 
-// phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
-// phpcs:enable PSR1.Files.SideEffects
-
 use Joomla\CMS\Language\Text;
 use Joomla\Component\Jedchecker\Administrator\Helper\CheckerHelper;
 use Joomla\Component\Jedchecker\Administrator\Rule\AbstractRule;
 use Joomla\Filesystem\Folder;
+
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 /**
  * JamssRule attempts to identify deprecated code, unsafe code, leftover stuff.

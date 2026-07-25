@@ -12,11 +12,11 @@
 
 namespace Joomla\Component\Jedchecker\Administrator\Controller;
 
+use Joomla\CMS\MVC\Controller\BaseController;
+
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
-
-use Joomla\CMS\MVC\Controller\BaseController;
 
 /**
  * DisplayController routes to the default uploads view.

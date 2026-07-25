@@ -10,15 +10,15 @@
 
 namespace Joomla\Component\Jedchecker\Administrator\Api;
 
-// phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
-// phpcs:enable PSR1.Files.SideEffects
-
 use Joomla\Archive\Archive;
 use Joomla\Component\Jedchecker\Administrator\Rule\RuleDiscovery;
 use Joomla\Filesystem\File;
 use Joomla\Filesystem\Folder;
 use Joomla\Filesystem\Path;
+
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 /**
  * CheckerApi provides a static entry point to unpack a ZIP and run all JEDChecker rules.

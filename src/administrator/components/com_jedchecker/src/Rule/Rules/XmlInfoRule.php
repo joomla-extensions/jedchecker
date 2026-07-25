@@ -13,15 +13,15 @@
 
 namespace Joomla\Component\Jedchecker\Administrator\Rule\Rules;
 
-// phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
-// phpcs:enable PSR1.Files.SideEffects
-
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\Component\Jedchecker\Administrator\Helper\CheckerHelper;
 use Joomla\Component\Jedchecker\Administrator\Report\Report;
 use Joomla\Component\Jedchecker\Administrator\Rule\AbstractRule;
+
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 /**
  * XmlInfoRule searches all XML manifests for specific tags.

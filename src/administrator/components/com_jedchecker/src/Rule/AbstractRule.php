@@ -13,12 +13,12 @@
 
 namespace Joomla\Component\Jedchecker\Administrator\Rule;
 
+use Joomla\Component\Jedchecker\Administrator\Report\Report;
+use Joomla\Registry\Registry;
+
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
-
-use Joomla\Component\Jedchecker\Administrator\Report\Report;
-use Joomla\Registry\Registry;
 
 /**
  * AbstractRule is the base class for all JEDChecker rules.

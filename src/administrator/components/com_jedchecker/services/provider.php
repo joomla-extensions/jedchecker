@@ -8,10 +8,6 @@
  * @license    GNU General Public Licence version 2 or later; see LICENCE.txt
  */
 
-// phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
-// phpcs:enable PSR1.Files.SideEffects
-
 use Joomla\CMS\Dispatcher\ComponentDispatcherFactoryInterface;
 use Joomla\CMS\Extension\ComponentInterface;
 use Joomla\CMS\Extension\MVCComponent;
@@ -20,6 +16,10 @@ use Joomla\CMS\Extension\Service\Provider\MVCFactory as MVCFactoryServiceProvide
 use Joomla\CMS\MVC\Factory\MVCFactoryInterface;
 use Joomla\DI\Container;
 use Joomla\DI\ServiceProviderInterface;
+
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 return new class () implements ServiceProviderInterface {
     public function register(Container $container): void

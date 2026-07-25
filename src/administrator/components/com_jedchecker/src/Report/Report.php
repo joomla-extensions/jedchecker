@@ -13,11 +13,11 @@
 
 namespace Joomla\Component\Jedchecker\Administrator\Report;
 
+use Joomla\CMS\Language\Text;
+
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
-
-use Joomla\CMS\Language\Text;
 
 /**
  * Report collects JEDChecker rule results and renders them as HTML or structured data.

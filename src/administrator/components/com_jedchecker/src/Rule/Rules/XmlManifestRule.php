@@ -10,14 +10,14 @@
 
 namespace Joomla\Component\Jedchecker\Administrator\Rule\Rules;
 
-// phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
-// phpcs:enable PSR1.Files.SideEffects
-
 use Joomla\CMS\Language\Text;
 use Joomla\Component\Jedchecker\Administrator\Helper\CheckerHelper;
 use Joomla\Component\Jedchecker\Administrator\Rule\AbstractRule;
 use SimpleXMLElement;
+
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 /**
  * XmlManifestRule validates all XML manifests against DTD-like rules.

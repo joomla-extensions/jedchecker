@@ -12,10 +12,6 @@
 
 namespace Joomla\Component\Jedchecker\Administrator\Controller;
 
-// phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
-// phpcs:enable PSR1.Files.SideEffects
-
 use Joomla\Archive\Archive;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
@@ -23,6 +19,10 @@ use Joomla\CMS\Session\Session;
 use Joomla\Component\Jedchecker\Administrator\Model\UploadsModel;
 use Joomla\Filesystem\File;
 use Joomla\Filesystem\Folder;
+
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 /**
  * UploadsController handles file upload, extraction, rule execution, and cleanup.

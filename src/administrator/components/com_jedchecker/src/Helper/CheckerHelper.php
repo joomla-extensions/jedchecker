@@ -10,12 +10,12 @@
 
 namespace Joomla\Component\Jedchecker\Administrator\Helper;
 
+use Joomla\CMS\Filter\InputFilter;
+use Joomla\Filesystem\Folder;
+
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
-
-use Joomla\CMS\Filter\InputFilter;
-use Joomla\Filesystem\Folder;
 
 /**
  * CheckerHelper provides static utility methods used across JEDChecker rules.
