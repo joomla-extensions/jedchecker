@@ -40,6 +40,7 @@ class UploadsController extends BaseController
      */
     public function check(): void
     {
+        Session::checkToken('get') || $this->app->close(403);
         $this->app->getIdentity()->authorise('core.manage', 'com_jedchecker') || $this->app->close(403);
 
         $shortName = $this->app->getInput()->get('rule', '', 'string');
@@ -61,6 +62,7 @@ class UploadsController extends BaseController
      */
     public function clear(): void
     {
+        Session::checkToken() || $this->app->close(403);
         $this->app->getIdentity()->authorise('core.manage', 'com_jedchecker') || $this->app->close(403);
 
         /** @var UploadsModel $model */

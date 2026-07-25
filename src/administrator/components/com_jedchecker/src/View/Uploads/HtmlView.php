@@ -14,6 +14,7 @@ namespace Joomla\Component\Jedchecker\Administrator\View\Uploads;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
+use Joomla\CMS\Session\Session;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Uri\Uri;
 use Joomla\Component\Jedchecker\Administrator\Rule\RuleDiscovery;
@@ -46,8 +47,9 @@ class HtmlView extends BaseHtmlView
 
         $this->ruleClasses = RuleDiscovery::getRules();
 
-        $this->jsOptions['url']   = Uri::base();
-        $this->jsOptions['rules'] = $this->getRuleShortNames();
+        $this->jsOptions['url']       = Uri::base();
+        $this->jsOptions['rules']     = $this->getRuleShortNames();
+        $this->jsOptions['csrfToken'] = Session::getFormToken();
 
         $this->setToolbar();
 

@@ -26,7 +26,8 @@
   }
 
   function check(url, rule) {
-    fetch(`${url}index.php?option=com_jedchecker&task=uploads.check&format=raw&rule=${rule}`)
+    const csrfToken = encodeURIComponent(jedOptions['csrfToken']);
+    fetch(`${url}index.php?option=com_jedchecker&task=uploads.check&format=raw&rule=${rule}&${csrfToken}=1`)
       .then(response => {
         if (!response.ok) {
           throw new Error(`${response.status} ${response.statusCode}`);
