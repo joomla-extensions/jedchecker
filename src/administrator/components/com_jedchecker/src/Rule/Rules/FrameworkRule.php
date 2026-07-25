@@ -350,6 +350,8 @@ class FrameworkRule extends AbstractRule
                             $this->report->addNotice($file, $error_message, $line_number);
                             break;
                     }
+
+                    $error_count++;
                 }
 
                 if ($error_count > 100) {
