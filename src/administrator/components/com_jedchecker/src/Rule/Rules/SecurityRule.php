@@ -97,7 +97,7 @@ class SecurityRule extends AbstractRule
 
         $this->buildObfuscatedRegex();
 
-        $files = Folder::files($this->basedir, ' . ', true, true);
+        $files = Folder::files($this->basedir, '.', true, true);
 
         foreach ($files as $file) {
             $this->checkBadFilename($file);
