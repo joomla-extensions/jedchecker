@@ -11,6 +11,7 @@
 namespace Joomla\Component\Jedchecker\Administrator\Api;
 
 use Joomla\Archive\Archive;
+use Joomla\Component\Jedchecker\Administrator\Helper\CheckerHelper;
 use Joomla\Component\Jedchecker\Administrator\Rule\RuleDiscovery;
 use Joomla\Filesystem\File;
 use Joomla\Filesystem\Folder;
@@ -27,6 +28,15 @@ use Joomla\Filesystem\Path;
  */
 class CheckerApi
 {
+    /** Maximum nesting depth of archives-within-archives to extract. */
+    private const MAX_EXTRACTION_DEPTH = 5;
+
+    /** Maximum number of nested archives to extract per check. */
+    private const MAX_NESTED_ARCHIVES = 200;
+
+    /** Maximum cumulative decompressed size (bytes) to extract per check. */
+    private const MAX_EXTRACTED_BYTES = 500 * 1024 * 1024;
+
     /**
      * Run all JEDChecker rules against an extension zip file.
      *
@@ -178,19 +188,35 @@ class CheckerApi
     /**
      * extractNested
      *
-     * Recursive extraction of nested archives within a directory.
+     * Recursive extraction of nested archives within a directory, bounded by depth, archive
+     * count, and cumulative decompressed size, since the archive contents are fully
+     * attacker-controlled and an unbounded recursion is a decompression-bomb DoS vector.
      *
-     * @param   string  $dir  Folder to search in
+     * @param   string          $dir    Folder to search in
+     * @param   int             $depth  Current nesting depth (internal use on recursive calls)
+     * @param   \stdClass|null  $state  Shared counters across the recursive call tree (internal use)
      *
      * @return  void
      *
      * @since  3.0.0
      */
-    protected static function extractNested(string $dir): void
+    protected static function extractNested(string $dir, int $depth = 0, ?\stdClass $state = null): void
     {
+        if ($state === null) {
+            $state = (object)['archives' => 0, 'bytes' => CheckerHelper::directorySize($dir)];
+        }
+
+        if ($depth >= self::MAX_EXTRACTION_DEPTH || $state->bytes >= self::MAX_EXTRACTED_BYTES) {
+            return;
+        }
+
         $iterator = new \RecursiveDirectoryIterator($dir);
 
         foreach ($iterator as $file) {
+            if ($state->archives >= self::MAX_NESTED_ARCHIVES || $state->bytes >= self::MAX_EXTRACTED_BYTES) {
+                return;
+            }
+
             if ($file->isFile()) {
                 if (
                     preg_match(
@@ -210,11 +236,14 @@ class CheckerApi
 
                     if ($result) {
                         File::delete($file->getPathname());
-                        self::extractNested($target);
+                        $state->archives++;
+                        $state->bytes += CheckerHelper::directorySize($target);
+
+                        self::extractNested($target, $depth + 1, $state);
                     }
                 }
             } elseif (! $iterator->isDot()) {
-                self::extractNested($file->getPathname());
+                self::extractNested($file->getPathname(), $depth, $state);
             }
         }
     }

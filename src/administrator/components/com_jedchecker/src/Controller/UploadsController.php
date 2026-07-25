@@ -16,6 +16,7 @@ use Joomla\Archive\Archive;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Session\Session;
+use Joomla\Component\Jedchecker\Administrator\Helper\CheckerHelper;
 use Joomla\Component\Jedchecker\Administrator\Model\UploadsModel;
 use Joomla\Filesystem\File;
 use Joomla\Filesystem\Folder;
@@ -31,6 +32,15 @@ use Joomla\Filesystem\Folder;
  */
 class UploadsController extends BaseController
 {
+    /** Maximum nesting depth of archives-within-archives to extract. */
+    private const MAX_EXTRACTION_DEPTH = 5;
+
+    /** Maximum number of nested archives to extract per upload. */
+    private const MAX_NESTED_ARCHIVES = 200;
+
+    /** Maximum cumulative decompressed size (bytes) to extract per upload. */
+    private const MAX_EXTRACTED_BYTES = 500 * 1024 * 1024;
+
     /**
      * Run a single rule against all unzipped folders and return HTML as JSON.
      *
@@ -184,19 +194,35 @@ class UploadsController extends BaseController
     }
 
     /**
-     * Recursively extract nested archives.
+     * Recursively extract nested archives, bounded by depth, archive count, and cumulative
+     * decompressed size, since the archive contents are fully attacker-controlled and an
+     * unbounded recursion is a decompression-bomb denial-of-service vector.
      *
-     * @param   string  $start  Directory to start from
+     * @param   string          $start  Directory to start from
+     * @param   int             $depth  Current nesting depth (internal use on recursive calls)
+     * @param   \stdClass|null  $state  Shared counters across the recursive call tree (internal use)
      *
      * @return  void
      *
      * @since   3.0.0
      */
-    public function unzipAll(string $start): void
+    public function unzipAll(string $start, int $depth = 0, ?\stdClass $state = null): void
     {
+        if ($state === null) {
+            $state = (object)['archives' => 0, 'bytes' => CheckerHelper::directorySize($start)];
+        }
+
+        if ($depth >= self::MAX_EXTRACTION_DEPTH || $state->bytes >= self::MAX_EXTRACTED_BYTES) {
+            return;
+        }
+
         $iterator = new \RecursiveDirectoryIterator($start);
 
         foreach ($iterator as $file) {
+            if ($state->archives >= self::MAX_NESTED_ARCHIVES || $state->bytes >= self::MAX_EXTRACTED_BYTES) {
+                return;
+            }
+
             if ($file->isFile()) {
                 if (
                     preg_match(
@@ -216,11 +242,14 @@ class UploadsController extends BaseController
 
                     if ($result) {
                         File::delete($file->getPathname());
-                        $this->unzipAll($unzip);
+                        $state->archives++;
+                        $state->bytes += CheckerHelper::directorySize($unzip);
+
+                        $this->unzipAll($unzip, $depth + 1, $state);
                     }
                 }
             } elseif (! $iterator->isDot()) {
-                $this->unzipAll($file->getPathname());
+                $this->unzipAll($file->getPathname(), $depth, $state);
             }
         }
     }

@@ -272,6 +272,38 @@ abstract class CheckerHelper
     }
 
     /**
+     * directorySize
+     *
+     * Returns the total size in bytes of all files under a path (recursively), or the size of
+     * a single file. Used to bound decompression-bomb risk when extracting untrusted archives.
+     *
+     * @param   string  $path
+     *
+     * @return int
+     *
+     * @since  3.0.0
+     */
+    public static function directorySize(string $path): int
+    {
+        if (! is_dir($path)) {
+            return is_file($path) ? (int)filesize($path) : 0;
+        }
+
+        $size     = 0;
+        $iterator = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($path, \FilesystemIterator::SKIP_DOTS)
+        );
+
+        foreach ($iterator as $file) {
+            if ($file->isFile()) {
+                $size += $file->getSize();
+            }
+        }
+
+        return $size;
+    }
+
+    /**
      * findManifests
      *
      * Find and return XML manifest files within a given directory.
