@@ -40,6 +40,8 @@ class UploadsController extends BaseController
      */
     public function check(): void
     {
+        $this->app->getIdentity()->authorise('core.manage', 'com_jedchecker') || $this->app->close(403);
+
         $shortName = $this->app->getInput()->get('rule', '', 'string');
 
         /** @var UploadsModel $model */
@@ -59,6 +61,8 @@ class UploadsController extends BaseController
      */
     public function clear(): void
     {
+        $this->app->getIdentity()->authorise('core.manage', 'com_jedchecker') || $this->app->close(403);
+
         /** @var UploadsModel $model */
         $model = $this->getModel('Uploads', 'Administrator');
 
@@ -82,6 +86,7 @@ class UploadsController extends BaseController
         $input = $app->getInput();
 
         Session::checkToken() || $app->close(403);
+        $app->getIdentity()->authorise('core.manage', 'com_jedchecker') || $app->close(403);
 
         /** @var UploadsModel $model */
         $model = $this->getModel('Uploads', 'Administrator');
@@ -133,6 +138,7 @@ class UploadsController extends BaseController
         $app = $this->app;
 
         Session::checkToken() || $app->close(403);
+        $app->getIdentity()->authorise('core.manage', 'com_jedchecker') || $app->close(403);
 
         /** @var UploadsModel $model */
         $model        = $this->getModel('Uploads', 'Administrator');
