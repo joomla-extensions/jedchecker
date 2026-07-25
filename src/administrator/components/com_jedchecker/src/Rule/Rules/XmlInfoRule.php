@@ -339,7 +339,7 @@ class XmlInfoRule extends AbstractRule
         $lookupLangDirs   = array_unique($lookupLangDirs);
 
         $lookupLangFiles = [
-                $langTag . ' . ' . $extension . '.sys.ini',
+                $langTag . '.' . $extension . '.sys.ini',
                 $extension . '.sys.ini',
         ];
 
