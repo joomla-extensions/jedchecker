@@ -22,11 +22,11 @@ use Joomla\Component\Jedchecker\Administrator\Rule\AbstractRule;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
- * XmlLicenceRule searches all XML manifests for a valid licence tag.
+ * XmlLicenseRule searches all XML manifests for a valid licence tag.
  *
  * @since  3.0.0
  */
-class XmlLicenceRule extends AbstractRule
+class XmlLicenseRule extends AbstractRule
 {
     /**
      * Rule ordering.
