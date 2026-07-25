@@ -104,6 +104,8 @@ class UploadsController extends BaseController
             }
         }
 
+        $this->protectDirectory($archivePath);
+
         $file['filepath'] = $archivePath . '/' . strtolower($file['name']);
 
         if (! File::upload($file['tmp_name'], $file['filepath'], false)) {
@@ -163,6 +165,7 @@ class UploadsController extends BaseController
 
         if ($result) {
             $this->unzipAll($unzippedPath . '/' . $files[0]);
+            $this->protectDirectory($unzippedPath);
             $message = 'COM_JEDCHECKER_UNZIP_SUCCESS';
             $app->enqueueMessage(Text::_($message));
         } else {
@@ -212,5 +215,75 @@ class UploadsController extends BaseController
                 $this->unzipAll($file->getPathname());
             }
         }
+    }
+
+    /**
+     * Prevent execution of any extracted/uploaded file if this directory (or a subdirectory of it)
+     * is ever reachable over the web, e.g. because Joomla's temp_path was left at its default,
+     * inside the site's webroot. The package contents are fully attacker-controlled, so any
+     * .htaccess/web.config bundled inside the archive is removed first to stop it overriding
+     * the rules written here.
+     *
+     * @param   string  $path  Directory to protect
+     *
+     * @return  void
+     *
+     * @since   3.0.0
+     */
+    protected function protectDirectory(string $path): void
+    {
+        if (! is_dir($path)) {
+            return;
+        }
+
+        foreach (Folder::files($path, '^(\.htaccess|web\.config)$', true, true, [], []) as $existing) {
+            File::delete($existing);
+        }
+
+        File::write(
+            $path . '/.htaccess',
+            "<FilesMatch \"\\.(php[0-9]*|phtml|pl|py|jsp|asp|aspx|sh|cgi|exe|dll|so)\$\">\n"
+            . "    <IfModule mod_authz_core.c>\n"
+            . "        Require all denied\n"
+            . "    </IfModule>\n"
+            . "    <IfModule !mod_authz_core.c>\n"
+            . "        Order allow,deny\n"
+            . "        Deny from all\n"
+            . "    </IfModule>\n"
+            . "</FilesMatch>\n"
+            . "<IfModule mod_php.c>\n"
+            . "    php_flag engine off\n"
+            . "</IfModule>\n"
+            . "<IfModule mod_php7.c>\n"
+            . "    php_flag engine off\n"
+            . "</IfModule>\n"
+            . "<IfModule mod_php8.c>\n"
+            . "    php_flag engine off\n"
+            . "</IfModule>\n"
+        );
+
+        File::write(
+            $path . '/web.config',
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+            . "<configuration>\n"
+            . "    <system.webServer>\n"
+            . "        <handlers>\n"
+            . "            <clear />\n"
+            . "        </handlers>\n"
+            . "        <security>\n"
+            . "            <requestFiltering>\n"
+            . "                <fileExtensions>\n"
+            . "                    <add fileExtension=\".php\" allowed=\"false\" />\n"
+            . "                    <add fileExtension=\".phtml\" allowed=\"false\" />\n"
+            . "                    <add fileExtension=\".asp\" allowed=\"false\" />\n"
+            . "                    <add fileExtension=\".aspx\" allowed=\"false\" />\n"
+            . "                    <add fileExtension=\".exe\" allowed=\"false\" />\n"
+            . "                    <add fileExtension=\".dll\" allowed=\"false\" />\n"
+            . "                </fileExtensions>\n"
+            . "            </requestFiltering>\n"
+            . "        </security>\n"
+            . "    </system.webServer>\n"
+            . "</configuration>\n"
+        );
     }
 }
