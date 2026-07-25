@@ -10,16 +10,16 @@
  * @license    GNU General Public Licence version 2 or later; see LICENCE.txt
  */
 
-// phpcs:disable PSR1.Files.SideEffects
-\defined('_JEXEC') or die;
-// phpcs:enable PSR1.Files.SideEffects
-
 use Joomla\CMS\Factory;
 use Joomla\CMS\Installer\Adapter\ComponentAdapter;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Log\Log;
 use Joomla\Filesystem\File;
 use Joomla\Filesystem\Folder;
+
+// phpcs:disable PSR1.Files.SideEffects
+\defined('_JEXEC') or die;
+// phpcs:enable PSR1.Files.SideEffects
 
 /**
  * Class Com_JedcheckerInstallerScript
