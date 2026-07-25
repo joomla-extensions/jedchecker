@@ -353,7 +353,7 @@ class JamssRule extends AbstractRule
         $total_results  = 0;
         $jamssFileNames = $this->jamssFileNames;
 
-        if (in_array(pathinfo($path, PATHINFO_EXTENSION), $ext) && filesize($path)) {
+        if (\in_array(pathinfo($path, PATHINFO_EXTENSION), $ext) && filesize($path)) {
             if ($malic_file_descr = array_search(pathinfo($path, PATHINFO_BASENAME), $jamssFileNames)) {
                 $this->jamssWarning(
                     $path,
@@ -380,24 +380,24 @@ class JamssRule extends AbstractRule
                         $content,
                         CheckerHelper::CLEAN_COMMENTS | CheckerHelper::CLEAN_HTML
                     ),
-                    'code'  => CheckerHelper::cleanPhpCode(
+                    'code' => CheckerHelper::cleanPhpCode(
                         $content,
                         CheckerHelper::CLEAN_COMMENTS | CheckerHelper::CLEAN_HTML | CheckerHelper::CLEAN_STRINGS
                     ),
             ];
 
             foreach ($patterns as $pattern) {
-                $scope          = (is_array($pattern) && isset($pattern[4])) ? $pattern[4] : 'clean';
+                $scope          = (\is_array($pattern) && isset($pattern[4])) ? $pattern[4] : 'clean';
                 $scoped_content = $scopes[$scope];
 
-                if (is_array($pattern)) {
+                if (\is_array($pattern)) {
                     preg_match_all('#' . $pattern[0] . '#isS', $scoped_content, $found, PREG_OFFSET_CAPTURE);
                 } else {
                     preg_match_all('#' . $pattern . '#isS', $scoped_content, $found, PREG_OFFSET_CAPTURE);
                 }
 
                 $all_results   = $found[0];
-                $results_count = count($all_results);
+                $results_count = \count($all_results);
                 $total_results += $results_count;
                 $first_line    = 0;
                 $first_code    = '';
@@ -405,7 +405,7 @@ class JamssRule extends AbstractRule
                 if (! empty($all_results)) {
                     foreach ($all_results as $match) {
                         $offset = $match[1];
-                        $start  = strrpos($scoped_content, "\n", $offset - strlen($scoped_content));
+                        $start  = strrpos($scoped_content, "\n", $offset - \strlen($scoped_content));
 
                         if ($start === false) {
                             $start = 0;
@@ -414,7 +414,7 @@ class JamssRule extends AbstractRule
                         $end = strpos($scoped_content, "\n", $offset);
 
                         if ($end === false) {
-                            $end = strlen($scoped_content);
+                            $end = \strlen($scoped_content);
                         }
 
                         $first_line = $this->calculateLineNumber($offset, $scoped_content);
@@ -422,7 +422,7 @@ class JamssRule extends AbstractRule
                         break;
                     }
 
-                    if (is_array($pattern)) {
+                    if (\is_array($pattern)) {
                         $this->jamssWarning(
                             $path,
                             Text::_('COM_JEDCHECKER_ERROR_JAMSS_PATTERN') . "#$pattern[2] - $pattern[1]",
@@ -461,7 +461,7 @@ class JamssRule extends AbstractRule
      */
     private function jamssWarning(string $path, string $title, mixed $info, string $code, int $line): void
     {
-        $info = ! empty($info) ? sprintf($this->params->get('info'), htmlentities($info, ENT_QUOTES)) : '';
+        $info = ! empty($info) ? \sprintf($this->params->get('info'), htmlentities($info, ENT_QUOTES)) : '';
         $this->report->addWarning($path, $info . $title, $line, $code);
     }
 

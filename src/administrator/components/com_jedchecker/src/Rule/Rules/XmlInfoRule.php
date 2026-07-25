@@ -22,8 +22,6 @@ use Joomla\CMS\Language\Text;
 use Joomla\Component\Jedchecker\Administrator\Helper\CheckerHelper;
 use Joomla\Component\Jedchecker\Administrator\Report\Report;
 use Joomla\Component\Jedchecker\Administrator\Rule\AbstractRule;
-use ReflectionMethod;
-use SimpleXMLElement;
 
 /**
  * XmlInfoRule searches all XML manifests for specific tags.
@@ -102,7 +100,7 @@ class XmlInfoRule extends AbstractRule
 
         $manifestFound = false;
 
-        if (count($files)) {
+        if (\count($files)) {
             $topLevelDepth = substr_count($files[0], '/');
 
             foreach ($files as $file) {
@@ -150,7 +148,7 @@ class XmlInfoRule extends AbstractRule
 
         $type = (string)$xml['type'];
 
-        if (! $this->loadExtensionLanguage($xml, dirname($file))) {
+        if (! $this->loadExtensionLanguage($xml, \dirname($file))) {
             $lang_file = CheckerHelper::getElementName($xml) . '.sys.ini';
 
             if ($type === 'plugin' && isset($xml['group']) && strpos($lang_file, 'plg_') !== 0) {
@@ -174,7 +172,7 @@ class XmlInfoRule extends AbstractRule
         $this->report->addInfo($file, implode('<br />', $info));
 
         if ($isTopLevel) {
-            if (! in_array($type, $this->joomlatypes, true)) {
+            if (! \in_array($type, $this->joomlatypes, true)) {
                 $this->report->addError($file, Text::sprintf('COM_JEDCHECKER_MANIFEST_TYPE_NOT_ACCEPTED', $type));
             }
 
@@ -232,7 +230,7 @@ class XmlInfoRule extends AbstractRule
                 $this->report->addError($file, Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_NON_ASCII', $extensionName));
             }
 
-            $nameLen = strlen($extensionName);
+            $nameLen = \strlen($extensionName);
 
             if ($nameLen > 80) {
                 $this->report->addError($file, Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_TOO_LONG', $extensionName));
@@ -267,8 +265,8 @@ class XmlInfoRule extends AbstractRule
             $group              = (string)$xml['group'];
 
             if (
-                    $extensionNameGroup !== $group && $extensionNameGroup !== str_replace('-', '', $group)
-                    && ! (isset($this->pluginsGroupMap[$extensionNameGroup]) && $this->pluginsGroupMap[$extensionNameGroup] === $group)
+                $extensionNameGroup !== $group && $extensionNameGroup !== str_replace('-', '', $group)
+                && ! (isset($this->pluginsGroupMap[$extensionNameGroup]) && $this->pluginsGroupMap[$extensionNameGroup] === $group)
             ) {
                 $this->report->addWarning(
                     $file,
@@ -285,7 +283,7 @@ class XmlInfoRule extends AbstractRule
      *
      * Loads and validates the language files for an extension.
      *
-     * @param   SimpleXMLElement  $xml
+     * @param   \SimpleXMLElement  $xml
      * @param   string            $rootDir
      * @param   string            $langTag
      *
@@ -294,7 +292,7 @@ class XmlInfoRule extends AbstractRule
      * @throws \ReflectionException
      *
      */
-    protected function loadExtensionLanguage(SimpleXMLElement $xml, string $rootDir, string $langTag = 'en-GB'): bool
+    protected function loadExtensionLanguage(\SimpleXMLElement $xml, string $rootDir, string $langTag = 'en-GB'): bool
     {
         $extension = CheckerHelper::getElementName($xml);
         $type      = (string)$xml['type'];
@@ -322,7 +320,7 @@ class XmlInfoRule extends AbstractRule
 
             foreach ($xml->administration->languages->language as $language) {
                 if (trim($language['tag']) === $langTag) {
-                    $lookupLangDirs[] = trim($folder . '/' . dirname($language), '/');
+                    $lookupLangDirs[] = trim($folder . '/' . \dirname($language), '/');
                 }
             }
         }
@@ -332,7 +330,7 @@ class XmlInfoRule extends AbstractRule
 
             foreach ($xml->languages->language as $language) {
                 if (trim($language['tag']) === $langTag) {
-                    $lookupLangDirs[] = trim($folder . '/' . dirname($language), '/');
+                    $lookupLangDirs[] = trim($folder . '/' . \dirname($language), '/');
                 }
             }
         }
@@ -350,7 +348,7 @@ class XmlInfoRule extends AbstractRule
                 $langSysFile = $rootDir . '/' . ($dir === '' ? '' : $dir . '/') . $file;
 
                 if (is_file($langSysFile)) {
-                    $loadLanguage = new ReflectionMethod($lang, 'loadLanguage');
+                    $loadLanguage = new \ReflectionMethod($lang, 'loadLanguage');
                     $loadLanguage->setAccessible(true);
                     $loadLanguage->invoke($lang, $langSysFile, $extension);
 

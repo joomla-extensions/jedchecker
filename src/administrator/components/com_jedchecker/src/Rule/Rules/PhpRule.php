@@ -18,7 +18,6 @@ use Joomla\CMS\Language\Text;
 use Joomla\Component\Jedchecker\Administrator\Helper\CheckerHelper;
 use Joomla\Component\Jedchecker\Administrator\Rule\AbstractRule;
 use Joomla\Filesystem\Folder;
-use stdClass;
 
 /**
  * PhpRule checks for PHP compatibility issues — deprecated and removed functions.
@@ -102,7 +101,7 @@ class PhpRule extends AbstractRule
     {
         $origContent = (array)file($file);
 
-        if (count($origContent) === 0) {
+        if (\count($origContent) === 0) {
             return false;
         }
 
@@ -175,7 +174,7 @@ class PhpRule extends AbstractRule
                         $testObject->group,
                         'deprecated'
                     ) === 0) ? 'COM_JEDCHECKER_ERROR_PHP_DEPRECATED' : 'COM_JEDCHECKER_ERROR_PHP_REMOVED';
-                    $error_message = sprintf(
+                    $error_message = \sprintf(
                         Text::_($langKey),
                         $testObject->version
                     ) . ':<pre>' . $highlightedLine . '</pre>';
@@ -229,12 +228,12 @@ class PhpRule extends AbstractRule
 
         $sections = json_decode($jsonContent, true);
 
-        if (! is_array($sections)) {
+        if (! \is_array($sections)) {
             return;
         }
 
         foreach ($sections as $sectionName => $patterns) {
-            $newTest        = new stdClass();
+            $newTest        = new \stdClass();
             $newTest->group = $sectionName;
             $newTest->kind  = (strpos($sectionName, 'removed') === 0) ? 'error' : 'warning';
             $newTest->tests = [];
@@ -246,7 +245,7 @@ class PhpRule extends AbstractRule
             }
 
             foreach ($patterns as $pattern => $replacement) {
-                $testObj              = new stdClass();
+                $testObj              = new \stdClass();
                 $testObj->test        = $pattern;
                 $testObj->regex       = $this->generateRegex($pattern);
                 $testObj->replacement = ($replacement !== '') ? $replacement : false;
@@ -277,7 +276,7 @@ class PhpRule extends AbstractRule
             $regex = '\b' . $regex;
         }
 
-        if (ctype_alpha($test[strlen($test) - 1])) {
+        if (ctype_alpha($test[\strlen($test) - 1])) {
             $regex .= '\b';
         }
 

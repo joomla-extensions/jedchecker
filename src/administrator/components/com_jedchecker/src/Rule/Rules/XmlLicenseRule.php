@@ -101,8 +101,8 @@ class XmlLicenceRule extends AbstractRule
         }
 
         if (
-                stripos($xml->licence, 'gpl') === false
-                && stripos($xml->licence, 'general public licence') === false
+            stripos($xml->licence, 'gpl') === false
+            && stripos($xml->licence, 'general public licence') === false
         ) {
             $this->report->addCompat($file, Text::_('COM_JEDCHECKER_ERROR_XML_LICENCE_NOT_GPL'));
 

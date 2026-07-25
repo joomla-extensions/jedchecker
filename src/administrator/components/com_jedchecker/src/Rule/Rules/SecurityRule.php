@@ -178,13 +178,13 @@ class SecurityRule extends AbstractRule
     {
         $extension = strtolower(pathinfo($file, PATHINFO_EXTENSION));
 
-        if (in_array($extension, $this->executableExts)) {
+        if (\in_array($extension, $this->executableExts)) {
             $this->report->addWarning($file, Text::_('COM_JEDCHECKER_ERROR_SECURITY_EXECUTABLE_FILE'));
 
             return;
         }
 
-        if (in_array($extension, $this->shellExts)) {
+        if (\in_array($extension, $this->shellExts)) {
             $this->report->addWarning($file, Text::_('COM_JEDCHECKER_ERROR_SECURITY_SHELL_SCRIPT'));
 
             return;
@@ -238,7 +238,7 @@ class SecurityRule extends AbstractRule
             $regex = '\b' . $regex;
         }
 
-        if (preg_match('/\w/', $pattern[strlen($pattern) - 1])) {
+        if (preg_match('/\w/', $pattern[\strlen($pattern) - 1])) {
             $regex .= '\b';
         }
 

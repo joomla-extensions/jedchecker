@@ -32,10 +32,10 @@ return new class () implements ServiceProviderInterface {
         $container->set(
             ComponentInterface::class,
             static function (Container $container): ComponentInterface {
-                    $component = new MVCComponent($container->get(ComponentDispatcherFactoryInterface::class));
-                    $component->setMVCFactory($container->get(MVCFactoryInterface::class));
+                $component = new MVCComponent($container->get(ComponentDispatcherFactoryInterface::class));
+                $component->setMVCFactory($container->get(MVCFactoryInterface::class));
 
-                    return $component;
+                return $component;
             }
         );
     }

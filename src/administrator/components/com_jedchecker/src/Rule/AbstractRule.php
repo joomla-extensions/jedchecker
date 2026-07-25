@@ -19,7 +19,6 @@ namespace Joomla\Component\Jedchecker\Administrator\Rule;
 
 use Joomla\Component\Jedchecker\Administrator\Report\Report;
 use Joomla\Registry\Registry;
-use ReflectionClass;
 
 /**
  * AbstractRule is the base class for all JEDChecker rules.
@@ -181,7 +180,7 @@ abstract class AbstractRule
      */
     protected function loadParams(): Registry
     {
-        $reflect   = new ReflectionClass($this);
+        $reflect   = new \ReflectionClass($this);
         $shortName = strtolower(preg_replace('/Rule$/', '', $reflect->getShortName()));
 
         $paramsFile = __DIR__ . '/Rules/data/' . $shortName . '.ini';
@@ -194,7 +193,7 @@ abstract class AbstractRule
             if ($data) {
                 $obj = (object)parse_ini_string($data);
 
-                if (is_object($obj)) {
+                if (\is_object($obj)) {
                     $params->loadObject($obj);
                 }
             }

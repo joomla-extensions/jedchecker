@@ -16,9 +16,7 @@ namespace Joomla\Component\Jedchecker\Administrator\Controller;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Exception;
 use Joomla\CMS\MVC\Controller\BaseController;
-use RuntimeException;
 
 /**
  * DisplayController routes to the default uploads view.
@@ -39,12 +37,12 @@ class DisplayController extends BaseController
      *
      * @return $this
      * @since  3.0.0
-     * @throws Exception
+     * @throws \Exception
      */
     public function display($cachable = false, $urlparams = []): static
     {
         if (! $this->app->getIdentity()->authorise('core.manage', 'com_jedchecker')) {
-            throw new RuntimeException($this->app->getLanguage()->_('JERROR_ALERTNOAUTHOR'), 403);
+            throw new \RuntimeException($this->app->getLanguage()->_('JERROR_ALERTNOAUTHOR'), 403);
         }
 
         return parent::display($cachable, $urlparams);

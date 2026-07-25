@@ -146,7 +146,7 @@ class XmlManifestRule extends AbstractRule
 
         $type = (string)$xml['type'];
 
-        if (! in_array($type, $this->joomlaTypes, true)) {
+        if (! \in_array($type, $this->joomlaTypes, true)) {
             $this->report->addError($file, Text::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_TYPE', $type));
 
             return true;
@@ -188,7 +188,7 @@ class XmlManifestRule extends AbstractRule
                 if ($type === 'module') {
                     $elements = $this->collectElements($xml->files, $type);
 
-                    if (count($elements) >= 2) {
+                    if (\count($elements) >= 2) {
                         $this->report->addWarning(
                             $file,
                             Text::sprintf('COM_JEDCHECKER_MANIFEST_MULTIPLE_ATTRIBUTES', 'module')
@@ -198,14 +198,14 @@ class XmlManifestRule extends AbstractRule
                     if (isset($xml->element)) {
                         $element = (string)$xml->element;
 
-                        if (count($elements) && $elements[0] !== $element) {
+                        if (\count($elements) && $elements[0] !== $element) {
                             $this->report->addWarning(
                                 $file,
                                 Text::_('COM_JEDCHECKER_MANIFEST_MODULE_ELEMENT_MISMATCH')
                             );
                         }
                     } else {
-                        if (count($elements) === 0) {
+                        if (\count($elements) === 0) {
                             $this->report->addError(
                                 $file,
                                 Text::sprintf('COM_JEDCHECKER_MANIFEST_MISSED_ELEMENT_ATTRIBUTE', 'module')
@@ -219,14 +219,14 @@ class XmlManifestRule extends AbstractRule
             case 'plugin':
                 $elements = $this->collectElements($xml->files, $type);
 
-                if (count($elements) >= 2) {
+                if (\count($elements) >= 2) {
                     $this->report->addWarning(
                         $file,
                         Text::sprintf('COM_JEDCHECKER_MANIFEST_MULTIPLE_ATTRIBUTES', 'plugin')
                     );
                 }
 
-                if (count($elements) === 0) {
+                if (\count($elements) === 0) {
                     $this->report->addError(
                         $file,
                         Text::sprintf('COM_JEDCHECKER_MANIFEST_MISSED_ELEMENT_ATTRIBUTE', 'plugin')
@@ -316,15 +316,15 @@ class XmlManifestRule extends AbstractRule
 
         $this->validateXml($xml, 'extension');
 
-        if (count($this->errors)) {
+        if (\count($this->errors)) {
             $this->report->addError($file, implode('<br />', $this->errors));
         }
 
-        if (count($this->warnings)) {
+        if (\count($this->warnings)) {
             $this->report->addWarning($file, implode('<br />', $this->warnings));
         }
 
-        if (count($this->notices)) {
+        if (\count($this->notices)) {
             $this->report->addNotice($file, implode('<br />', $this->notices));
         }
 
@@ -336,14 +336,14 @@ class XmlManifestRule extends AbstractRule
      *
      * Collects elements from a SimpleXMLElement node based on a specified type.
      *
-     * @param   SimpleXMLElement|null  $node
+     * @param   \SimpleXMLElement|null  $node
      * @param   string                 $type
      *
      * @return array
      *
      * @since  3.0.0
      */
-    protected function collectElements(?SimpleXMLElement $node, string $type): array
+    protected function collectElements(?\SimpleXMLElement $node, string $type): array
     {
         $elements = [];
 
@@ -363,18 +363,18 @@ class XmlManifestRule extends AbstractRule
      *
      * Validates XML node against a specified ruleset.
      *
-     * @param   SimpleXMLElement  $node
+     * @param   \SimpleXMLElement  $node
      * @param   string            $ruleset
      *
      * @since  3.0.0
      */
-    protected function validateXml(SimpleXMLElement $node, string $ruleset): void
+    protected function validateXml(\SimpleXMLElement $node, string $ruleset): void
     {
         $name = $node->getName();
 
         $DTDattributes = $this->DTDAttrRules[$ruleset] ?? [];
 
-        if (count($DTDattributes) === 0) {
+        if (\count($DTDattributes) === 0) {
             foreach ($node->attributes() as $attr) {
                 $this->notices[] = Text::sprintf(
                     'COM_JEDCHECKER_MANIFEST_UNKNOWN_ATTRIBUTE',
@@ -386,7 +386,7 @@ class XmlManifestRule extends AbstractRule
             foreach ($node->attributes() as $attr) {
                 $attrName = (string)$attr->getName();
 
-                if (! in_array($attrName, $DTDattributes, true)) {
+                if (! \in_array($attrName, $DTDattributes, true)) {
                     $this->notices[] = Text::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_ATTRIBUTE', $name, $attrName);
                 }
             }
@@ -395,7 +395,7 @@ class XmlManifestRule extends AbstractRule
         $DTDchildRules  = $this->DTDNodeRules[$ruleset] ?? [];
         $DTDchildToRule = [];
 
-        if (count($DTDchildRules) === 0) {
+        if (\count($DTDchildRules) === 0) {
             if ($node->count() > 0) {
                 $this->notices[] = Text::sprintf('COM_JEDCHECKER_MANIFEST_UNKNOWN_CHILDREN', $name);
             }
@@ -474,11 +474,11 @@ class XmlManifestRule extends AbstractRule
      *
      * Validates XML menu node for specific attributes.
      *
-     * @param   SimpleXMLElement  $node
+     * @param   \SimpleXMLElement  $node
      *
      * @since  3.0.0
      */
-    protected function validateXmlMenu(SimpleXMLElement $node): void
+    protected function validateXmlMenu(\SimpleXMLElement $node): void
     {
         if (isset($node['link'])) {
             $skipAttrs = ['act', 'controller', 'layout', 'sub', 'task', 'view'];
@@ -486,7 +486,7 @@ class XmlManifestRule extends AbstractRule
             foreach ($node->attributes() as $attr) {
                 $attrName = $attr->getName();
 
-                if (in_array($attrName, $skipAttrs, true)) {
+                if (\in_array($attrName, $skipAttrs, true)) {
                     $this->warnings[] = Text::sprintf('COM_JEDCHECKER_MANIFEST_MENU_UNUSED_ATTRIBUTE', $attrName);
                 }
             }

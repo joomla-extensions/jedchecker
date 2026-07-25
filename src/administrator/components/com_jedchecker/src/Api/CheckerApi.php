@@ -14,13 +14,11 @@ namespace Joomla\Component\Jedchecker\Administrator\Api;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Exception;
 use Joomla\Archive\Archive;
 use Joomla\Component\Jedchecker\Administrator\Rule\RuleDiscovery;
 use Joomla\Filesystem\File;
 use Joomla\Filesystem\Folder;
 use Joomla\Filesystem\Path;
-use RecursiveDirectoryIterator;
 
 /**
  * CheckerApi provides a static entry point to unpack a ZIP and run all JEDChecker rules.
@@ -147,7 +145,7 @@ class CheckerApi
                     'rules'   => $results,
                     'html'    => $combinedHtml,
             ];
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             self::cleanup($baseTmpPath);
 
             return [
@@ -190,7 +188,7 @@ class CheckerApi
      */
     protected static function extractNested(string $dir): void
     {
-        $iterator = new RecursiveDirectoryIterator($dir);
+        $iterator = new \RecursiveDirectoryIterator($dir);
 
         foreach ($iterator as $file) {
             if ($file->isFile()) {
@@ -206,7 +204,7 @@ class CheckerApi
                     try {
                         $archive = new Archive();
                         $result  = $archive->extract($file->getPathname(), $target);
-                    } catch (Exception $e) {
+                    } catch (\Exception $e) {
                         $result = false;
                     }
 

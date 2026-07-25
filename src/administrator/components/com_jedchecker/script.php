@@ -28,8 +28,8 @@ use Joomla\Filesystem\Folder;
  */
 class Com_JedcheckerInstallerScript
 {
-    protected $extension = 'com_jedchecker';
-    protected $min_php = '8.1.0';
+    protected $extension  = 'com_jedchecker';
+    protected $min_php    = '8.1.0';
     protected $min_joomla = '4.3.0';
     protected $parent;
 

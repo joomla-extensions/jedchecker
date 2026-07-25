@@ -20,7 +20,6 @@ use Joomla\CMS\Language\Text;
 use Joomla\Component\Jedchecker\Administrator\Helper\CheckerHelper;
 use Joomla\Component\Jedchecker\Administrator\Rule\AbstractRule;
 use Joomla\Filesystem\Folder;
-use stdClass;
 
 /**
  * FrameworkRule identifies deprecated code, unsafe code, and leftover development files.
@@ -111,13 +110,13 @@ class FrameworkRule extends AbstractRule
         $folders = Folder::folders($this->basedir, $regexLeftoverFolders, true, true, [], []);
         $files   = Folder::files($this->basedir, $regexLeftoverFolders, true, true, [], []);
 
-        if (is_array($folders)) {
+        if (\is_array($folders)) {
             foreach ($folders as $folder) {
                 $this->report->addWarning($folder, Text::_("COM_JEDCHECKER_ERROR_FRAMEWORK_LEFTOVER_FOLDER"));
             }
         }
 
-        if (is_array($files)) {
+        if (\is_array($files)) {
             foreach ($files as $file) {
                 $this->report->addWarning($file, Text::_("COM_JEDCHECKER_ERROR_FRAMEWORK_LEFTOVER_FILE"));
             }
@@ -152,7 +151,7 @@ class FrameworkRule extends AbstractRule
     {
         $origContent = (array)file($file);
 
-        if (count($origContent) === 0) {
+        if (\count($origContent) === 0) {
             return false;
         }
 
@@ -220,7 +219,7 @@ class FrameworkRule extends AbstractRule
 
             foreach ($testNames as $test) {
                 foreach (explode(",", $this->params->get($test . '_groups')) as $group) {
-                    $newTest        = new stdClass();
+                    $newTest        = new \stdClass();
                     $newTest->group = $group;
                     $newTest->kind  = $test;
                     $newTest->tests = [];
@@ -232,7 +231,7 @@ class FrameworkRule extends AbstractRule
                             $replacement = false;
                         }
 
-                        $testObj              = new stdClass();
+                        $testObj              = new \stdClass();
                         $testObj->test        = $match;
                         $testObj->regex       = $this->generateRegex($match);
                         $testObj->replacement = $replacement;
@@ -245,7 +244,7 @@ class FrameworkRule extends AbstractRule
                 }
             }
 
-            $newTest        = new stdClass();
+            $newTest        = new \stdClass();
             $newTest->group = 'legacy_aliases';
             $newTest->kind  = 'compatibility';
             $newTest->tests = [];
@@ -257,7 +256,7 @@ class FrameworkRule extends AbstractRule
 
             foreach ($legacyAliases as $version => $aliases) {
                 foreach ($aliases as $oldClass => $newClass) {
-                    $testObj              = new stdClass();
+                    $testObj              = new \stdClass();
                     $testObj->test        = $oldClass;
                     $testObj->regex       = $this->generateRegex($oldClass, true);
                     $testObj->replacement = $newClass;
@@ -321,7 +320,7 @@ class FrameworkRule extends AbstractRule
                             'deprecated'
                         ) === 0) ? 'COM_JEDCHECKER_ERROR_FRAMEWORK_DEPRECATED' :
                                 'COM_JEDCHECKER_ERROR_FRAMEWORK_REMOVED';
-                        $error_message = sprintf(
+                        $error_message = \sprintf(
                             Text::_($langKey),
                             $testObject->version
                         ) . ':<pre>' . $highlightedLine . '</pre>';
@@ -382,7 +381,7 @@ class FrameworkRule extends AbstractRule
             $regex = '\b' . $regex;
         }
 
-        if (ctype_alpha($test[strlen($test) - 1])) {
+        if (ctype_alpha($test[\strlen($test) - 1])) {
             $regex .= '\b';
         }
 
@@ -413,12 +412,12 @@ class FrameworkRule extends AbstractRule
 
         $sections = json_decode($jsonContent, true);
 
-        if (! is_array($sections)) {
+        if (! \is_array($sections)) {
             return;
         }
 
         foreach ($sections as $sectionName => $patterns) {
-            $newTest        = new stdClass();
+            $newTest        = new \stdClass();
             $newTest->group = $sectionName;
             $newTest->kind  = 'compatibility';
             $newTest->tests = [];
@@ -430,7 +429,7 @@ class FrameworkRule extends AbstractRule
             }
 
             foreach ($patterns as $pattern => $replacement) {
-                $testObj              = new stdClass();
+                $testObj              = new \stdClass();
                 $testObj->test        = $pattern;
                 $testObj->regex       = $this->generateRegex($pattern);
                 $testObj->replacement = ($replacement !== '') ? $replacement : false;

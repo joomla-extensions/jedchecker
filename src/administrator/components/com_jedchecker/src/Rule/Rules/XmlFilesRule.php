@@ -114,7 +114,7 @@ class XmlFilesRule extends AbstractRule
 
         $this->errors      = [];
         $this->warnings    = [];
-        $this->manifestDir = dirname($file) . '/';
+        $this->manifestDir = \dirname($file) . '/';
 
         $sitedir  = '';
         $admindir = '';
@@ -237,7 +237,7 @@ class XmlFilesRule extends AbstractRule
                         $folder   = ltrim($attrPath, '/');
 
                         if (strpos($folder, $extensionPath) === 0) {
-                            $folder = $this->manifestDir . $sitedir . substr($folder, strlen($extensionPath));
+                            $folder = $this->manifestDir . $sitedir . substr($folder, \strlen($extensionPath));
 
                             if (! is_dir($folder)) {
                                 $this->errors[] = Text::sprintf('COM_JEDCHECKER_XML_FILES_FOLDER_NOT_FOUND', $attrPath);
@@ -256,11 +256,11 @@ class XmlFilesRule extends AbstractRule
             }
         }
 
-        if (count($this->errors)) {
+        if (\count($this->errors)) {
             $this->report->addError($file, implode('<br />', $this->errors));
         }
 
-        if (count($this->warnings)) {
+        if (\count($this->warnings)) {
             $this->report->addWarning($file, implode('<br />', $this->warnings));
         }
 
@@ -272,13 +272,13 @@ class XmlFilesRule extends AbstractRule
      *
      * Checks if a SimpleXMLElement node has any child elements.
      *
-     * @param   SimpleXMLElement  $node
+     * @param   \SimpleXMLElement  $node
      *
      * @since  3.0.0
      */
-    protected function checkNotEmpty(SimpleXMLElement $node): void
+    protected function checkNotEmpty(\SimpleXMLElement $node): void
     {
-        if (count($node->children()) === 0) {
+        if (\count($node->children()) === 0) {
             $path = [];
 
             foreach ($node->xpath("ancestor-or-self::*") as $p) {
@@ -294,13 +294,13 @@ class XmlFilesRule extends AbstractRule
      *
      * Retrieves the source folder for a SimpleXMLElement node.
      *
-     * @param   SimpleXMLElement  $node
+     * @param   \SimpleXMLElement  $node
      *
      * @return string
      *
      * @since  3.0.0
      */
-    protected function getSourceFolder(SimpleXMLElement $node): string
+    protected function getSourceFolder(\SimpleXMLElement $node): string
     {
         if (! isset($node['folder'])) {
             return '';

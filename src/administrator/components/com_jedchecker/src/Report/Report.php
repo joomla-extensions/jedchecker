@@ -18,7 +18,6 @@ namespace Joomla\Component\Jedchecker\Administrator\Report;
 // phpcs:enable PSR1.Files.SideEffects
 
 use Joomla\CMS\Language\Text;
-use stdClass;
 
 /**
  * Report collects JEDChecker rule results and renders them as HTML or structured data.
@@ -27,12 +26,12 @@ use stdClass;
  */
 class Report
 {
-    public const LEVEL_ERROR = 'error';
+    public const LEVEL_ERROR   = 'error';
     public const LEVEL_WARNING = 'warning';
-    public const LEVEL_COMPAT = 'compatibility';
-    public const LEVEL_NOTICE = 'notice';
-    public const LEVEL_INFO = 'info';
-    public const LEVEL_PASSED = 'passed';
+    public const LEVEL_COMPAT  = 'compatibility';
+    public const LEVEL_NOTICE  = 'notice';
+    public const LEVEL_INFO    = 'info';
+    public const LEVEL_PASSED  = 'passed';
 
     /**
      * Report data.
@@ -390,7 +389,7 @@ class Report
         ];
 
         $this->data                 = [];
-        $this->data['count']        = new stdClass();
+        $this->data['count']        = new \stdClass();
         $this->data['count']->total = 0;
 
         foreach ($this->issueLangTitles as $key => $_dummy) {

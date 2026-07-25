@@ -206,13 +206,13 @@ class GplRule extends AbstractRule
             }
         }
 
-        if (count($titles) === 0) {
+        if (\count($titles) === 0) {
             return null;
         }
 
         $titles = implode('|', array_keys($titles));
 
-        if (count($ids)) {
+        if (\count($ids)) {
             $ids    = implode('|', array_keys($ids));
             $titles .=
                     '|\blicence\b.+?(?:' . $ids . ')' .

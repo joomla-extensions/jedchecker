@@ -16,7 +16,6 @@ namespace Joomla\Component\Jedchecker\Administrator\Helper;
 
 use Joomla\CMS\Filter\InputFilter;
 use Joomla\Filesystem\Folder;
-use SimpleXMLElement;
 
 /**
  * CheckerHelper provides static utility methods used across JEDChecker rules.
@@ -25,9 +24,9 @@ use SimpleXMLElement;
  */
 abstract class CheckerHelper
 {
-    public const CLEAN_HTML = 1;
+    public const CLEAN_HTML     = 1;
     public const CLEAN_COMMENTS = 2;
-    public const CLEAN_STRINGS = 4;
+    public const CLEAN_STRINGS  = 4;
 
     /**
      * cleanPhpCode
@@ -71,7 +70,7 @@ abstract class CheckerHelper
 
                     $code         = substr($match[0], 1, -1);
                     $cleanContent .= $q . ($isCleanStrings ? self::removeContent($code, $q === '"') : $code) . $q;
-                    $pos          += strlen($match[0]);
+                    $pos += \strlen($match[0]);
                     break;
 
                 case '`':
@@ -81,12 +80,12 @@ abstract class CheckerHelper
 
                     $code         = $match[0];
                     $cleanContent .= $code;
-                    $pos          += strlen($code);
+                    $pos += \strlen($code);
                     break;
 
                 case '<<<':
                     $cleanContent .= '<<<';
-                    $pos          += 3;
+                    $pos += 3;
 
                     if (! preg_match('/([a-z_]\w*|\'.*?\'|".*?")\n/iA', $content, $match, 0, $pos)) {
                         break;
@@ -94,7 +93,7 @@ abstract class CheckerHelper
 
                     $identifier   = $match[1];
                     $cleanContent .= $match[0];
-                    $pos          += strlen($match[0]);
+                    $pos += \strlen($match[0]);
 
                     $foundPos = strpos($content, $identifier, $pos);
 
@@ -107,12 +106,12 @@ abstract class CheckerHelper
                         $code,
                         $identifier[0] !== "'"
                     ) : $code) . $identifier;
-                    $pos          += strlen($code) + strlen($identifier);
+                    $pos += \strlen($code) + \strlen($identifier);
                     break;
 
                 case '/*':
                     $cleanContent .= '/*';
-                    $pos          += 2;
+                    $pos += 2;
 
                     $endPos = strpos($content, '*/', $pos);
 
@@ -144,7 +143,7 @@ abstract class CheckerHelper
 
                 case '?>':
                     $cleanContent .= '?>';
-                    $pos          += 2;
+                    $pos += 2;
 
                     if (! preg_match('/<\?(?:php\s|\s|=)/i', $content, $match, PREG_OFFSET_CAPTURE, $pos)) {
                         return $cleanContent . ($isCleanHtml ? '' : substr($content, $pos));
@@ -156,7 +155,7 @@ abstract class CheckerHelper
 
                     $phpPreamble  = $match[0][0];
                     $cleanContent .= $phpPreamble;
-                    $pos          = $foundPos + strlen($phpPreamble);
+                    $pos          = $foundPos + \strlen($phpPreamble);
                     break;
             }
         }
@@ -201,7 +200,7 @@ abstract class CheckerHelper
                 case '\\':
                     $pos++;
 
-                    if ($pos < strlen($content) && $content[$pos] === "\n") {
+                    if ($pos < \strlen($content) && $content[$pos] === "\n") {
                         $cleanContent .= "\\\n";
                     }
 
@@ -212,7 +211,7 @@ abstract class CheckerHelper
                 case '${':
                     $posx   = $pos + 2;
                     $braces = 1;
-                    $strlen = strlen($content);
+                    $strlen = \strlen($content);
 
                     while ($braces > 0 && $posx < $strlen) {
                         $q = $content[$posx];
@@ -232,7 +231,7 @@ abstract class CheckerHelper
                                     return $cleanContent . substr($content, $pos);
                                 }
 
-                                $posx += strlen($match[0]);
+                                $posx += \strlen($match[0]);
                                 break;
 
                             case '`':
@@ -240,7 +239,7 @@ abstract class CheckerHelper
                                     return $cleanContent . substr($content, $pos);
                                 }
 
-                                $posx += strlen($match[0]);
+                                $posx += \strlen($match[0]);
                                 break;
                         }
 
@@ -295,13 +294,13 @@ abstract class CheckerHelper
             if (! $xml || ($xml->getName() !== 'extension' && $xml->getName() !== 'install')) {
                 $excludeList[] = $file;
             } elseif ((string)$xml['type'] === 'component' && isset($xml->administration->files['folder'])) {
-                $excludeList[] = dirname($file) . '/' . trim($xml->administration->files['folder'], ' /') . '/' . basename(
+                $excludeList[] = \dirname($file) . '/' . trim($xml->administration->files['folder'], ' /') . '/' . basename(
                     $file
                 );
             } elseif ((string)$xml['type'] === 'file' && isset($xml->fileset->files)) {
                 foreach ($xml->fileset->files as $child) {
                     if (isset($child['folder'])) {
-                        $excludeList[] = dirname($file) . '/' . trim($child['folder'], ' /') . '/' . basename($file);
+                        $excludeList[] = \dirname($file) . '/' . trim($child['folder'], ' /') . '/' . basename($file);
                     }
                 }
             }
@@ -318,13 +317,13 @@ abstract class CheckerHelper
      *
      * Returns the element name from an XML manifest.
      *
-     * @param   SimpleXMLElement  $xml
+     * @param   \SimpleXMLElement  $xml
      *
      * @return string
      *
      * @since  3.0.0
      */
-    public static function getElementName(SimpleXMLElement $xml): string
+    public static function getElementName(\SimpleXMLElement $xml): string
     {
         $type = (string)$xml['type'];
 
@@ -372,7 +371,7 @@ abstract class CheckerHelper
                     $alias = $match[2];
                 } else {
                     $path  = explode('\\', $fqn);
-                    $alias = $path[count($path) - 1];
+                    $alias = $path[\count($path) - 1];
                 }
 
                 $content = str_replace($match[0], self::cleanLines($match[0]), $content);

@@ -84,7 +84,7 @@ class ErrorReportingRule extends AbstractRule
 
     protected function find(string $file): bool
     {
-        $content = file_get_contents($file);
+        $content     = file_get_contents($file);
         $origContent = CheckerHelper::splitLines($content);
 
         $content = CheckerHelper::cleanPhpCode(

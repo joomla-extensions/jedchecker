@@ -127,9 +127,9 @@ class LanguageRule extends AbstractRule
             return false;
         }
 
-        $nLines = count($lines);
-        $keys = [];
-        $mbExists = function_exists('mb_check_encoding');
+        $nLines   = \count($lines);
+        $keys     = [];
+        $mbExists = \function_exists('mb_check_encoding');
 
         for ($lineno = 0; $lineno < $nLines; $lineno++) {
             $startLineno = $lineno + 1;
@@ -155,7 +155,7 @@ class LanguageRule extends AbstractRule
             }
 
             [$key, $value] = explode('=', $line, 2);
-            $key = rtrim($key);
+            $key           = rtrim($key);
 
             if ($key === '') {
                 $this->report->addError($file, Text::_('COM_JEDCHECKER_LANG_KEY_EMPTY'), $startLineno, $line);
@@ -177,7 +177,7 @@ class LanguageRule extends AbstractRule
                 continue;
             }
 
-            if (in_array($key, ['null', 'yes', 'no', 'true', 'false', 'on', 'off', 'none'], true)) {
+            if (\in_array($key, ['null', 'yes', 'no', 'true', 'false', 'on', 'off', 'none'], true)) {
                 $this->report->addError($file, Text::_('COM_JEDCHECKER_LANG_KEY_RESERVED'), $startLineno, $line);
                 continue;
             }
@@ -268,7 +268,7 @@ class LanguageRule extends AbstractRule
         if (is_file($file)) {
             $data = @parse_ini_file($file);
 
-            if (is_array($data)) {
+            if (\is_array($data)) {
                 $this->langKeys = array_replace($this->langKeys, $data);
             }
         }

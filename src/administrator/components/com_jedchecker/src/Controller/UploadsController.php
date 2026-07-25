@@ -16,7 +16,6 @@ namespace Joomla\Component\Jedchecker\Administrator\Controller;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Exception;
 use Joomla\Archive\Archive;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
@@ -24,7 +23,6 @@ use Joomla\CMS\Session\Session;
 use Joomla\Component\Jedchecker\Administrator\Model\UploadsModel;
 use Joomla\Filesystem\File;
 use Joomla\Filesystem\Folder;
-use RecursiveDirectoryIterator;
 
 /**
  * UploadsController handles file upload, extraction, rule execution, and cleanup.
@@ -159,7 +157,7 @@ class UploadsController extends BaseController
         try {
             $archive = new Archive();
             $result  = $archive->extract($origin, $destination);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $result = false;
         }
 
@@ -185,7 +183,7 @@ class UploadsController extends BaseController
      */
     public function unzipAll(string $start): void
     {
-        $iterator = new RecursiveDirectoryIterator($start);
+        $iterator = new \RecursiveDirectoryIterator($start);
 
         foreach ($iterator as $file) {
             if ($file->isFile()) {
@@ -201,7 +199,7 @@ class UploadsController extends BaseController
                     try {
                         $archive = new Archive();
                         $result  = $archive->extract($file->getPathname(), $unzip);
-                    } catch (Exception $e) {
+                    } catch (\Exception $e) {
                         $result = false;
                     }
 

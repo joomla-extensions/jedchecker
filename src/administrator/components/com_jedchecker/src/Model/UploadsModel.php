@@ -16,7 +16,6 @@ namespace Joomla\Component\Jedchecker\Administrator\Model;
 \defined('_JEXEC') or die;
 // phpcs:enable PSR1.Files.SideEffects
 
-use Exception;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\BaseModel;
 use Joomla\Component\Jedchecker\Administrator\Rule\RuleDiscovery;
@@ -245,7 +244,7 @@ class UploadsModel extends BaseModel
      * @param $config
      *
      * @since 3.0.0
-     * @throws Exception
+     * @throws \Exception
      */
     public function __construct($config = [])
     {

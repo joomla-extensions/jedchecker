@@ -27,19 +27,19 @@ use Joomla\Component\Jedchecker\Administrator\Rule\AbstractRule;
  */
 class JexecRule extends AbstractRule
 {
- /**
-     * The formal ID of this rule. For example: SE1.
-     *
-     * @var string
-     * @since 3.0.0
-     */
+    /**
+        * The formal ID of this rule. For example: SE1.
+        *
+        * @var string
+        * @since 3.0.0
+        */
     protected string $id = 'PH2';
-/**
-     * The title or caption of this rule.
-     *
-     * @var string
-     * @since 3.0.0
-     */
+    /**
+         * The title or caption of this rule.
+         *
+         * @var string
+         * @since 3.0.0
+         */
     protected string $title = 'COM_JEDCHECKER_RULE_PH2';
 
     /**
@@ -49,12 +49,12 @@ class JexecRule extends AbstractRule
      * @since 3.0.0
      */
     protected string $description = 'COM_JEDCHECKER_RULE_PH2_DESC';
- /**
-     * Rule ordering.
-     *
-     * @var integer
-     * @since 3.0.0
-     */
+    /**
+        * Rule ordering.
+        *
+        * @var integer
+        * @since 3.0.0
+        */
     public static int $ordering = 600;
 
 
@@ -181,7 +181,7 @@ class JexecRule extends AbstractRule
         $this->regexExcludeFolders = '#^(?:\.svn|CVS|\.DS_Store|__MACOSX|' . implode('|', $libfolders) . ')$#';
 
         // Generate list of libraries fingerprint files
-        $libFiles = $this->params->get('libfiles');
+        $libFiles       = $this->params->get('libfiles');
         $this->libFiles = array_map('trim', explode(',', $libFiles));
     }
 
