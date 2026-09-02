@@ -134,7 +134,7 @@ class UploadsController extends BaseController
 
         $file['filepath'] = $archivePath . '/' . strtolower($filename);
 
-        if (! File::upload($file['tmp_name'], $file['filepath'], false)) {
+        if (! File::upload($file['tmp_name'], $file['filepath'], false, true)) {
             $app->enqueueMessage(Text::_('COM_JEDCHECKER_ERROR_UNABLE_TO_UPLOAD_FILE'), 'error');
             $app->redirect('index.php?option=com_jedchecker&view=uploads');
 
