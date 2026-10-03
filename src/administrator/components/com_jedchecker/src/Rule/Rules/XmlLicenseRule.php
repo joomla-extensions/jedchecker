@@ -94,15 +94,16 @@ class XmlLicenseRule extends AbstractRule
             return true;
         }
 
-        if (! isset($xml->licence)) {
+        if (! isset($xml->license)) {
             $this->report->addError($file, Text::_('COM_JEDCHECKER_ERROR_XML_LICENCE_NOT_FOUND'));
 
             return false;
         }
 
         if (
-            stripos($xml->licence, 'gpl') === false
-            && stripos($xml->licence, 'general public licence') === false
+            stripos($xml->license, 'gpl') === false
+            && stripos($xml->license, 'general public licence') === false
+            && stripos($xml->license, 'general public license') === false
         ) {
             $this->report->addCompat($file, Text::_('COM_JEDCHECKER_ERROR_XML_LICENCE_NOT_GPL'));
 
