@@ -80,7 +80,7 @@ class EncodingRule extends AbstractRule
 
         $this->encodingsRegex = '/' . implode('|', $encodings) . '/i';
 
-        $files = Folder::files($this->basedir, '\.php$', true, true);
+        $files = CheckerHelper::filterExcludedPaths(Folder::files($this->basedir, '\.php$', true, true));
 
         foreach ($files as $file) {
             $this->find($file);

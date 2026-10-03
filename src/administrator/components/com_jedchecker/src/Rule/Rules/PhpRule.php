@@ -79,7 +79,7 @@ class PhpRule extends AbstractRule
      */
     public function check(): void
     {
-        $files = Folder::files($this->basedir, '\.php$', true, true);
+        $files = CheckerHelper::filterExcludedPaths(Folder::files($this->basedir, '\.php$', true, true));
 
         foreach ($files as $file) {
             $this->find($file);

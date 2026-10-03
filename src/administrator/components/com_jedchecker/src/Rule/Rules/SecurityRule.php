@@ -11,6 +11,7 @@
 namespace Joomla\Component\Jedchecker\Administrator\Rule\Rules;
 
 use Joomla\CMS\Language\Text;
+use Joomla\Component\Jedchecker\Administrator\Helper\CheckerHelper;
 use Joomla\Component\Jedchecker\Administrator\Rule\AbstractRule;
 use Joomla\Filesystem\Folder;
 
@@ -97,7 +98,7 @@ class SecurityRule extends AbstractRule
 
         $this->buildObfuscatedRegex();
 
-        $files = Folder::files($this->basedir, '.', true, true);
+        $files = CheckerHelper::filterExcludedPaths(Folder::files($this->basedir, '.', true, true));
 
         foreach ($files as $file) {
             $this->checkBadFilename($file);
