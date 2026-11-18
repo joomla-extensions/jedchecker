@@ -13,9 +13,9 @@
 namespace Joomla\Component\Jedchecker\Administrator\Controller;
 
 use Joomla\Archive\Archive;
+use Joomla\CMS\Access\Exception\NotAllowed;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
-use Joomla\CMS\Session\Session;
 use Joomla\Component\Jedchecker\Administrator\Helper\CheckerHelper;
 use Joomla\Component\Jedchecker\Administrator\Model\UploadsModel;
 use Joomla\Filesystem\File;
@@ -50,8 +50,13 @@ class UploadsController extends BaseController
      */
     public function check(): void
     {
-        Session::checkToken('get') || $this->app->close(403);
-        $this->app->getIdentity()->authorise('core.manage', 'com_jedchecker') || $this->app->close(403);
+        // An AJAX call: answer 403 (the script shows it) rather than exiting with an empty 200.
+        if (! $this->checkToken('get', false) || ! $this->app->getIdentity()->authorise('core.manage', 'com_jedchecker')) {
+            $this->app->setHeader('status', 403, true);
+            $this->app->sendHeaders();
+            echo htmlspecialchars(Text::_('JERROR_ALERTNOAUTHOR'), ENT_QUOTES, 'UTF-8');
+            $this->app->close();
+        }
 
         $shortName = $this->app->getInput()->get('rule', '', 'string');
 
@@ -72,8 +77,8 @@ class UploadsController extends BaseController
      */
     public function clear(): void
     {
-        Session::checkToken() || $this->app->close(403);
-        $this->app->getIdentity()->authorise('core.manage', 'com_jedchecker') || $this->app->close(403);
+        $this->checkToken();
+        $this->assertCanManage();
 
         /** @var UploadsModel $model */
         $model = $this->getModel('Uploads', 'Administrator');
@@ -97,21 +102,29 @@ class UploadsController extends BaseController
         $app   = $this->app;
         $input = $app->getInput();
 
-        Session::checkToken() || $app->close(403);
-        $app->getIdentity()->authorise('core.manage', 'com_jedchecker') || $app->close(403);
+        $this->checkToken();
+        $this->assertCanManage();
 
         /** @var UploadsModel $model */
         $model = $this->getModel('Uploads', 'Administrator');
 
         $file = $input->files->get('extension', null, 'raw');
 
-        if (empty($file['tmp_name'])) {
+        if (empty($file['tmp_name']) || (int) ($file['error'] ?? UPLOAD_ERR_NO_FILE) !== UPLOAD_ERR_OK || ! is_uploaded_file($file['tmp_name'])) {
+            if (! empty($file['name'])) {
+                $app->enqueueMessage(Text::_('COM_JEDCHECKER_ERROR_UNABLE_TO_UPLOAD_FILE'), 'error');
+            }
+
             $this->setRedirect('index.php?option=com_jedchecker&view=uploads');
 
             return false;
         }
 
         $archivePath = $model->getArchivePath();
+
+        // Protect the whole work folder before anything from the package lands in it.
+        Folder::create($model->getBasePath());
+        CheckerHelper::protectDirectory($model->getBasePath());
 
         if (! is_dir($archivePath)) {
             Folder::create($archivePath);
@@ -121,9 +134,8 @@ class UploadsController extends BaseController
             }
         }
 
-        $this->protectDirectory($archivePath);
-
-        $filename = basename($file['name']);
+        // The file name becomes a folder name and is shown in the report: keep it plain.
+        $filename = preg_replace('/[^A-Za-z0-9._-]/', '_', basename((string) $file['name']));
 
         if (! preg_match('/\.(?:zip|tar|tgz|tbz2|gz|gzip|bz2|bzip2)$/i', $filename)) {
             $app->enqueueMessage(Text::_('COM_JEDCHECKER_ERROR_UNABLE_TO_UPLOAD_FILE'), 'error');
@@ -141,7 +153,12 @@ class UploadsController extends BaseController
             return false;
         }
 
-        $this->unzip();
+        $message = $this->unzip(basename($file['filepath']));
+
+        if ($message !== 'COM_JEDCHECKER_UNZIP_SUCCESS') {
+            $app->enqueueMessage(Text::_($message), 'error');
+        }
+
         $this->setRedirect('index.php?option=com_jedchecker&view=uploads');
 
         return true;
@@ -150,17 +167,16 @@ class UploadsController extends BaseController
     /**
      * Extract the uploaded archive into the unzipped path.
      *
+     * Not a task: only upload() calls it, after its token and permission checks.
+     *
+     * @param   string  $filename  The uploaded archive's name in the archive folder
+     *
      * @return  string  Language key of the result message
      *
      * @since   3.0.0
      */
-    public function unzip(): string
+    protected function unzip(string $filename): string
     {
-        $app = $this->app;
-
-        Session::checkToken() || $app->close(403);
-        $app->getIdentity()->authorise('core.manage', 'com_jedchecker') || $app->close(403);
-
         /** @var UploadsModel $model */
         $model        = $this->getModel('Uploads', 'Administrator');
         $archivePath  = $model->getArchivePath();
@@ -174,32 +190,38 @@ class UploadsController extends BaseController
             }
         }
 
-        $files = Folder::files($archivePath);
+        // By name: the archive folder also holds the web.config protectDirectory() writes, which
+        // sorts after e.g. "web_links.zip" and used to be picked as "the" archive.
+        $origin = $archivePath . '/' . $filename;
 
-        if (empty($files)) {
+        if (! is_file($origin)) {
             return 'COM_JEDCHECKER_UNZIP_FAILED';
         }
 
-        $origin      = $archivePath . DIRECTORY_SEPARATOR . $files[0];
-        $destination = $unzippedPath . DIRECTORY_SEPARATOR . $files[0];
+        if (CheckerHelper::exceedsSizeLimit($origin, self::MAX_EXTRACTED_BYTES)) {
+            return 'COM_JEDCHECKER_ERROR_ARCHIVE_TOO_LARGE';
+        }
+
+        $destination = $unzippedPath . '/' . $filename;
 
         try {
-            $archive = new Archive();
+            $archive = new Archive(['tmp_path' => $this->app->get('tmp_path')]);
             $result  = $archive->extract($origin, $destination);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $result = false;
         }
 
-        if ($result) {
-            $this->unzipAll($unzippedPath . '/' . $files[0]);
-            $this->protectDirectory($unzippedPath);
-            $message = 'COM_JEDCHECKER_UNZIP_SUCCESS';
-            $app->enqueueMessage(Text::_($message));
-        } else {
-            $message = 'COM_JEDCHECKER_UNZIP_FAILED';
+        if (! $result) {
+            return 'COM_JEDCHECKER_UNZIP_FAILED';
         }
 
-        return $message;
+        $this->unzipAll($destination);
+
+        // Again after unpacking: removes any .htaccess / web.config the package brought along.
+        CheckerHelper::protectDirectory($model->getBasePath());
+        $this->app->enqueueMessage(Text::_('COM_JEDCHECKER_UNZIP_SUCCESS'));
+
+        return 'COM_JEDCHECKER_UNZIP_SUCCESS';
     }
 
     /**
@@ -215,7 +237,7 @@ class UploadsController extends BaseController
      *
      * @since   3.0.0
      */
-    public function unzipAll(string $start, int $depth = 0, ?\stdClass $state = null): void
+    protected function unzipAll(string $start, int $depth = 0, ?\stdClass $state = null): void
     {
         if ($state === null) {
             $state = (object)['archives' => 0, 'bytes' => CheckerHelper::directorySize($start)];
@@ -242,10 +264,14 @@ class UploadsController extends BaseController
                 ) {
                     $unzip = $file->getPath() . '/' . $file->getBasename($matches[0]);
 
+                    if (CheckerHelper::exceedsSizeLimit($file->getPathname(), self::MAX_EXTRACTED_BYTES - $state->bytes)) {
+                        continue;
+                    }
+
                     try {
-                        $archive = new Archive();
+                        $archive = new Archive(['tmp_path' => $this->app->get('tmp_path')]);
                         $result  = $archive->extract($file->getPathname(), $unzip);
-                    } catch (\Exception $e) {
+                    } catch (\Throwable $e) {
                         $result = false;
                     }
 
@@ -264,72 +290,18 @@ class UploadsController extends BaseController
     }
 
     /**
-     * Prevent execution of any extracted/uploaded file if this directory (or a subdirectory of it)
-     * is ever reachable over the web, e.g. because Joomla's temp_path was left at its default,
-     * inside the site's webroot. The package contents are fully attacker-controlled, so any
-     * .htaccess/web.config bundled inside the archive is removed first to stop it overriding
-     * the rules written here.
-     *
-     * @param   string  $path  Directory to protect
+     * Refuse with Joomla's "not allowed" page (HTTP 403) unless the user may use JED Checker.
      *
      * @return  void
      *
-     * @since   3.0.0
+     * @throws  NotAllowed
+     *
+     * @since   __DEPLOY_VERSION__
      */
-    protected function protectDirectory(string $path): void
+    protected function assertCanManage(): void
     {
-        if (! is_dir($path)) {
-            return;
+        if (! $this->app->getIdentity()->authorise('core.manage', 'com_jedchecker')) {
+            throw new NotAllowed(Text::_('JERROR_ALERTNOAUTHOR'), 403);
         }
-
-        foreach (Folder::files($path, '^(\.htaccess|web\.config)$', true, true, [], []) as $existing) {
-            File::delete($existing);
-        }
-
-        File::write(
-            $path . '/.htaccess',
-            "<FilesMatch \"\\.(php[0-9]*|phtml|pl|py|jsp|asp|aspx|sh|cgi|exe|dll|so)\$\">\n"
-            . "    <IfModule mod_authz_core.c>\n"
-            . "        Require all denied\n"
-            . "    </IfModule>\n"
-            . "    <IfModule !mod_authz_core.c>\n"
-            . "        Order allow,deny\n"
-            . "        Deny from all\n"
-            . "    </IfModule>\n"
-            . "</FilesMatch>\n"
-            . "<IfModule mod_php.c>\n"
-            . "    php_flag engine off\n"
-            . "</IfModule>\n"
-            . "<IfModule mod_php7.c>\n"
-            . "    php_flag engine off\n"
-            . "</IfModule>\n"
-            . "<IfModule mod_php8.c>\n"
-            . "    php_flag engine off\n"
-            . "</IfModule>\n"
-        );
-
-        File::write(
-            $path . '/web.config',
-            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
-            . "<configuration>\n"
-            . "    <system.webServer>\n"
-            . "        <handlers>\n"
-            . "            <clear />\n"
-            . "        </handlers>\n"
-            . "        <security>\n"
-            . "            <requestFiltering>\n"
-            . "                <fileExtensions>\n"
-            . "                    <add fileExtension=\".php\" allowed=\"false\" />\n"
-            . "                    <add fileExtension=\".phtml\" allowed=\"false\" />\n"
-            . "                    <add fileExtension=\".asp\" allowed=\"false\" />\n"
-            . "                    <add fileExtension=\".aspx\" allowed=\"false\" />\n"
-            . "                    <add fileExtension=\".exe\" allowed=\"false\" />\n"
-            . "                    <add fileExtension=\".dll\" allowed=\"false\" />\n"
-            . "                </fileExtensions>\n"
-            . "            </requestFiltering>\n"
-            . "        </security>\n"
-            . "    </system.webServer>\n"
-            . "</configuration>\n"
-        );
     }
 }

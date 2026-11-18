@@ -10,7 +10,9 @@
 
 namespace Joomla\Component\Jedchecker\Administrator\Helper;
 
+use Joomla\CMS\Factory;
 use Joomla\CMS\Filter\InputFilter;
+use Joomla\Filesystem\File;
 use Joomla\Filesystem\Folder;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -476,7 +478,7 @@ abstract class CheckerHelper
         $excludeList = [];
 
         foreach ($files as $file) {
-            $xml = simplexml_load_file($file);
+            $xml = self::loadXml($file);
 
             if (! $xml || ($xml->getName() !== 'extension' && $xml->getName() !== 'install')) {
                 $excludeList[] = $file;
@@ -603,5 +605,214 @@ abstract class CheckerHelper
     public static function splitLines(string $content): array
     {
         return preg_split("/(?:\r\n|\n|\r)(?!$)/", $content);
+    }
+
+    /**
+     * loadXml
+     *
+     * Parse an XML file from the checked package. The package is untrusted input: no network access
+     * while parsing (LIBXML_NONET), no entity substitution, and parse errors are collected instead of
+     * being printed into the report as PHP warnings.
+     *
+     * @param   string  $file  The XML file
+     *
+     * @return  \SimpleXMLElement|false  False when it is not well-formed XML
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    public static function loadXml(string $file): \SimpleXMLElement|false
+    {
+        $previous = libxml_use_internal_errors(true);
+
+        try {
+            $xml = simplexml_load_file($file, \SimpleXMLElement::class, LIBXML_NONET);
+        } finally {
+            libxml_clear_errors();
+            libxml_use_internal_errors($previous);
+        }
+
+        return $xml instanceof \SimpleXMLElement ? $xml : false;
+    }
+
+    /**
+     * workPath
+     *
+     * The folder JED Checker's own screen uploads and unpacks into: one per administrator, named with
+     * an HMAC of the user id and the site secret. Packages contain PHP, and Joomla's tmp_path is often
+     * inside the web root - a fixed, guessable folder (the former "tmp/jed_checker") would let anyone
+     * who can upload a package request its PHP files over the web where .htaccess is not honoured
+     * (nginx). A per-user folder also keeps two administrators from overwriting each other's upload.
+     *
+     * @param   int|null  $userId  The user; the current one when null
+     *
+     * @return  string
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    public static function workPath(?int $userId = null): string
+    {
+        $app    = Factory::getApplication();
+        $userId = $userId ?? (int) $app->getIdentity()->id;
+        $secret = (string) $app->get('secret');
+
+        return rtrim((string) $app->get('tmp_path'), '/\\') . '/jed_checker_' . substr(hash_hmac('sha256', 'jedchecker:' . $userId, $secret), 0, 24);
+    }
+
+    /**
+     * isInsidePackage
+     *
+     * Whether a path taken from a manifest stays inside the package. A manifest entry such as
+     * "../../../../etc/passwd" must not be used to probe the server's file system.
+     *
+     * @param   string  $relativePath  A path relative to the manifest's folder
+     *
+     * @return  bool
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    public static function isInsidePackage(string $relativePath): bool
+    {
+        $path = str_replace('\\', '/', $relativePath);
+
+        if ($path !== '' && ($path[0] === '/' || preg_match('#^[a-zA-Z]:/#', $path) || str_contains($path, '://'))) {
+            return false;
+        }
+
+        return ! \in_array('..', explode('/', $path), true);
+    }
+
+    /**
+     * exceedsSizeLimit
+     *
+     * Whether an archive declares more uncompressed data than the given budget - checked before it is
+     * unpacked, so that a small "zip bomb" is refused instead of filling the disk or the memory.
+     * Zip archives are measured from their central directory (needs the zip extension), gzip files from
+     * their size trailer; other formats cannot be measured up front and pass.
+     *
+     * @param   string  $archive  The archive
+     * @param   int     $budget   Bytes still allowed
+     *
+     * @return  bool
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    public static function exceedsSizeLimit(string $archive, int $budget): bool
+    {
+        $name = strtolower($archive);
+
+        if (str_ends_with($name, '.zip') && class_exists(\ZipArchive::class)) {
+            $zip = new \ZipArchive();
+
+            if ($zip->open($archive) !== true) {
+                return false;
+            }
+
+            $total = 0;
+
+            for ($i = 0; $i < $zip->numFiles; $i++) {
+                $stat   = $zip->statIndex($i);
+                $total += $stat ? (int) $stat['size'] : 0;
+
+                if ($total > $budget) {
+                    $zip->close();
+
+                    return true;
+                }
+            }
+
+            $zip->close();
+
+            return false;
+        }
+
+        if (preg_match('/\.(?:gz|gzip|tgz)$/', $name) && filesize($archive) >= 18) {
+            // ISIZE: the uncompressed size modulo 2^32, in the last four bytes.
+            $handle = fopen($archive, 'rb');
+
+            if ($handle === false) {
+                return false;
+            }
+
+            fseek($handle, -4, SEEK_END);
+            $isize = unpack('V', (string) fread($handle, 4));
+            fclose($handle);
+
+            return \is_array($isize) && $isize[1] > $budget;
+        }
+
+        return false;
+    }
+
+    /**
+     * protectDirectory
+     *
+     * Prevent execution of any extracted/uploaded file if this directory (or a subdirectory of it)
+     * is ever reachable over the web, e.g. because Joomla's tmp_path was left at its default,
+     * inside the site's webroot. The package contents are fully attacker-controlled, so any
+     * .htaccess/web.config bundled inside the archive is removed first to stop it overriding
+     * the rules written here.
+     *
+     * @param   string  $path  Directory to protect
+     *
+     * @return  void
+     *
+     * @since   3.0.0
+     */
+    public static function protectDirectory(string $path): void
+    {
+        if (! is_dir($path)) {
+            return;
+        }
+
+        foreach (Folder::files($path, '^(\.htaccess|web\.config|\.user\.ini)$', true, true, [], []) as $existing) {
+            File::delete($existing);
+        }
+
+        File::write(
+            $path . '/.htaccess',
+            "<FilesMatch \"\\.(php[0-9]*|phtml|phar|pl|py|jsp|asp|aspx|sh|cgi|exe|dll|so)\$\">\n"
+            . "    <IfModule mod_authz_core.c>\n"
+            . "        Require all denied\n"
+            . "    </IfModule>\n"
+            . "    <IfModule !mod_authz_core.c>\n"
+            . "        Order allow,deny\n"
+            . "        Deny from all\n"
+            . "    </IfModule>\n"
+            . "</FilesMatch>\n"
+            . "<IfModule mod_php.c>\n"
+            . "    php_flag engine off\n"
+            . "</IfModule>\n"
+            . "<IfModule mod_php7.c>\n"
+            . "    php_flag engine off\n"
+            . "</IfModule>\n"
+            . "<IfModule mod_php8.c>\n"
+            . "    php_flag engine off\n"
+            . "</IfModule>\n"
+        );
+
+        File::write(
+            $path . '/web.config',
+            "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"
+            . "<configuration>\n"
+            . "    <system.webServer>\n"
+            . "        <handlers>\n"
+            . "            <clear />\n"
+            . "        </handlers>\n"
+            . "        <security>\n"
+            . "            <requestFiltering>\n"
+            . "                <fileExtensions>\n"
+            . "                    <add fileExtension=\".php\" allowed=\"false\" />\n"
+            . "                    <add fileExtension=\".phtml\" allowed=\"false\" />\n"
+            . "                    <add fileExtension=\".phar\" allowed=\"false\" />\n"
+            . "                    <add fileExtension=\".asp\" allowed=\"false\" />\n"
+            . "                    <add fileExtension=\".aspx\" allowed=\"false\" />\n"
+            . "                    <add fileExtension=\".exe\" allowed=\"false\" />\n"
+            . "                    <add fileExtension=\".dll\" allowed=\"false\" />\n"
+            . "                </fileExtensions>\n"
+            . "            </requestFiltering>\n"
+            . "        </security>\n"
+            . "    </system.webServer>\n"
+            . "</configuration>\n"
+        );
     }
 }

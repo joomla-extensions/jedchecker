@@ -13,7 +13,7 @@
 
 namespace Joomla\Component\Jedchecker\Administrator\Rule\Rules;
 
-use Joomla\CMS\Factory;
+use Joomla\CMS\Language\LanguageHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\Component\Jedchecker\Administrator\Helper\CheckerHelper;
 use Joomla\Component\Jedchecker\Administrator\Report\Report;
@@ -71,6 +71,14 @@ class XmlInfoRule extends AbstractRule
             'plugin',
             'library',
     ];
+
+    /**
+     * The checked extension's own language strings (upper-case keys), from its .sys.ini.
+     *
+     * @var array<string, string>
+     * @since __DEPLOY_VERSION__
+     */
+    protected array $extensionStrings = [];
 
     /**
      * Map of plugin groups to their respective directories.
@@ -132,7 +140,7 @@ class XmlInfoRule extends AbstractRule
      */
     protected function find(string $file, bool $isTopLevel): bool
     {
-        $xml = simplexml_load_file($file);
+        $xml = CheckerHelper::loadXml($file);
 
         if (! $xml) {
             return false;
@@ -147,6 +155,11 @@ class XmlInfoRule extends AbstractRule
         }
 
         $type = (string)$xml['type'];
+
+        // The package's own strings, to translate its name and menu. Kept apart from the
+        // application's Language object: a package's language file must not be able to redefine
+        // JED Checker's (or anybody else's) strings for the rest of the request.
+        $this->extensionStrings = [];
 
         if (! $this->loadExtensionLanguage($xml, \dirname($file))) {
             $lang_file = CheckerHelper::getElementName($xml) . '.sys.ini';
@@ -165,14 +178,14 @@ class XmlInfoRule extends AbstractRule
             );
         }
 
-        $lang              = Factory::getApplication()->getLanguage();
-        $extensionName     = $lang->_((string)$xml->name);
+        $extensionName     = $this->translate((string)$xml->name);
         $extensionNameSafe = htmlspecialchars($extensionName, ENT_QUOTES);
 
+        // Everything taken from the package is escaped: the report is HTML.
         $info   = [];
         $info[] = Text::sprintf('COM_JEDCHECKER_INFO_XML_NAME_XML', $extensionNameSafe);
-        $info[] = Text::sprintf('COM_JEDCHECKER_INFO_XML_VERSION_XML', (string)$xml->version);
-        $info[] = Text::sprintf('COM_JEDCHECKER_INFO_XML_CREATIONDATE_XML', (string)$xml->creationDate);
+        $info[] = Text::sprintf('COM_JEDCHECKER_INFO_XML_VERSION_XML', htmlspecialchars((string)$xml->version, ENT_QUOTES));
+        $info[] = Text::sprintf('COM_JEDCHECKER_INFO_XML_CREATIONDATE_XML', htmlspecialchars((string)$xml->creationDate, ENT_QUOTES));
 
         $this->report->addInfo($file, implode('<br />', $info));
 
@@ -266,7 +279,7 @@ class XmlInfoRule extends AbstractRule
         }
 
         if ($type === 'component' && isset($xml->administration->menu)) {
-            $menuName = $lang->_((string)$xml->administration->menu);
+            $menuName = $this->translate((string)$xml->administration->menu);
 
             if ($extensionName !== $menuName) {
                 $this->report->addWarning(
@@ -322,8 +335,6 @@ class XmlInfoRule extends AbstractRule
             $extension = 'plg_' . $xml['group'] . '_' . $extension;
         }
 
-        $lang = Factory::getApplication()->getLanguage();
-
         $lookupLangDirs = [];
 
         if (isset($xml->administration->files['folder'])) {
@@ -369,9 +380,12 @@ class XmlInfoRule extends AbstractRule
                 $langSysFile = $rootDir . '/' . ($dir === '' ? '' : $dir . '/') . $file;
 
                 if (is_file($langSysFile)) {
-                    $loadLanguage = new \ReflectionMethod($lang, 'loadLanguage');
-                    $loadLanguage->setAccessible(true);
-                    $loadLanguage->invoke($lang, $langSysFile, $extension);
+                    // Joomla's own ini parser, into this rule's table (see translate()).
+                    $strings = LanguageHelper::parseIniFile($langSysFile);
+
+                    foreach (\is_array($strings) ? $strings : [] as $key => $value) {
+                        $this->extensionStrings[strtoupper((string) $key)] = (string) $value;
+                    }
 
                     return true;
                 }
@@ -393,7 +407,7 @@ class XmlInfoRule extends AbstractRule
      */
     protected function validateDomain(string $file, string $url): void
     {
-        $domain = (strpos($url, '//') === false) ? $url : parse_url(trim($url), PHP_URL_HOST);
+        $domain = (strpos($url, '//') === false) ? $url : (string) parse_url(trim($url), PHP_URL_HOST);
 
         if (stripos($domain, 'joomla') !== false) {
             $this->report->addIssue(
@@ -402,10 +416,27 @@ class XmlInfoRule extends AbstractRule
                 $file,
                 Text::sprintf(
                     'COM_JEDCHECKER_INFO_XML_URL_JOOMLA_DERIVATIVE',
-                    $url,
+                    htmlspecialchars($url, ENT_QUOTES),
                     'https://tm.joomla.org/approved-domains.html'
                 )
             );
         }
+    }
+
+    /**
+     * translate
+     *
+     * A string of the checked extension in its own language file, as Joomla would show it; the key
+     * itself when the file does not define it.
+     *
+     * @param   string  $key  The key (or literal text)
+     *
+     * @return  string
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    protected function translate(string $key): string
+    {
+        return $this->extensionStrings[strtoupper(trim($key))] ?? $key;
     }
 }

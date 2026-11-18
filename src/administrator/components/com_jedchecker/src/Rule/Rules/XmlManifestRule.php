@@ -138,7 +138,7 @@ class XmlManifestRule extends AbstractRule
      */
     protected function find(string $file): bool
     {
-        $xml = simplexml_load_file($file);
+        $xml = CheckerHelper::loadXml($file);
 
         if (! $xml) {
             return false;
@@ -239,7 +239,7 @@ class XmlManifestRule extends AbstractRule
                 break;
 
             case 'package':
-                foreach ($xml->files->children() as $item) {
+                foreach ($xml->files->children() ?? [] as $item) {
                     if (! isset($item['type'])) {
                         $this->report->addError(
                             $file,
@@ -354,7 +354,8 @@ class XmlManifestRule extends AbstractRule
         $elements = [];
 
         if (isset($node)) {
-            foreach ($node->children() as $child) {
+            // children() is null for an element the manifest does not have (e.g. no <files>).
+            foreach ($node->children() ?? [] as $child) {
                 if (isset($child[$type])) {
                     $elements[] = (string)$child[$type];
                 }

@@ -14,6 +14,7 @@
 namespace Joomla\Component\Jedchecker\Administrator\Report;
 
 use Joomla\CMS\Language\Text;
+use Joomla\Filesystem\Path;
 
 // phpcs:disable PSR1.Files.SideEffects
 \defined('_JEXEC') or die;
@@ -42,7 +43,7 @@ class Report
     protected array $data;
 
     /**
-     * Base directory of the JEDChecker installation.
+     * Folder the issue locations are made relative to (see setBasedir()); unset = absolute.
      *
      * @var string
      * @since 3.0.0
@@ -152,11 +153,16 @@ class Report
      */
     protected function addItem(ReportItem $item, string $type): void
     {
-        if (! empty($this->basedir)) {
-            $item->location = str_replace($this->basedir, '', $item->location);
+        if (! empty($this->basedir) && $item->location !== '') {
+            $cleaned = Path::clean($item->location);
 
-            if ($item->location === '') {
-                $item->location = '/';
+            // Only locations inside the base folder change (a location that is not a path stays as
+            // it is); relative ones do not start with a separator: "com_foo.zip/foo.xml".
+            $rest = substr($cleaned, \strlen($this->basedir));
+
+            if (str_starts_with($cleaned, $this->basedir) && ($rest === '' || $rest[0] === '/' || $rest[0] === '\\')) {
+                $relative       = ltrim($rest, '/\\');
+                $item->location = $relative === '' ? '/' : $relative;
             }
         }
 
@@ -340,6 +346,21 @@ class Report
         }
 
         return implode('', $html);
+    }
+
+    /**
+     * Make the locations of the issues added from now on relative to this folder (typically the
+     * folder the package was unpacked into, so that locations start at the package's name).
+     *
+     * @param   string  $basedir  Folder
+     *
+     * @return  void
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    public function setBasedir(string $basedir): void
+    {
+        $this->basedir = rtrim(Path::clean($basedir), '/\\');
     }
 
     /**

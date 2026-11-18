@@ -106,7 +106,7 @@ class XmlFilesRule extends AbstractRule
      */
     protected function find(string $file): bool
     {
-        $xml = simplexml_load_file($file);
+        $xml = CheckerHelper::loadXml($file);
 
         if (! $xml) {
             return false;
@@ -237,9 +237,12 @@ class XmlFilesRule extends AbstractRule
                         $folder   = ltrim($attrPath, '/');
 
                         if (strpos($folder, $extensionPath) === 0) {
-                            $folder = $this->manifestDir . $sitedir . substr($folder, \strlen($extensionPath));
+                            $relative = $sitedir . substr($folder, \strlen($extensionPath));
+                            $folder   = $this->manifestDir . $relative;
 
-                            if (! is_dir($folder)) {
+                            if (! CheckerHelper::isInsidePackage($relative)) {
+                                $this->errors[] = $this->outsidePackage($attrPath);
+                            } elseif (! is_dir($folder)) {
                                 $this->errors[] = Text::sprintf(
                                     'COM_JEDCHECKER_XML_FILES_FOLDER_NOT_FOUND',
                                     htmlspecialchars($attrPath, ENT_QUOTES)
@@ -254,7 +257,9 @@ class XmlFilesRule extends AbstractRule
         if (isset($xml->namespace['path'])) {
             $folder = (string)$xml->namespace['path'];
 
-            if (! is_dir($this->manifestDir . $admindir . $folder) && ! is_dir($this->manifestDir . $sitedir . $folder)) {
+            if (! CheckerHelper::isInsidePackage($admindir . $folder) || ! CheckerHelper::isInsidePackage($sitedir . $folder)) {
+                $this->errors[] = $this->outsidePackage($folder);
+            } elseif (! is_dir($this->manifestDir . $admindir . $folder) && ! is_dir($this->manifestDir . $sitedir . $folder)) {
                 $this->errors[] = Text::sprintf(
                     'COM_JEDCHECKER_XML_FILES_FOLDER_NOT_FOUND',
                     htmlspecialchars($folder, ENT_QUOTES)
@@ -317,6 +322,12 @@ class XmlFilesRule extends AbstractRule
 
         $folder = (string)$node['folder'];
 
+        if (! CheckerHelper::isInsidePackage($folder)) {
+            $this->errors[] = $this->outsidePackage($folder);
+
+            return '';
+        }
+
         if (is_dir($this->manifestDir . $folder)) {
             return $folder . '/';
         }
@@ -342,6 +353,13 @@ class XmlFilesRule extends AbstractRule
     protected function checkFiles($files, string $dir = ''): void
     {
         foreach ($files as $file) {
+            // Never probe the server's file system with a path the package chose.
+            if (! CheckerHelper::isInsidePackage($dir . $file)) {
+                $this->errors[] = $this->outsidePackage($dir . $file);
+
+                continue;
+            }
+
             $filename = $this->manifestDir . $dir . $file;
 
             if (is_file($filename)) {
@@ -376,6 +394,12 @@ class XmlFilesRule extends AbstractRule
     protected function checkFolders($folders, string $dir = ''): void
     {
         foreach ($folders as $folder) {
+            if (! CheckerHelper::isInsidePackage($dir . $folder)) {
+                $this->errors[] = $this->outsidePackage($dir . $folder);
+
+                continue;
+            }
+
             if (! is_dir($this->manifestDir . $dir . $folder)) {
                 $this->errors[] = Text::sprintf(
                     'COM_JEDCHECKER_XML_FILES_FOLDER_NOT_FOUND',
@@ -383,5 +407,21 @@ class XmlFilesRule extends AbstractRule
                 );
             }
         }
+    }
+
+    /**
+     * outsidePackage
+     *
+     * The error for a manifest path that leaves the package ("../..", an absolute path).
+     *
+     * @param   string  $path  The path as written in the manifest
+     *
+     * @return  string
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    protected function outsidePackage(string $path): string
+    {
+        return Text::sprintf('COM_JEDCHECKER_XML_FILES_OUTSIDE_PACKAGE', htmlspecialchars($path, ENT_QUOTES));
     }
 }

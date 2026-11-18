@@ -267,7 +267,9 @@ class LanguageRule extends AbstractRule
     protected function populateLangKeys(string $file): void
     {
         if (is_file($file)) {
-            $data = @parse_ini_file($file);
+            // Only the keys are needed. RAW: no constant or ${...} expansion of the values, and
+            // Joomla's escaped quotes (\") do not make the whole file unparsable.
+            $data = @parse_ini_file($file, false, INI_SCANNER_RAW);
 
             if (\is_array($data)) {
                 $this->langKeys = array_replace($this->langKeys, $data);

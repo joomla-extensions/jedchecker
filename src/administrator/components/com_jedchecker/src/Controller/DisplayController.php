@@ -12,6 +12,7 @@
 
 namespace Joomla\Component\Jedchecker\Administrator\Controller;
 
+use Joomla\CMS\Access\Exception\NotAllowed;
 use Joomla\CMS\MVC\Controller\BaseController;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -42,7 +43,7 @@ class DisplayController extends BaseController
     public function display($cachable = false, $urlparams = []): static
     {
         if (! $this->app->getIdentity()->authorise('core.manage', 'com_jedchecker')) {
-            throw new \RuntimeException($this->app->getLanguage()->_('JERROR_ALERTNOAUTHOR'), 403);
+            throw new NotAllowed($this->app->getLanguage()->_('JERROR_ALERTNOAUTHOR'), 403);
         }
 
         return parent::display($cachable, $urlparams);

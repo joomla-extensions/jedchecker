@@ -17,6 +17,7 @@ use Joomla\CMS\MVC\View\HtmlView as BaseHtmlView;
 use Joomla\CMS\Session\Session;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Uri\Uri;
+use Joomla\Component\Jedchecker\Administrator\Helper\CheckerHelper;
 use Joomla\Component\Jedchecker\Administrator\Rule\RuleDiscovery;
 use Joomla\Filesystem\Folder;
 
@@ -41,7 +42,7 @@ class HtmlView extends BaseHtmlView
     public function display($tpl = null): void
     {
         $app        = Factory::getApplication();
-        $this->path = $app->getConfig()->get('tmp_path') . '/jed_checker';
+        $this->path = CheckerHelper::workPath();
 
         $app->getLanguage()->load('com_jedchecker.sys', JPATH_ADMINISTRATOR);
 
@@ -50,6 +51,8 @@ class HtmlView extends BaseHtmlView
         $this->jsOptions['url']       = Uri::base();
         $this->jsOptions['rules']     = $this->getRuleShortNames();
         $this->jsOptions['csrfToken'] = Session::getFormToken();
+
+        $this->getDocument()->addScriptOptions('com_jedchecker', $this->jsOptions);
 
         $this->setToolbar();
 
@@ -102,20 +105,17 @@ class HtmlView extends BaseHtmlView
 
     private function filesExist(string $type): bool
     {
-        $path = Factory::getApplication()->getConfig()->get('tmp_path') . '/jed_checker/' . $type;
+        $path = $this->path . '/' . $type;
 
-        if (is_dir($path)) {
-            if (Folder::folders($path) || Folder::files($path)) {
-                return true;
-            }
-        } else {
-            $local = Factory::getApplication()->getConfig()->get('tmp_path') . '/jed_checker/local.txt';
-
-            if ($type === 'unzipped' && is_file($local)) {
-                return true;
-            }
+        if (is_dir($path) && (Folder::folders($path) || Folder::files($path))) {
+            return true;
         }
 
-        return false;
+        if ($type !== 'unzipped') {
+            return false;
+        }
+
+        return is_file($this->path . '/local.txt')
+            || is_file(rtrim((string) Factory::getApplication()->get('tmp_path'), '/\\') . '/jed_checker/local.txt');
     }
 }

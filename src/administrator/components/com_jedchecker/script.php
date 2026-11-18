@@ -119,6 +119,29 @@ class Com_JedcheckerInstallerScript
             }
         }
 
+        // Remove media no longer used: Joomla provides Bootstrap, and the J4 stylesheet is unused.
+        $legacyMedia = [
+                JPATH_ROOT . '/media/' . $this->extension . '/js/bootstrap.bundle.min.js',
+                JPATH_ROOT . '/media/' . $this->extension . '/css/j4-style.css',
+                JPATH_ROOT . '/media/' . $this->extension . '/css/j4-style.min.css',
+        ];
+
+        foreach ($legacyMedia as $legacyFile) {
+            if (is_file($legacyFile)) {
+                File::delete($legacyFile);
+            }
+        }
+
+        // Uploads now go to one unguessable folder per administrator; remove what the shared
+        // "tmp/jed_checker" folder of earlier versions still holds (but keep a local.txt).
+        $sharedTmp = rtrim((string) Factory::getApplication()->get('tmp_path'), '/\\') . '/jed_checker';
+
+        foreach (['archives', 'unzipped'] as $legacyTmp) {
+            if (is_dir($sharedTmp . '/' . $legacyTmp)) {
+                Folder::delete($sharedTmp . '/' . $legacyTmp);
+            }
+        }
+
         // Remove any old individual rules that are no longer included
         $oldRules = ['htmlindexes'];
 
