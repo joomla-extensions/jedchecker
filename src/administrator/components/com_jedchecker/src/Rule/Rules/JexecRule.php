@@ -14,6 +14,7 @@
 namespace Joomla\Component\Jedchecker\Administrator\Rule\Rules;
 
 use Joomla\CMS\Language\Text;
+use Joomla\Component\Jedchecker\Administrator\Helper\CheckerHelper;
 use Joomla\Component\Jedchecker\Administrator\Rule\AbstractRule;
 
 // phpcs:disable PSR1.Files.SideEffects
@@ -96,7 +97,7 @@ class JexecRule extends AbstractRule
         $this->initJexec();
 
         // Find all php files of the extension
-        $files = $this->files($this->basedir);
+        $files = CheckerHelper::filterExcludedPaths($this->files($this->basedir));
 
         // Iterate through all files
         foreach ($files as $file) {

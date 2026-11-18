@@ -92,7 +92,7 @@ class JamssRule extends AbstractRule
     {
         $this->report->setDefaultSubtype($this->id);
 
-        $files = Folder::files($this->basedir, '', true, true);
+        $files = CheckerHelper::filterExcludedPaths(Folder::files($this->basedir, '', true, true));
 
         $this->initJamss();
 

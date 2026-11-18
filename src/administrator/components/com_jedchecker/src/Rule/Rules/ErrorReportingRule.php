@@ -75,7 +75,7 @@ class ErrorReportingRule extends AbstractRule
 
         $this->errorreportingRegex = '/' . implode('|', $codes) . '/i';
 
-        $files = Folder::files($this->basedir, '\.php$', true, true);
+        $files = CheckerHelper::filterExcludedPaths(Folder::files($this->basedir, '\.php$', true, true));
 
         foreach ($files as $file) {
             $this->find($file);

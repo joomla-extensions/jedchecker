@@ -11,6 +11,7 @@
 namespace Joomla\Component\Jedchecker\Administrator\Rule\Rules;
 
 use Joomla\CMS\Language\Text;
+use Joomla\Component\Jedchecker\Administrator\Helper\CheckerHelper;
 use Joomla\Component\Jedchecker\Administrator\Rule\AbstractRule;
 use Joomla\Filesystem\Folder;
 
@@ -69,7 +70,7 @@ class LanguageRule extends AbstractRule
      */
     public function check(): void
     {
-        $files = Folder::files($this->basedir, '\.ini$', true, true);
+        $files = CheckerHelper::filterExcludedPaths(Folder::files($this->basedir, '\.ini$', true, true));
 
         foreach ($files as $file) {
             if (preg_match('#(?:^|/)([a-z]{2,3}-[A-Z]{2})(?:[./]\w+)?(?:\.sys)?\.ini$#', $file, $match)) {
@@ -91,7 +92,7 @@ class LanguageRule extends AbstractRule
             $this->populateLangKeys(JPATH_ADMINISTRATOR . '/language/en-GB/' . $file);
         }
 
-        $files = Folder::files($this->basedir, '\.php$', true, true);
+        $files = CheckerHelper::filterExcludedPaths(Folder::files($this->basedir, '\.php$', true, true));
 
         foreach ($files as $file) {
             $this->findJText($file);

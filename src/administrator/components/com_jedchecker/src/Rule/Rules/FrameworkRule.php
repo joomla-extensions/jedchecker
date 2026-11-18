@@ -107,8 +107,12 @@ class FrameworkRule extends AbstractRule
 
         $regexLeftoverFolders = '^' . $this->regexLeftoverFolders . '$';
 
-        $folders = Folder::folders($this->basedir, $regexLeftoverFolders, true, true, [], []);
-        $files   = Folder::files($this->basedir, $regexLeftoverFolders, true, true, [], []);
+        $folders = CheckerHelper::filterExcludedPaths(
+            Folder::folders($this->basedir, $regexLeftoverFolders, true, true, [], [])
+        );
+        $files   = CheckerHelper::filterExcludedPaths(
+            Folder::files($this->basedir, $regexLeftoverFolders, true, true, [], [])
+        );
 
         if (\is_array($folders)) {
             foreach ($folders as $folder) {
@@ -122,7 +126,7 @@ class FrameworkRule extends AbstractRule
             }
         }
 
-        $files = Folder::files($this->basedir, '\.php$', true, true);
+        $files = CheckerHelper::filterExcludedPaths(Folder::files($this->basedir, '\.php$', true, true));
 
         foreach ($files as $file) {
             if (! $this->excludeResource($file)) {

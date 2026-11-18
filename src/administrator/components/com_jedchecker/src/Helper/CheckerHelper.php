@@ -304,6 +304,161 @@ abstract class CheckerHelper
     }
 
     /**
+     * getExcludedPaths
+     *
+     * Loads and caches the exclusion entries listed in administrator/components/com_jedchecker/exclude.txt.
+     * Each non-comment, non-blank line has the form "<package>:<fragment>", where <package> is matched
+     * (case-insensitively, as a prefix) against one of the directory segments of a scanned file's path - the
+     * one corresponding to the sub-extension zip it came from. When checking a bundled package (e.g. a
+     * pkg_* zip containing many component/module/plugin zips), every nested zip is unpacked into a folder
+     * named after that zip (extension stripped, so a version suffix in the zip's own filename survives,
+     * e.g. "plg_fabrik_cron_geocode_5.0.1"), and that folder shows up somewhere inside the full path of
+     * every file it contains. Scoping to that segment, rather than to the single outermost folder the whole
+     * bundle was unpacked into, is what lets an exclusion written for one sub-extension avoid "bleeding"
+     * into a different sub-extension that happens to share a folder name such as "vendor" or "libs". A line
+     * with no ':' has no package scoping and applies everywhere (kept for simple, package-agnostic
+     * exclusions). <fragment> itself is matched as a trailing sequence of path segments anywhere in the path
+     * (the same way a bare pattern in a .gitignore file matches at any depth). Blank lines and lines
+     * starting with '#' are ignored, and '#' may also be used to document, on its own line, why a given
+     * exclusion exists.
+     *
+     * @return array  List of ['package' => string|null, 'fragment' => string] entries
+     *
+     * @since __DEPLOY_VERSION__
+     */
+    public static function getExcludedPaths(): array
+    {
+        static $excluded = null;
+
+        if ($excluded !== null) {
+            return $excluded;
+        }
+
+        $excluded = [];
+
+        $excludeFile = JPATH_ADMINISTRATOR . '/components/com_jedchecker/exclude.txt';
+
+        if (! is_file($excludeFile)) {
+            return $excluded;
+        }
+
+        $content = file_get_contents($excludeFile);
+
+        if ($content === false || $content === '') {
+            return $excluded;
+        }
+
+        foreach (self::splitLines($content) as $line) {
+            $line = trim($line);
+
+            if ($line === '' || $line[0] === '#') {
+                continue;
+            }
+
+            $package  = null;
+            $fragment = $line;
+
+            if (strpos($line, ':') !== false) {
+                [$package, $fragment] = explode(':', $line, 2);
+                $package              = trim($package, '/ ');
+            }
+
+            $excluded[] = [
+                    'package'  => $package !== null && $package !== '' ? $package : null,
+                    'fragment' => trim($fragment, '/ '),
+            ];
+        }
+
+        return $excluded;
+    }
+
+    /**
+     * pathHasPackageSegment
+     *
+     * Determines whether any '/'-separated segment of $path starts with (case-insensitively) the given
+     * package name - i.e. whether $path lies inside a folder that a zip named "$package[-_...version]"
+     * was unpacked into. See getExcludedPaths() for why this is how a path's "current package" is found.
+     *
+     * @param   string  $path
+     * @param   string  $package
+     *
+     * @return bool
+     *
+     * @since __DEPLOY_VERSION__
+     */
+    protected static function pathHasPackageSegment(string $path, string $package): bool
+    {
+        foreach (explode('/', trim($path, '/')) as $segment) {
+            if ($segment !== '' && strncasecmp($segment, $package, \strlen($package)) === 0) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * isExcludedPath
+     *
+     * Determines whether the given path matches one of the exclusion entries configured in exclude.txt
+     * (see getExcludedPaths()). An entry scoped to a package only applies when $path has a directory
+     * segment identifying that package (see pathHasPackageSegment()), so exclusions never bleed between
+     * the different sub-extensions unpacked from a bundled package.
+     *
+     * @param   string  $path
+     *
+     * @return bool
+     *
+     * @since __DEPLOY_VERSION__
+     */
+    public static function isExcludedPath(string $path): bool
+    {
+        $excludedEntries = self::getExcludedPaths();
+
+        if (empty($excludedEntries)) {
+            return false;
+        }
+
+        $path = rtrim(str_replace('\\', '/', $path), '/');
+
+        foreach ($excludedEntries as $entry) {
+            if ($entry['package'] !== null && ! self::pathHasPackageSegment($path, $entry['package'])) {
+                continue;
+            }
+
+            $needle = '/' . $entry['fragment'];
+
+            if (substr($path, -\strlen($needle)) === $needle || strpos($path, $needle . '/') !== false) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * filterExcludedPaths
+     *
+     * Removes any paths that match a configured excluded path fragment (see exclude.txt) from the given list.
+     *
+     * @param   array  $paths
+     *
+     * @return array
+     *
+     * @since __DEPLOY_VERSION__
+     */
+    public static function filterExcludedPaths(array $paths): array
+    {
+        if (empty(self::getExcludedPaths())) {
+            return $paths;
+        }
+
+        return array_values(array_filter($paths, static function (string $path): bool {
+            return ! self::isExcludedPath($path);
+        }));
+    }
+
+    /**
      * findManifests
      *
      * Find and return XML manifest files within a given directory.
@@ -316,7 +471,7 @@ abstract class CheckerHelper
      */
     public static function findManifests(string $basedir): array
     {
-        $files = Folder::files($basedir, '\.xml$', true, true);
+        $files = self::filterExcludedPaths(Folder::files($basedir, '\.xml$', true, true));
 
         $excludeList = [];
 

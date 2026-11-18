@@ -13,6 +13,7 @@
 namespace Joomla\Component\Jedchecker\Administrator\Rule\Rules;
 
 use Joomla\CMS\Language\Text;
+use Joomla\Component\Jedchecker\Administrator\Helper\CheckerHelper;
 use Joomla\Component\Jedchecker\Administrator\Rule\AbstractRule;
 use Joomla\Filesystem\Folder;
 
@@ -83,7 +84,7 @@ class GplRule extends AbstractRule
         $this->report->setDefaultSubtype($this->id);
         $this->init();
 
-        $files = Folder::files($this->basedir, '\.php$', true, true);
+        $files = CheckerHelper::filterExcludedPaths(Folder::files($this->basedir, '\.php$', true, true));
 
         foreach ($files as $file) {
             if (! $this->find($file)) {
