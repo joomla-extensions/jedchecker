@@ -1,13 +1,10 @@
 (() => {
   'use strict';
 
-  let jedOptions;
-  try {
-    jedOptions = JSON.parse(document.getElementById('jed-rules-json').innerHTML);
-        if (!jedOptions) {
-            throw new Error();
-        }
-  } catch (e) {
+  // Set by the view with addScriptOptions('com_jedchecker', ...).
+  const jedOptions = window.Joomla && Joomla.getOptions ? Joomla.getOptions('com_jedchecker') : null;
+
+  if (!jedOptions || !Array.isArray(jedOptions.rules)) {
     throw new Error('Initialization data is missing');
   }
 
@@ -27,10 +24,10 @@
 
   function check(url, rule) {
     const csrfToken = encodeURIComponent(jedOptions['csrfToken']);
-    fetch(`${url}index.php?option=com_jedchecker&task=uploads.check&format=raw&rule=${rule}&${csrfToken}=1`)
+    fetch(`${url}index.php?option=com_jedchecker&task=uploads.check&format=raw&rule=${encodeURIComponent(rule)}&${csrfToken}=1`, { credentials: 'same-origin' })
       .then(response => {
         if (!response.ok) {
-          throw new Error(`${response.status} ${response.statusCode}`);
+          throw new Error(`${response.status} ${response.statusText}`);
         }
         return response.text();
       })
@@ -62,7 +59,11 @@
         const sidebar = document.getElementById(`jed-${rule}`);
         const target = document.getElementById(`police-check-result-${rule}`);
 
-        target.innerHTML = `<span class="text-danger"><b>${error.name}:</b> ${error.message}</span>`;
+        // Text, not HTML: the message may echo parts of the server's answer.
+        const message = document.createElement('span');
+        message.className = 'text-danger';
+        message.textContent = `${error.name}: ${error.message}`;
+        target.replaceChildren(message);
 
         [...sidebar.querySelectorAll('.badge.bg-danger')].forEach(el => el.textContent = '?');
         [...sidebar.querySelectorAll('.badge.bg-warning, .badge.bg-secondary, .badge.bg-info')].forEach(el => el.textContent = '');
@@ -107,9 +108,4 @@
 
   new bootstrap.Tooltip(document.getElementById('jedchecker'), {container: 'body', selector: '[data-bs-toggle=tooltip]'});
 
-  document.addEventListener('DOMContentLoaded', () => {
-    try {
-      jQuery.fn.scrollspy.noConflict();
-    } catch (e) {}
-  }, true);
 })();
