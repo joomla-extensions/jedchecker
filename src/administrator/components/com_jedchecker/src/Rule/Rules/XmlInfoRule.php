@@ -370,7 +370,6 @@ class XmlInfoRule extends AbstractRule
 
                 if (is_file($langSysFile)) {
                     $loadLanguage = new \ReflectionMethod($lang, 'loadLanguage');
-                    $loadLanguage->setAccessible(true);
                     $loadLanguage->invoke($lang, $langSysFile, $extension);
 
                     return true;
