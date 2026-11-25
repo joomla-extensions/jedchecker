@@ -14,6 +14,7 @@ namespace Joomla\Component\Jedchecker\Administrator\Model;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\BaseModel;
+use Joomla\Component\Jedchecker\Administrator\Helper\CheckerHelper;
 use Joomla\Component\Jedchecker\Administrator\Rule\RuleDiscovery;
 use Joomla\Filesystem\Folder;
 use Joomla\Filesystem\Path;
@@ -213,7 +214,13 @@ class UploadsModel extends BaseModel
             }
         }
 
+        // local.txt: extra folders to check, one per line. Read from the work folder, or from the
+        // shared "tmp/jed_checker" folder where earlier versions looked for it.
         $local = $this->path . '/local.txt';
+
+        if (! is_file($local)) {
+            $local = rtrim((string) Factory::getApplication()->get('tmp_path'), '/\\') . '/jed_checker/local.txt';
+        }
 
         if (is_file($local)) {
             $content = file_get_contents($local);
@@ -250,8 +257,8 @@ class UploadsModel extends BaseModel
     {
         parent::__construct($config);
 
-        $tmpPath            = Factory::getApplication()->getConfig()->get('tmp_path');
-        $this->path         = $tmpPath . '/jed_checker';
+        // One unguessable folder per administrator (see CheckerHelper::workPath()).
+        $this->path         = CheckerHelper::workPath();
         $this->pathArchive  = $this->path . '/archives';
         $this->pathUnzipped = $this->path . '/unzipped';
     }

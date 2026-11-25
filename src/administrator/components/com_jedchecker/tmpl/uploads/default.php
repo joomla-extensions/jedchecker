@@ -22,11 +22,13 @@ HTMLHelper::_('bootstrap.collapse');
 HTMLHelper::_('bootstrap.tab');
 HTMLHelper::_('bootstrap.tooltip');
 
-HTMLHelper::_('stylesheet', 'com_jedchecker/style.css', ['version' => 'auto', 'relative' => true]);
-HTMLHelper::_('script', 'com_jedchecker/script.js', ['version' => 'auto', 'relative' => true], ['defer' => true]);
+// Joomla 4+ web assets (media/com_jedchecker/joomla.asset.json); the options the script needs go
+// through Joomla's script options (Joomla.getOptions('com_jedchecker')), set in the view.
+$wa = $this->getDocument()->getWebAssetManager();
+$wa->getRegistry()->addExtensionRegistryFile('com_jedchecker');
+$wa->useStyle('com_jedchecker.style')
+    ->useScript('com_jedchecker.script');
 ?>
-<script id="jed-rules-json" type="application/json"><?php
-    echo json_encode($this->jsOptions); ?></script>
 <div id="jedchecker">
     <div class="row g-3">
         <div class="col-12 col-md-8">

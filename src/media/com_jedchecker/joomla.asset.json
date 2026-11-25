@@ -1,0 +1,28 @@
+{
+  "$schema": "https://developer.joomla.org/schemas/json-schema/web_assets.json",
+  "name": "com_jedchecker",
+  "version": "4.0.0",
+  "description": "JED Checker",
+  "license": "GPL-2.0-or-later",
+  "assets": [
+    {
+      "name": "com_jedchecker.style",
+      "type": "style",
+      "uri": "com_jedchecker/style.css"
+    },
+    {
+      "name": "com_jedchecker.script",
+      "type": "script",
+      "uri": "com_jedchecker/script.js",
+      "dependencies": [
+        "core",
+        "bootstrap.collapse",
+        "bootstrap.tab",
+        "bootstrap.popover"
+      ],
+      "attributes": {
+        "type": "module"
+      }
+    }
+  ]
+}

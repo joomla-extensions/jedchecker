@@ -88,7 +88,7 @@ class XmlLicenseRule extends AbstractRule
      */
     protected function find(string $file): bool
     {
-        $xml = simplexml_load_file($file);
+        $xml = CheckerHelper::loadXml($file);
 
         if (! $xml) {
             return true;

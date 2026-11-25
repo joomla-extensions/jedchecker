@@ -92,7 +92,7 @@ class XmlUpdateServerRule extends AbstractRule
         $packageCount = 0;
 
         foreach ($files as $file) {
-            $xml = simplexml_load_file($file);
+            $xml = CheckerHelper::loadXml($file);
 
             if ($xml && (string)$xml['type'] === 'package') {
                 $packageCount++;
@@ -118,7 +118,7 @@ class XmlUpdateServerRule extends AbstractRule
         $componentPaths = [];
 
         foreach ($files as $file) {
-            $xml = simplexml_load_file($file);
+            $xml = CheckerHelper::loadXml($file);
 
             if ($xml) {
                 $directories = explode('/', substr($file, 0, strrpos($file, '/')));
@@ -167,7 +167,7 @@ class XmlUpdateServerRule extends AbstractRule
      */
     protected function find(string $file): bool
     {
-        $xml = simplexml_load_file($file);
+        $xml = CheckerHelper::loadXml($file);
 
         if (! $xml) {
             return true;

@@ -11,6 +11,7 @@
 namespace Joomla\Component\Jedchecker\Administrator\Api;
 
 use Joomla\Archive\Archive;
+use Joomla\CMS\Language\Text;
 use Joomla\Component\Jedchecker\Administrator\Helper\CheckerHelper;
 use Joomla\Component\Jedchecker\Administrator\Rule\RuleDiscovery;
 use Joomla\Filesystem\File;
@@ -40,114 +41,86 @@ class CheckerApi
     /**
      * Run all JEDChecker rules against an extension zip file.
      *
-     * @param   string  $zipFile  Absolute path to the extension zip file
+     * The temporary folder is always removed, whatever happens (a `finally`, and `\Throwable` rather
+     * than `\Exception`, so that a PHP Error - a TypeError on an unusual file, say - neither escapes
+     * to the caller nor leaves the unpacked package behind). Each rule runs on its own: a rule that
+     * fails is reported as failed, with its message in `error`, and the other rules still run.
+     *
+     * Locations in the findings are relative to the folder the package was unpacked into, so they
+     * start at the package's file name: "com_foo_1.0.0.zip/site/foo.php".
+     *
+     * @param   string       $zipFile  Absolute path to the extension zip file
+     * @param   string|null  $workDir  Folder to unpack in (e.g. Joomla's tmp_path); the system temp
+     *                                 folder when null. Useful where open_basedir excludes the latter.
      *
      * @return  array{success: bool, error: string, rules: array, html: string}
+     *          Each rule: id, title, description (language keys), data (count + issues), html, and
+     *          error ('' unless the rule itself failed).
      *
      * @since   3.0.0
      */
-    public static function check(string $zipFile): array
+    public static function check(string $zipFile, ?string $workDir = null): array
     {
         if (! is_file($zipFile)) {
-            return [
-                    'success' => false,
-                    'error'   => 'File not found: ' . $zipFile,
-                    'rules'   => [],
-                    'html'    => '',
-            ];
+            return self::failure('File not found: ' . $zipFile);
         }
 
-        $baseTmpPath  = sys_get_temp_dir() . '/jed_checker_api_' . md5($zipFile . microtime(true));
+        $workDir = rtrim($workDir !== null && $workDir !== '' ? $workDir : sys_get_temp_dir(), '/\\');
+
+        if (! is_dir($workDir) || ! is_writable($workDir)) {
+            return self::failure('The temporary folder is not writable: ' . $workDir);
+        }
+
+        $baseTmpPath  = $workDir . '/jed_checker_api_' . md5($zipFile . microtime(true) . random_int(0, PHP_INT_MAX));
         $archivePath  = $baseTmpPath . '/archives';
         $unzippedPath = $baseTmpPath . '/unzipped';
 
         try {
-            if (! mkdir($archivePath, 0755, true) || ! mkdir($unzippedPath, 0755, true)) {
-                return [
-                        'success' => false,
-                        'error'   => 'Failed to create temporary directories',
-                        'rules'   => [],
-                        'html'    => '',
-                ];
+            if (! @mkdir($archivePath, 0755, true) || ! @mkdir($unzippedPath, 0755, true)) {
+                return self::failure('Failed to create temporary directories in ' . $workDir);
             }
 
+            // The package contains PHP; should the work folder be inside the web root (a tmp_path
+            // given as $workDir), nothing in it may be executable over the web.
+            CheckerHelper::protectDirectory($baseTmpPath);
+
             $archiveFile = $archivePath . '/' . basename($zipFile);
-            copy($zipFile, $archiveFile);
+
+            if (! @copy($zipFile, $archiveFile)) {
+                return self::failure('Failed to copy the package to the temporary directory');
+            }
+
+            if (CheckerHelper::exceedsSizeLimit($archiveFile, self::MAX_EXTRACTED_BYTES)) {
+                return self::failure('The package unpacks to more than ' . (int) (self::MAX_EXTRACTED_BYTES / 1048576) . ' MB');
+            }
 
             $destination = $unzippedPath . '/' . basename($zipFile);
-            $archive     = new Archive();
+            $archive     = new Archive(['tmp_path' => $workDir]);
             $result      = $archive->extract($archiveFile, $destination);
 
             if (! $result) {
-                self::cleanup($baseTmpPath);
-
-                return [
-                        'success' => false,
-                        'error'   => 'Failed to extract archive',
-                        'rules'   => [],
-                        'html'    => '',
-                ];
+                return self::failure('Failed to extract archive');
             }
 
             self::extractNested($destination);
 
+            // Again after unpacking: removes any .htaccess / web.config the package brought along.
+            CheckerHelper::protectDirectory($baseTmpPath);
+
             $folders = self::getFolders($unzippedPath);
 
             if (empty($folders)) {
-                self::cleanup($baseTmpPath);
-
-                return [
-                        'success' => false,
-                        'error'   => 'No extension folders found in archive',
-                        'rules'   => [],
-                        'html'    => '',
-                ];
+                return self::failure('No extension folders found in archive');
             }
 
-            $ruleClasses  = RuleDiscovery::getRules();
             $results      = [];
             $combinedHtml = '';
 
-            foreach ($ruleClasses as $ruleClass) {
-                $ruleHtml = '';
-                $ruleData = null;
-                $instance = null;
-
-                foreach ($folders as $folder) {
-                    $instance = new $ruleClass(Path::clean($folder));
-                    $instance->check();
-
-                    $report = $instance->getReport();
-                    $html   = $report->getHTML();
-                    $data   = $report->getData();
-
-                    $ruleHtml .= $html;
-
-                    if ($ruleData === null) {
-                        $ruleData = $data;
-                    } else {
-                        foreach ($data['count'] as $key => $value) {
-                            $ruleData['count'][$key] = ($ruleData['count'][$key] ?? 0) + $value;
-                        }
-
-                        $ruleData['issues'] = array_merge($ruleData['issues'], $data['issues']);
-                    }
-                }
-
-                if ($instance !== null) {
-                    $results[] = [
-                            'id'          => $instance->getId(),
-                            'title'       => $instance->getTitle(),
-                            'description' => $instance->getDescription(),
-                            'data'        => $ruleData,
-                            'html'        => $ruleHtml,
-                    ];
-                }
-
-                $combinedHtml .= $ruleHtml;
+            foreach (RuleDiscovery::getRules() as $ruleClass) {
+                $rule          = self::runRule($ruleClass, $folders, $unzippedPath);
+                $results[]     = $rule;
+                $combinedHtml .= $rule['html'];
             }
-
-            self::cleanup($baseTmpPath);
 
             return [
                     'success' => true,
@@ -155,16 +128,125 @@ class CheckerApi
                     'rules'   => $results,
                     'html'    => $combinedHtml,
             ];
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
+            return self::failure($e->getMessage());
+        } finally {
             self::cleanup($baseTmpPath);
+        }
+    }
+
+    /**
+     * Run one rule over every unpacked folder. A failure is contained here and reported as the
+     * rule's result, so that one rule cannot take the others' findings down with it.
+     *
+     * @param   string    $ruleClass     The rule's class
+     * @param   string[]  $folders       The unpacked folders
+     * @param   string    $unzippedPath  Folder the locations are made relative to
+     *
+     * @return  array{id: string, title: string, description: string, data: array, html: string, error: string}
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    protected static function runRule(string $ruleClass, array $folders, string $unzippedPath): array
+    {
+        $ruleHtml = '';
+        $ruleData = null;
+        $instance = null;
+
+        try {
+            foreach ($folders as $folder) {
+                $instance = new $ruleClass(Path::clean($folder));
+                $instance->getReport()->setBasedir($unzippedPath);
+                $instance->check();
+
+                $report = $instance->getReport();
+                $data   = $report->getData();
+
+                $ruleHtml .= $report->getHTML();
+
+                if ($ruleData === null) {
+                    $ruleData = $data;
+                } else {
+                    foreach ($data['count'] as $key => $value) {
+                        $ruleData['count'][$key] = ($ruleData['count'][$key] ?? 0) + $value;
+                    }
+
+                    $ruleData['issues'] = array_merge($ruleData['issues'], $data['issues']);
+                }
+            }
 
             return [
-                    'success' => false,
-                    'error'   => $e->getMessage(),
-                    'rules'   => [],
-                    'html'    => '',
+                    'id'          => $instance !== null ? $instance->getId() : self::shortName($ruleClass),
+                    'title'       => $instance !== null ? $instance->getTitle() : self::shortName($ruleClass),
+                    'description' => $instance !== null ? $instance->getDescription() : '',
+                    'data'        => $ruleData ?? self::emptyData(),
+                    'html'        => $ruleHtml,
+                    'error'       => '',
+            ];
+        } catch (\Throwable $e) {
+            $message = Text::_('COM_JEDCHECKER_RULE_FAILED');
+            $message = $message === 'COM_JEDCHECKER_RULE_FAILED' ? 'This rule could not be run on the package: %s' : $message;
+
+            return [
+                    'id'          => $instance !== null ? $instance->getId() : self::shortName($ruleClass),
+                    'title'       => $instance !== null ? $instance->getTitle() : self::shortName($ruleClass),
+                    'description' => $instance !== null ? $instance->getDescription() : '',
+                    'data'        => self::emptyData(),
+                    'html'        => '<div class="alert alert-secondary">'
+                        . htmlspecialchars(\sprintf($message, $e->getMessage()), ENT_QUOTES, 'UTF-8') . '</div>',
+                    'error'       => $e->getMessage(),
             ];
         }
+    }
+
+    /**
+     * The result of a check that could not run.
+     *
+     * @param   string  $error  Why
+     *
+     * @return  array{success: bool, error: string, rules: array, html: string}
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    protected static function failure(string $error): array
+    {
+        return [
+                'success' => false,
+                'error'   => $error,
+                'rules'   => [],
+                'html'    => '',
+        ];
+    }
+
+    /**
+     * Report data with nothing in it, in the shape of Report::getData().
+     *
+     * @return  array{count: array<string, int>, issues: array}
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    protected static function emptyData(): array
+    {
+        return [
+                'count'  => ['total' => 0, 'error' => 0, 'warning' => 0, 'compatibility' => 0, 'notice' => 0, 'info' => 0, 'passed' => 0],
+                'issues' => [],
+        ];
+    }
+
+    /**
+     * "XmlInfoRule" for a rule class, when the rule could not even be created.
+     *
+     * @param   string  $ruleClass  The class
+     *
+     * @return  string
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    protected static function shortName(string $ruleClass): string
+    {
+        $parts = explode('\\', $ruleClass);
+
+        return (string) end($parts);
     }
 
     /**
@@ -227,10 +309,14 @@ class CheckerApi
                 ) {
                     $target = $file->getPath() . '/' . $file->getBasename($matches[0]);
 
+                    if (CheckerHelper::exceedsSizeLimit($file->getPathname(), self::MAX_EXTRACTED_BYTES - $state->bytes)) {
+                        continue;
+                    }
+
                     try {
                         $archive = new Archive();
                         $result  = $archive->extract($file->getPathname(), $target);
-                    } catch (\Exception $e) {
+                    } catch (\Throwable $e) {
                         $result = false;
                     }
 
