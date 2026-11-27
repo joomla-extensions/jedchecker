@@ -194,7 +194,7 @@ class CheckerApi
                     'data'        => self::emptyData(),
                     'html'        => '<div class="alert alert-secondary">'
                         . htmlspecialchars(\sprintf($message, $e->getMessage()), ENT_QUOTES, 'UTF-8') . '</div>',
-                    'error'       => $e->getMessage(),
+                    'error' => $e->getMessage(),
             ];
         }
     }

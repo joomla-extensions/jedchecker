@@ -156,9 +156,9 @@ class JexecRule extends AbstractRule
             $defines[$i] = preg_quote(trim($define), '#');
         }
 
-        $use_single_ns = '[0-9A-Za-z_\\\\]+(?: as [0-9A-Za-z_]+?)? ?';
-        $use_group_ns  = '[0-9A-Za-z_\\\\]+\\\\\\{ ?' . $use_single_ns . '(?:, ?' . $use_single_ns . ' ?)*\\} ?';
-        $use_ns        = '(?:' . $use_single_ns . '|' . $use_group_ns . ')(?:, ?(?:' . $use_single_ns . '|' . $use_group_ns . '))*';
+        $use_single_ns     = '[0-9A-Za-z_\\\\]+(?: as [0-9A-Za-z_]+?)? ?';
+        $use_group_ns      = '[0-9A-Za-z_\\\\]+\\\\\\{ ?' . $use_single_ns . '(?:, ?' . $use_single_ns . ' ?)*\\} ?';
+        $use_ns            = '(?:' . $use_single_ns . '|' . $use_group_ns . ')(?:, ?(?:' . $use_single_ns . '|' . $use_group_ns . '))*';
         $additionalDefined = '(?: ?(?:or |\|\| ?)\\\\?defined ?\( ?[\'"][A-Za-z_][A-Za-z0-9_]*[\'"] ?\))*';
 
         $this->regex

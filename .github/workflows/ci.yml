@@ -5,9 +5,21 @@ on:
     branches: [ develop ]
   pull_request:
     branches: [ develop ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  COMPOSER_CACHE_DIR: /tmp/composer-cache
+
+defaults:
+  run:
+    shell: bash
 
 jobs:
-  composer:
+  code-style:
+    name: Code style
     runs-on: ubuntu-latest
     container:
       image: joomlaprojects/docker-images:php8.3
@@ -17,14 +29,16 @@ jobs:
         uses: actions/cache@v5
         with:
           path: /tmp/composer-cache
-          key: ${{ inputs.composer-cache-key }}-cache-v1
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-
       - name: Install Composer dependencies
-        shell: bash
         run: composer install --no-progress --ignore-platform-reqs
+      - name: Run PHP CS Fixer
+        run: ./vendor/bin/php-cs-fixer fix -vvv --dry-run --diff
 
-  phpcs:
+  build:
+    name: Build package
     runs-on: ubuntu-latest
-    needs: composer
     container:
       image: joomlaprojects/docker-images:php8.3
     steps:
@@ -33,43 +47,64 @@ jobs:
         uses: actions/cache@v5
         with:
           path: /tmp/composer-cache
-          key: ${{ inputs.composer-cache-key }}-cache-v1
-      - name: Run PHP CS Fixer and PHPCS
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-
+      - name: Install Composer dependencies
+        run: composer install --no-progress --ignore-platform-reqs
+      - name: Build
         run: |
-          ./vendor/bin/php-cs-fixer fix -vvv --dry-run --diff
+          vendor/bin/robo build
+          ls dist/*.zip
+      - name: Upload package
+        uses: actions/upload-artifact@v7
+        with:
+          name: jedchecker-package
+          path: dist/*.zip
+          retention-days: 7
 
-  prepare_tests:
+  phpstan:
+    name: PHPStan (Joomla ${{ matrix.joomla-version }})
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
-        joomla-version: ['5.4', '6.1', '6.2', '7.0']
+        joomla-version: ['5.4', '6.0', '6.1', '6.2']
     container:
-      image: joomlaprojects/docker-images:cypress8.3
+      image: joomlaprojects/docker-images:php8.3
     steps:
       - uses: actions/checkout@v6
       - name: Cache Composer dependencies
         uses: actions/cache@v5
         with:
           path: /tmp/composer-cache
-          key: ${{ inputs.composer-cache-key }}-cache-v1
+          key: composer-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-
+      - name: Install Composer dependencies
+        run: composer install --no-progress --ignore-platform-reqs
 
-      - name: Determine Nightly URL for Joomla ${{ matrix.joomla-version }}
+      - name: Determine download URL for Joomla ${{ matrix.joomla-version }}
         id: joomla-info
+        env:
+          GH_TOKEN: ${{ github.token }}
+          JOOMLA_VERSION: ${{ matrix.joomla-version }}
         run: |
-          URL=$(curl -s "https://api.github.com/repos/joomla/joomla-cms/releases" | \
-                grep -oP '"browser_download_url":\s*"[^"]*'"${{ matrix.joomla-version }}"'[^"]*Full_Package\.zip"' | \
-                sed 's/"browser_download_url":\s*"//;s/"$//' | \
+          # Latest stable full package of this minor version (releases are listed newest first).
+          PATTERN="Joomla_${JOOMLA_VERSION//./\\.}\.[0-9]+-Stable-Full_Package\.zip"
+          URL=$(curl -fsS -H "Authorization: Bearer ${GH_TOKEN}" \
+                  "https://api.github.com/repos/joomla/joomla-cms/releases?per_page=100" | \
+                grep -oE "\"browser_download_url\":\s*\"[^\"]*/${PATTERN}\"" | \
+                sed -E 's/"browser_download_url":\s*"//;s/"$//' | \
                 head -1)
 
           if [ -z "$URL" ]; then
-            echo "::error::Could not find URL for version ${{ matrix.joomla-version }} in joomla/joomla-cms releases."
+            echo "::error::Could not find a stable full package for Joomla ${JOOMLA_VERSION} in joomla/joomla-cms releases."
             exit 1
           fi
-          echo "📦 Joomla ${{ matrix.joomla-version }} URL: $URL"
-          echo "url=$URL" >> $GITHUB_OUTPUT
-          echo "url_hash=$(echo -n "$URL" | md5sum | cut -d' ' -f1)" >> $GITHUB_OUTPUT
+          echo "Joomla ${JOOMLA_VERSION} URL: $URL"
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+          echo "url_hash=$(echo -n "$URL" | md5sum | cut -d' ' -f1)" >> "$GITHUB_OUTPUT"
 
-      - name: Cache Joomla Zip
+      - name: Cache Joomla package
         id: cache-joomla
         uses: actions/cache@v5
         with:
@@ -78,50 +113,12 @@ jobs:
 
       - name: Download Joomla ${{ matrix.joomla-version }}
         if: steps.cache-joomla.outputs.cache-hit != 'true'
-        run: |
-          echo "⬇️ Downloading from: ${{ steps.joomla-info.outputs.url }}"
-          curl -LfsS "${{ steps.joomla-info.outputs.url }}" -o joomla.zip
+        run: curl -LfsS "${{ steps.joomla-info.outputs.url }}" -o joomla.zip
 
-      - name: Build and Verify
+      - name: Unpack Joomla
         run: |
-          echo "📦 Downloaded Joomla! ${{ matrix.joomla-version }} from: ${{ steps.joomla-info.outputs.url }}"
-          vendor/bin/robo build
-          if ! unzip -t joomla.zip > /dev/null; then
-          unzip -t joomla.zip > /dev/null
-            echo "ERROR: joomla.zip is invalid or not found."
-            exit 1
-          fi
-
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v7
-        with:
-          name: build-artifacts-j${{ matrix.joomla-version }}
-          path: |
-            dist/
-            joomla.zip
-          retention-days: 1
-
-  phpstan:
-    runs-on: ubuntu-latest
-    needs: prepare_tests
-    strategy:
-      matrix:
-        joomla-version: ['5.4', '6.0', '6.1', '6.2']
-    container:
-      image: joomlaprojects/docker-images:php8.3
-    steps:
-      - uses: actions/checkout@v6
-      - name: Download artifacts
-        uses: actions/download-artifact@v8
-        with:
-          name: build-artifacts-j${{ matrix.joomla-version }}
-      - name: Cache Composer dependencies
-        uses: actions/cache@v5
-        with:
-          path: /tmp/composer-cache
-          key: ${{ inputs.composer-cache-key }}-cache-v1
-      - name: Run PHPStan
-        continue-on-error: true
-        run: |
+          unzip -tq joomla.zip
           unzip -q joomla.zip -d joomla
-          ./vendor/bin/phpstan
+
+      - name: Run PHPStan
+        run: ./vendor/bin/phpstan analyse --no-progress --memory-limit=1G
