@@ -348,10 +348,10 @@ class XmlInfoRule extends AbstractRule
         $lookupLangDirs[] = 'language/' . $langTag;
 
         if (isset($xml->administration->languages)) {
-            $folder = trim($xml->administration->languages['folder'], '/');
+            $folder = trim((string)$xml->administration->languages['folder'], '/');
 
             foreach ($xml->administration->languages->language as $language) {
-                if (trim($language['tag']) === $langTag) {
+                if (trim((string)$language['tag']) === $langTag) {
                     $lookupLangDirs[] = trim($folder . '/' . \dirname($language), '/');
                 }
             }
@@ -361,7 +361,7 @@ class XmlInfoRule extends AbstractRule
             $folder = trim((string)$xml->languages['folder'], '/');
 
             foreach ($xml->languages->language as $language) {
-                if (trim($language['tag']) === $langTag) {
+                if (trim((string)$language['tag']) === $langTag) {
                     $lookupLangDirs[] = trim($folder . '/' . \dirname($language), '/');
                 }
             }
