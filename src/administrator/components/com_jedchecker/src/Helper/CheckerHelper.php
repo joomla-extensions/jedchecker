@@ -338,7 +338,8 @@ abstract class CheckerHelper
 
         $excluded = [];
 
-        $excludeFile = JPATH_ADMINISTRATOR . '/components/com_jedchecker/exclude.txt';
+        // The component folder (administrator/components/com_jedchecker when installed).
+        $excludeFile = \dirname(__DIR__, 2) . '/exclude.txt';
 
         if (! is_file($excludeFile)) {
             return $excluded;
