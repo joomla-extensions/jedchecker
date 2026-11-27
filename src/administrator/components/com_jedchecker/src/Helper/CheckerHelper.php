@@ -552,23 +552,68 @@ abstract class CheckerHelper
      */
     public static function resolveAliases(string $content): string
     {
+        $aliases = [];
+
+        // Single imports: use A\B\C; / use A\B\C as D;
         if (preg_match_all('/\buse\s+([\\\\\w]+)(?:\s+as\s+(\w+))?\s*;/i', $content, $matches, PREG_SET_ORDER)) {
             foreach ($matches as $match) {
-                $fqn = $match[1];
-
-                if (isset($match[2])) {
-                    $alias = $match[2];
-                } else {
-                    $path  = explode('\\', $fqn);
-                    $alias = $path[\count($path) - 1];
-                }
-
+                self::addAlias($aliases, $match[1], $match[2] ?? null);
                 $content = str_replace($match[0], self::cleanLines($match[0]), $content);
-                $content = preg_replace('/\b' . $alias . '\b/', $fqn, $content);
             }
         }
 
-        return $content;
+        // Group imports: use A\B\{C, D as E};
+        if (preg_match_all('/\buse\s+([\\\\\w]+?)\\\\\{([^}]*)\}\s*;/i', $content, $matches, PREG_SET_ORDER)) {
+            foreach ($matches as $match) {
+                foreach (explode(',', $match[2]) as $item) {
+                    if (preg_match('/^\s*([\\\\\w]+)(?:\s+as\s+(\w+))?\s*$/i', $item, $itemMatch)) {
+                        self::addAlias($aliases, $match[1] . '\\' . $itemMatch[1], $itemMatch[2] ?? null);
+                    }
+                }
+
+                $content = str_replace($match[0], self::cleanLines($match[0]), $content);
+            }
+        }
+
+        if (\count($aliases) === 0) {
+            return $content;
+        }
+
+        // One pass over the content, so a name that was already expanded is never rewritten again.
+        // Only bare names are replaced: not a part of a qualified name (preceded by "\"), a variable
+        // ("$Name"), or a property/method/constant ("->Name", "?->Name", "::Name").
+        $names = array_map(static fn (string $alias): string => preg_quote($alias, '/'), array_keys($aliases));
+
+        return preg_replace_callback(
+            '/(?<![\\\\$\w]|->|::)\b(?:' . implode('|', $names) . ')\b/',
+            static fn (array $match): string => $aliases[$match[0]],
+            $content
+        );
+    }
+
+    /**
+     * addAlias
+     *
+     * Registers the name under which an imported class is used in the code.
+     *
+     * @param   array        $aliases  Alias => fully qualified name
+     * @param   string       $fqn      The imported name
+     * @param   string|null  $alias    The "as" alias, if any
+     *
+     * @return void
+     *
+     * @since  __DEPLOY_VERSION__
+     */
+    protected static function addAlias(array &$aliases, string $fqn, ?string $alias): void
+    {
+        if ($alias === null || $alias === '') {
+            $path  = explode('\\', $fqn);
+            $alias = end($path);
+        }
+
+        if ($alias !== '' && $alias !== false) {
+            $aliases[$alias] = $fqn;
+        }
     }
 
     /**
