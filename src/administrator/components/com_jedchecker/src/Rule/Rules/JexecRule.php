@@ -159,16 +159,22 @@ class JexecRule extends AbstractRule
         $use_single_ns = '[0-9A-Za-z_\\\\]+(?: as [0-9A-Za-z_]+?)? ?';
         $use_group_ns  = '[0-9A-Za-z_\\\\]+\\\\\\{ ?' . $use_single_ns . '(?:, ?' . $use_single_ns . ' ?)*\\} ?';
         $use_ns        = '(?:' . $use_single_ns . '|' . $use_group_ns . ')(?:, ?(?:' . $use_single_ns . '|' . $use_group_ns . '))*';
+        $additionalDefined = '(?: ?(?:or |\|\| ?)\\\\?defined ?\( ?[\'"][A-Za-z_][A-Za-z0-9_]*[\'"] ?\))*';
+
         $this->regex
-            = '#^\s*' // at the beginning of the file
-            . '<\?php\s+' // there is an opening php tag
-            . '(?:declare ?\(strict_types ?= ?1 ?\) ?; ?)?' // optionally followed by declare(strict_types=1) directive
-            . '(?:namespace [0-9A-Za-z_\\\\]+ ?; ?)?' // optionally followed by namespace directive
-            . '(?:use (?:function |const )?' . $use_ns . '; ?)*' // optionally followed by use directives
-            . '\\\\?defined ?\( ?' // followed by defined test
-            . '([\'"])(?:' . implode('|', $defines) . ')\1' // of any of given constant
-            . ' ?\) ?(?:or |\|\| ?)(?:die|exit)\b' // or exit
-            . '#i'; // (case insensitive)
+            = '#^\s*'
+            . '<\?php\s+'
+            . '(?:declare ?\(strict_types ?= ?1 ?\) ?; ?)?'
+            . '(?:namespace [0-9A-Za-z_\\\\]+ ?; ?)?'
+            . '(?:use (?:function |const )?' . $use_ns . '; ?)*'
+            . '\\\\?defined ?\( ?'
+            . '([\'"])(?:' . implode('|', $defines) . ')\1'
+            . ' ?\)'
+            . $additionalDefined  // Support chained defined() checks
+            . ' ?(?:or |\|\| ?)(?:die|exit)\b'
+            . '#i';
+
+
 
         // Generate regular expression to match excluded directories
         $libfolders = $this->params->get('libfolders');

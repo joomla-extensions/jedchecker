@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component"  method="upgrade">
-  <name>JedChecker</name>
+  <name>JED Checker</name>
   <author>Joomla! Extensions Directory</author>
   <creationDate>##DATE##</creationDate>
   <copyright>Copyright (C) ##YEAR## Open Source Matters, Inc. All rights reserved.</copyright>

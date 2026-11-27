@@ -7,7 +7,7 @@
  * @copyright  Copyright (C) 2017 - 2026 Open Source Matters, Inc. All rights reserved.
  *             Copyright (C) 2008 - 2016 compjoom.com All rights reserved.
  *
- * @license    GNU General Public Licence version 2 or later; see LICENCE.txt
+ * @license    GNU General Public License version 2 or later; see License.txt
  */
 
 namespace Joomla\Component\Jedchecker\Administrator\Rule\Rules;
@@ -22,7 +22,7 @@ use Joomla\Filesystem\Folder;
 // phpcs:enable PSR1.Files.SideEffects
 
 /**
- * GplRule searches all files for GPL/compatible licences.
+ * GplRule searches all files for GPL/compatible Licenses.
  *
  * @since  3.0.0
  */
@@ -62,7 +62,7 @@ class GplRule extends AbstractRule
      * @var string|null
      * @since 3.0.0
      */
-    protected ?string $regexGPLLicences;
+    protected ?string $regexGPLLicenses;
 
     /**
      * Regex for matching obfuscated code.
@@ -70,7 +70,7 @@ class GplRule extends AbstractRule
      * @var string|null
      * @since 3.0.0
      */
-    protected ?string $regexCompatLicences;
+    protected ?string $regexCompatLicenses;
 
     /**
      * check
@@ -105,14 +105,14 @@ class GplRule extends AbstractRule
     {
         $dataDir = __DIR__ . '/data/gpl/';
 
-        $GPLLicences            = (array)file($dataDir . 'gnu.txt');
-        $this->regexGPLLicences = $this->generateRegexp($GPLLicences);
+        $GPLLicenses            = (array)file($dataDir . 'gnu.txt');
+        $this->regexGPLLicenses = $this->generateRegexp($GPLLicenses);
 
-        $compatLicences = (array)file($dataDir . 'compat.txt');
-        $extraLicences  = explode(',', $this->params->get('constants', ''));
-        $compatLicences = array_merge($compatLicences, $extraLicences);
+        $compatLicenses = (array)file($dataDir . 'compat.txt');
+        $extraLicenses  = explode(',', $this->params->get('constants', ''));
+        $compatLicenses = array_merge($compatLicenses, $extraLicenses);
 
-        $this->regexCompatLicences = $this->generateRegexp($compatLicences);
+        $this->regexCompatLicenses = $this->generateRegexp($compatLicenses);
     }
 
     /**
@@ -137,18 +137,18 @@ class GplRule extends AbstractRule
         $content = file_get_contents($file);
         $content = preg_replace('/^\s*\*/m', '', $content);
 
-        if (preg_match($this->regexGPLLicences, $content, $match, PREG_OFFSET_CAPTURE)) {
+        if (preg_match($this->regexGPLLicenses, $content, $match, PREG_OFFSET_CAPTURE)) {
             $lineno = substr_count($content, "\n", 0, $match[0][1]) + 1;
-            $this->report->addPassed($file, Text::_('COM_JEDCHECKER_PH1_LICENCE_FOUND'), $lineno, $match[0][0]);
+            $this->report->addPassed($file, Text::_('COM_JEDCHECKER_PH1_License_FOUND'), $lineno, $match[0][0]);
 
             return true;
         }
 
-        if (preg_match($this->regexCompatLicences, $content, $match, PREG_OFFSET_CAPTURE)) {
+        if (preg_match($this->regexCompatLicenses, $content, $match, PREG_OFFSET_CAPTURE)) {
             $lineno = substr_count($content, "\n", 0, $match[0][1]) + 1;
             $this->report->addWarning(
                 $file,
-                Text::_('COM_JEDCHECKER_GPL_COMPATIBLE_LICENCE_WAS_FOUND'),
+                Text::_('COM_JEDCHECKER_GPL_COMPATIBLE_License_WAS_FOUND'),
                 $lineno,
                 $match[0][0]
             );
@@ -202,6 +202,8 @@ class GplRule extends AbstractRule
                 $title = preg_quote($title, '#');
                 $title = preg_replace('/(?<=\S)\s+v(?=\d)/', ',?\s+(?:v\.?\s*|version\s+)?', $title);
                 $title = preg_replace('/\s+/', '\s+', $title);
+                // Accept both the US ("License") and the British/Commonwealth ("Licence") spelling.
+                $title = preg_replace('/\bLicen[cs]e\b/i', 'Licen[cs]e', $title);
 
                 $titles[$title] = 1;
             }
@@ -215,9 +217,11 @@ class GplRule extends AbstractRule
 
         if (\count($ids)) {
             $ids    = implode('|', array_keys($ids));
+            // The regex is case-insensitive, so one set of alternatives covers "License"/"license";
+            // Licen[cs]e additionally accepts the British/Commonwealth spelling "Licence".
             $titles .=
-                    '|\blicence\b.+?(?:' . $ids . ')' .
-                    '|\b(?:' . $ids . ')\s+licence\b';
+                    '|\bLicen[cs]e\b.+?(?:' . $ids . ')' .
+                    '|\b(?:' . $ids . ')\s+Licen[cs]e\b';
         }
 
         return '#^.*?(?:' . $titles . ').*?$#im';
