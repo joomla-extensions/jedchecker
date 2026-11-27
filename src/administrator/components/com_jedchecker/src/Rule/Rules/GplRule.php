@@ -135,7 +135,9 @@ class GplRule extends AbstractRule
         }
 
         $content = file_get_contents($file);
-        $content = preg_replace('/^\s*\*/m', '', $content);
+        // Strip the leading "*" of docblock lines. Not \s: it would also remove line breaks before
+        // the "*" and make the reported line number too low.
+        $content = preg_replace('/^[ \t]*\*/m', '', $content);
 
         if (preg_match($this->regexGPLLicenses, $content, $match, PREG_OFFSET_CAPTURE)) {
             $lineno = substr_count($content, "\n", 0, $match[0][1]) + 1;
