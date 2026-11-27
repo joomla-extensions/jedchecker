@@ -176,7 +176,7 @@ class XmlManifestRule extends AbstractRule
                         $file,
                         Text::sprintf('COM_JEDCHECKER_MANIFEST_MISSED_ATTRIBUTE', $xml->getName(), 'client')
                     );
-                } elseif ($client !== 'site' && $client !== 'administrator') {
+                } elseif ($client !== 'site' && $client !== 'administrator' && $client !== 'api') {
                     $this->report->addError(
                         $file,
                         Text::sprintf(
@@ -282,12 +282,12 @@ class XmlManifestRule extends AbstractRule
                                         'client'
                                     )
                                 );
-                            } elseif ($client !== 'site' && $client !== 'administrator') {
+                            } elseif ($client !== 'site' && $client !== 'administrator'  && $client !== 'api') {
                                 $this->report->addError(
                                     $file,
                                     Text::sprintf(
                                         'COM_JEDCHECKER_MANIFEST_UNKNOWN_ATTRIBUTE_VALUE',
-                                        $item->getName(),
+                                        $item->getName().'MARK',
                                         'client',
                                         htmlspecialchars($client, ENT_QUOTES)
                                     )
