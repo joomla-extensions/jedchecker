@@ -141,8 +141,13 @@ class XmlUpdateServerRule extends AbstractRule
             } else {
                 $nested = false;
 
+                // Inside the component's folder, not merely a folder whose name starts the same
+                // (".../com_foo2" is not inside ".../com_foo").
                 foreach ($componentPaths as $component) {
-                    if (strpos($XMLFile['directoryPath'], $component) !== false) {
+                    if (
+                        $XMLFile['directoryPath'] === $component
+                        || str_starts_with($XMLFile['directoryPath'], $component . '/')
+                    ) {
                         $nested = true;
                     }
                 }
