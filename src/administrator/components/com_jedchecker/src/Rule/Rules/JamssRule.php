@@ -125,7 +125,8 @@ class JamssRule extends AbstractRule
     {
         // Patterns Start
 
-        $jamssStrings = 'r0nin|m0rtix|upl0ad|r57shell|c99shell|shellbot|phpshell|void\.ru|';
+        // Plain strings, not regular expressions (they are quoted in scanFile()).
+        $jamssStrings = 'r0nin|m0rtix|upl0ad|r57shell|c99shell|shellbot|phpshell|void.ru|';
         $jamssStrings .= 'phpremoteview|directmail|bash_history|multiviews|cwings|vandal|bitchx|';
         $jamssStrings .= 'eggdrop|guardservices|psybnc|dalnet|undernet|vulnscan|spymeta|raslan58|';
         $jamssStrings .= 'Webshell|str_rot13|FilesMan|FilesTools|Web Shell|ifrm|bckdrprm|';
@@ -408,7 +409,7 @@ class JamssRule extends AbstractRule
                 if (\is_array($pattern)) {
                     preg_match_all('#' . $pattern[0] . '#isS', $scoped_content, $found, PREG_OFFSET_CAPTURE);
                 } else {
-                    preg_match_all('#' . $pattern . '#isS', $scoped_content, $found, PREG_OFFSET_CAPTURE);
+                    preg_match_all('#' . preg_quote($pattern, '#') . '#isS', $scoped_content, $found, PREG_OFFSET_CAPTURE);
                 }
 
                 $all_results   = $found[0];
