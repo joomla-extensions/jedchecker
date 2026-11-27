@@ -206,7 +206,9 @@ class UploadsModel extends BaseModel
     public function getFolders(): array
     {
         $folders    = [];
-        $tmpFolders = Folder::folders($this->pathUnzipped);
+        // Folder::folders() throws for a folder that does not exist: nothing has been uploaded yet
+        // when only a local.txt is used.
+        $tmpFolders = is_dir($this->pathUnzipped) ? Folder::folders($this->pathUnzipped) : [];
 
         if (! empty($tmpFolders)) {
             foreach ($tmpFolders as $tmpFolder) {
