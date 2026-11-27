@@ -287,7 +287,7 @@ class XmlManifestRule extends AbstractRule
                                     $file,
                                     Text::sprintf(
                                         'COM_JEDCHECKER_MANIFEST_UNKNOWN_ATTRIBUTE_VALUE',
-                                        $item->getName().'MARK',
+                                        $item->getName(),
                                         'client',
                                         htmlspecialchars($client, ENT_QUOTES)
                                     )
