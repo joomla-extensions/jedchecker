@@ -7,6 +7,17 @@
         "friendsofphp/php-cs-fixer": "^3.95.32",
         "phpstan/phpstan": "^2.3.7",
         "phpstan/phpstan-deprecation-rules": "^2.0.6",
-        "phpunit/phpunit": "^11.5.58"
+        "phpunit/phpunit": "^11.5.58",
+        "joomla/filesystem": "^3.0 || ^4.0",
+        "joomla/archive": "^3.0 || ^4.0"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Joomla\\Component\\Jedchecker\\Administrator\\": "src/administrator/components/com_jedchecker/src/",
+            "Joomla\\Component\\Jedchecker\\Tests\\Unit\\": "tests/unit/"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
     }
 }
