@@ -185,7 +185,7 @@ abstract class AbstractRule
 
         $paramsFile = __DIR__ . '/Rules/data/' . $shortName . '.ini';
 
-        $params = new Registry('jedchecker.rule . ' . $shortName);
+        $params = new Registry();
 
         if (file_exists($paramsFile)) {
             $data = file_get_contents($paramsFile);
