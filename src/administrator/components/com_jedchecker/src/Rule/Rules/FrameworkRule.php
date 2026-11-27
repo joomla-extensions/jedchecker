@@ -29,12 +29,12 @@ use Joomla\Filesystem\Folder;
 class FrameworkRule extends AbstractRule
 {
     /**
-     * Data files remain in libraries/rules/ during the transitional migration period
+     * Folder of the rule data files, next to this class (also when it runs outside an installed component)
      *
      * @var string
      * @since 3.0.0
      */
-    private const DATA_DIR = '/components/com_jedchecker/src/Rule/Rules/data/';
+    private const DATA_DIR = __DIR__ . '/data/';
     /**
      * Rule ordering.
      *
@@ -267,11 +267,11 @@ class FrameworkRule extends AbstractRule
             $newTest->tests = [];
 
             $legacyAliases = parse_ini_file(
-                JPATH_ADMINISTRATOR . self::DATA_DIR . 'framework_legacy_aliases.ini',
+                self::DATA_DIR . 'framework_legacy_aliases.ini',
                 true
             );
 
-            foreach ($legacyAliases as $version => $aliases) {
+            foreach (\is_array($legacyAliases) ? $legacyAliases : [] as $version => $aliases) {
                 foreach ($aliases as $oldClass => $newClass) {
                     $testObj              = new \stdClass();
                     $testObj->test        = $oldClass;
@@ -417,7 +417,7 @@ class FrameworkRule extends AbstractRule
      */
     private function loadDeprecatedPatterns(): void
     {
-        $deprecatedFile = JPATH_ADMINISTRATOR . self::DATA_DIR . 'framework_deprecated.json';
+        $deprecatedFile = self::DATA_DIR . 'framework_deprecated.json';
 
         if (! file_exists($deprecatedFile)) {
             return;
