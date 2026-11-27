@@ -89,7 +89,8 @@ abstract class CheckerHelper
                     $cleanContent .= '<<<';
                     $pos += 3;
 
-                    if (! preg_match('/([a-z_]\w*|\'.*?\'|".*?")\n/iA', $content, $match, 0, $pos)) {
+                    // Spaces/tabs are allowed after <<<, and the line may end with \r\n.
+                    if (! preg_match('/[ \t]*([a-z_]\w*|\'[a-z_]\w*\'|"[a-z_]\w*")\r?\n/iA', $content, $match, 0, $pos)) {
                         break;
                     }
 
