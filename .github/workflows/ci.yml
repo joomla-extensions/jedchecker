@@ -54,6 +54,27 @@ jobs:
       - name: Run PHP CS Fixer
         run: ./vendor/bin/php-cs-fixer fix -vvv --dry-run --diff
 
+  phpunit:
+    name: PHPUnit (PHP ${{ matrix.php-version }})
+    runs-on: ubuntu-latest
+    needs: [composer]
+    strategy:
+      fail-fast: false
+      matrix:
+        # PHPUnit 11 needs PHP 8.2 or later.
+        php-version: ['8.2', '8.3', '8.4', '8.5']
+    container:
+      image: joomlaprojects/docker-images:php${{ matrix.php-version }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/cache/restore@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: vendor
+          key: ${{ runner.os }}-composer-${{ hashFiles('composer.lock') }}
+          fail-on-cache-miss: true
+      - name: Run PHPUnit
+        run: ./vendor/bin/phpunit --display-skipped
+
   build:
     name: Build package
     runs-on: ubuntu-latest

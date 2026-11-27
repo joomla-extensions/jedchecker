@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b42609e2d9d300e491842d45e53c02b6",
+    "content-hash": "8be80a10388e922dec423da1b7738953",
     "packages": [
         {
             "name": "composer/ca-bundle",
@@ -4263,6 +4263,107 @@
                 }
             ],
             "time": "2026-11-17T18:09:13+00:00"
+        },
+        {
+            "name": "joomla/archive",
+            "version": "4.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/joomla-framework/archive.git",
+                "reference": "7a8d0eda637bd37bc3de744aa3e4ce516d4356b0"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/joomla-framework/archive/zipball/7a8d0eda637bd37bc3de744aa3e4ce516d4356b0",
+                "reference": "7a8d0eda637bd37bc3de744aa3e4ce516d4356b0",
+                "shasum": ""
+            },
+            "require": {
+                "joomla/filesystem": "^4.0",
+                "php": "^8.3.0"
+            },
+            "require-dev": {
+                "joomla/test": "^4.0",
+                "phpstan/phpstan": "^2.1.17",
+                "phpstan/phpstan-deprecation-rules": "^2.0.3",
+                "phpunit/phpunit": "^12.0",
+                "squizlabs/php_codesniffer": "^3.10.2"
+            },
+            "suggest": {
+                "ext-bz2": "To extract bzip2 compressed packages",
+                "ext-zip": "To extract zip compressed packages",
+                "ext-zlib": "To extract gzip or zip compressed packages"
+            },
+            "type": "joomla-package",
+            "autoload": {
+                "psr-4": {
+                    "Joomla\\Archive\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "Joomla Archive Package",
+            "homepage": "https://github.com/joomla-framework/archive",
+            "keywords": [
+                "archive",
+                "framework",
+                "joomla"
+            ],
+            "support": {
+                "issues": "https://github.com/joomla-framework/archive/issues",
+                "source": "https://github.com/joomla-framework/archive/tree/4.0.0"
+            },
+            "time": "2025-07-24T08:04:38+00:00"
+        },
+        {
+            "name": "joomla/filesystem",
+            "version": "4.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/joomla-framework/filesystem.git",
+                "reference": "a79ed5044970b81a5aed22049199c1d6bc902d9a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/joomla-framework/filesystem/zipball/a79ed5044970b81a5aed22049199c1d6bc902d9a",
+                "reference": "a79ed5044970b81a5aed22049199c1d6bc902d9a",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.3.0"
+            },
+            "require-dev": {
+                "joomla/test": "^4.0",
+                "mikey179/vfsstream": "^1.6.11",
+                "phpstan/phpstan": "^2.1.17",
+                "phpstan/phpstan-deprecation-rules": "^2.0.3",
+                "phpunit/phpunit": "^12.2.7",
+                "squizlabs/php_codesniffer": "^3.13.2"
+            },
+            "type": "joomla-package",
+            "autoload": {
+                "psr-4": {
+                    "Joomla\\Filesystem\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "description": "Joomla Filesystem Package",
+            "homepage": "https://github.com/joomla/joomla-framework-filesystem",
+            "keywords": [
+                "filesystem",
+                "framework",
+                "joomla"
+            ],
+            "support": {
+                "issues": "https://github.com/joomla-framework/filesystem/issues",
+                "source": "https://github.com/joomla-framework/filesystem/tree/4.2.1"
+            },
+            "time": "2026-08-18T15:44:34+00:00"
         },
         {
             "name": "myclabs/deep-copy",

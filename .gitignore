@@ -51,3 +51,6 @@ joomla
 # Package building related
 jorobo.ini
 
+
+# PHPUnit
+.phpunit.cache
