@@ -185,10 +185,10 @@ class PhpRule extends AbstractRule
 
                     switch ($testObject->kind) {
                         case 'error':
-                            $this->report->addError($file, $error_message, $line_number);
+                            $this->report->addError($file, $error_message, $line_number + 1);
                             break;
                         default:
-                            $this->report->addWarning($file, $error_message, $line_number);
+                            $this->report->addWarning($file, $error_message, $line_number + 1);
                             break;
                     }
 
