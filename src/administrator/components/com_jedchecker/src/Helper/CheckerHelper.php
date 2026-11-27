@@ -129,6 +129,14 @@ abstract class CheckerHelper
 
                 case '//':
                 case '#':
+                    // "#[" opens a PHP 8 attribute, not a comment: keep it and go on scanning
+                    // its content (and any code after it on the same line) as code.
+                    if ($match[0][0] === '#' && ($content[$pos + 1] ?? '') === '[') {
+                        $cleanContent .= '#[';
+                        $pos += 2;
+                        break;
+                    }
+
                     $commentLen = strcspn($content, "\r\n", $pos);
                     $endPhpPos  = strpos($content, '?>', $pos);
 
