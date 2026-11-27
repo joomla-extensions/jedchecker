@@ -108,6 +108,19 @@ class XmlManifestRule extends AbstractRule
     ];
 
     /**
+     * Valid values of the "client" attribute per extension type. Only languages exist for the API
+     * application; there are no API modules or templates.
+     *
+     * @var array
+     * @since __DEPLOY_VERSION__
+     */
+    protected array $validClients = [
+            'language' => ['site', 'administrator', 'api'],
+            'module'   => ['site', 'administrator'],
+            'template' => ['site', 'administrator'],
+    ];
+
+    /**
      * check
      *
      * Runs the rule.
@@ -176,7 +189,7 @@ class XmlManifestRule extends AbstractRule
                         $file,
                         Text::sprintf('COM_JEDCHECKER_MANIFEST_MISSED_ATTRIBUTE', $xml->getName(), 'client')
                     );
-                } elseif ($client !== 'site' && $client !== 'administrator' && $client !== 'api') {
+                } elseif (! \in_array($client, $this->validClients[$type], true)) {
                     $this->report->addError(
                         $file,
                         Text::sprintf(
@@ -282,7 +295,7 @@ class XmlManifestRule extends AbstractRule
                                         'client'
                                     )
                                 );
-                            } elseif ($client !== 'site' && $client !== 'administrator' && $client !== 'api') {
+                            } elseif (! \in_array($client, $this->validClients[(string)$item['type']], true)) {
                                 $this->report->addError(
                                     $file,
                                     Text::sprintf(
