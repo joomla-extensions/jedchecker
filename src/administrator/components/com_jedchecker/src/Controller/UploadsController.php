@@ -240,16 +240,19 @@ class UploadsController extends BaseController
     protected function unzipAll(string $start, int $depth = 0, ?\stdClass $state = null): void
     {
         if ($state === null) {
-            $state = (object)['archives' => 0, 'bytes' => CheckerHelper::directorySize($start)];
+            $state = (object)['archives' => 0, 'bytes' => CheckerHelper::directorySize($start), 'extracted' => []];
         }
 
         if ($depth >= self::MAX_EXTRACTION_DEPTH || $state->bytes >= self::MAX_EXTRACTED_BYTES) {
             return;
         }
 
-        $iterator = new \RecursiveDirectoryIterator($start);
+        // A snapshot of the folder: archives are extracted into new folders next to them, and a
+        // live directory iterator may or may not return those later - which would walk them again
+        // at this (lower) depth and extract archives the depth limit had held back.
+        $entries = iterator_to_array(new \FilesystemIterator($start, \FilesystemIterator::SKIP_DOTS), false);
 
-        foreach ($iterator as $file) {
+        foreach ($entries as $file) {
             if ($state->archives >= self::MAX_NESTED_ARCHIVES || $state->bytes >= self::MAX_EXTRACTED_BYTES) {
                 return;
             }
@@ -280,10 +283,13 @@ class UploadsController extends BaseController
                         $state->archives++;
                         $state->bytes += CheckerHelper::directorySize($unzip);
 
+                        $state->extracted[$unzip] = true;
                         $this->unzipAll($unzip, $depth + 1, $state);
                     }
                 }
-            } elseif (! $iterator->isDot()) {
+            } elseif ($file->isDir() && ! isset($state->extracted[$file->getPath() . '/' . $file->getFilename()])) {
+                // Not a folder an archive was just extracted into (e.g. "foo/" next to "foo.zip"):
+                // that one was walked at the archive's depth already.
                 $this->unzipAll($file->getPathname(), $depth, $state);
             }
         }
