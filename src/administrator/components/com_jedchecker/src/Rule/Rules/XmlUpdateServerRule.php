@@ -190,22 +190,45 @@ class XmlUpdateServerRule extends AbstractRule
             return false;
         }
 
-        foreach ($xml->updateservers->server as $server) {
-            if (stripos($server, 'http') === false) {
-                $this->report->addError($file, Text::_('COM_JEDCHECKER_ERROR_XML_UPDATE_SERVER_LINK_NOT_FOUND'));
+        $valid = true;
 
-                return false;
+        // Report every server, not only up to the first broken one.
+        foreach ($xml->updateservers->server as $server) {
+            $url = trim((string)$server);
+
+            if (! $this->isHttpUrl($url)) {
+                $this->report->addError($file, Text::_('COM_JEDCHECKER_ERROR_XML_UPDATE_SERVER_LINK_NOT_FOUND'), null, $url);
+                $valid = false;
+
+                continue;
             }
 
             $this->report->addPassed(
                 $file,
                 Text::sprintf(
                     'COM_JEDCHECKER_INFO_XML_UPDATE_SERVER_LINK',
-                    htmlspecialchars((string)$server, ENT_QUOTES)
+                    htmlspecialchars($url, ENT_QUOTES)
                 )
             );
         }
 
-        return true;
+        return $valid;
+    }
+
+    /**
+     * Whether the update server is an absolute http(s) URL with a host. Before, any text that
+     * contained "http" somewhere was accepted.
+     *
+     * @param   string  $url
+     *
+     * @return  bool
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    protected function isHttpUrl(string $url): bool
+    {
+        $scheme = strtolower((string) parse_url($url, PHP_URL_SCHEME));
+
+        return \in_array($scheme, ['http', 'https'], true) && (string) parse_url($url, PHP_URL_HOST) !== '';
     }
 }
