@@ -770,8 +770,10 @@ abstract class CheckerHelper
      *
      * Whether an archive declares more uncompressed data than the given budget - checked before it is
      * unpacked, so that a small "zip bomb" is refused instead of filling the disk or the memory.
-     * Zip archives are measured from their central directory (needs the zip extension), gzip files from
-     * their size trailer; other formats cannot be measured up front and pass.
+     * Zip archives are measured from their central directory (needs the zip extension). A tar file
+     * unpacks to at most its own size. gzip and bzip2 files are decompressed as a stream, without
+     * writing anything, until the budget is exceeded: their headers cannot be trusted (gzip's size
+     * trailer is the size modulo 4 GiB and covers only the last member, bzip2 has none).
      *
      * @param   string  $archive  The archive
      * @param   int     $budget   Bytes still allowed
@@ -809,20 +811,61 @@ abstract class CheckerHelper
             return false;
         }
 
-        if (preg_match('/\.(?:gz|gzip|tgz)$/', $name) && filesize($archive) >= 18) {
-            // ISIZE: the uncompressed size modulo 2^32, in the last four bytes.
-            $handle = fopen($archive, 'rb');
+        if (str_ends_with($name, '.tar')) {
+            return (int) filesize($archive) > $budget;
+        }
 
-            if ($handle === false) {
-                return false;
+        if (preg_match('/\.(?:gz|gzip|tgz)$/', $name)) {
+            return self::decompressedSizeExceeds('compress.zlib://' . $archive, $budget);
+        }
+
+        // Without the bz2 extension, Joomla cannot extract the archive either.
+        if (preg_match('/\.(?:bz2|bzip2|tbz2)$/', $name) && \function_exists('bzopen')) {
+            return self::decompressedSizeExceeds('compress.bzip2://' . $archive, $budget);
+        }
+
+        return false;
+    }
+
+    /**
+     * decompressedSizeExceeds
+     *
+     * Reads a compressed stream to its end, or until more than $budget bytes came out of it.
+     *
+     * @param   string  $url     A compress.zlib:// or compress.bzip2:// URL
+     * @param   int     $budget  Bytes allowed
+     *
+     * @return  bool
+     *
+     * @since   __DEPLOY_VERSION__
+     */
+    protected static function decompressedSizeExceeds(string $url, int $budget): bool
+    {
+        $handle = @fopen($url, 'rb');
+
+        if ($handle === false) {
+            return false;
+        }
+
+        $total = 0;
+
+        while (! feof($handle)) {
+            $chunk = fread($handle, 1048576);
+
+            if ($chunk === false || $chunk === '') {
+                break;
             }
 
-            fseek($handle, -4, SEEK_END);
-            $isize = unpack('V', (string) fread($handle, 4));
-            fclose($handle);
+            $total += \strlen($chunk);
 
-            return \is_array($isize) && $isize[1] > $budget;
+            if ($total > $budget) {
+                fclose($handle);
+
+                return true;
+            }
         }
+
+        fclose($handle);
 
         return false;
     }
