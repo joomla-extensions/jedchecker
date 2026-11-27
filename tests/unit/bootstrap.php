@@ -16,7 +16,7 @@
 
 $root = \dirname(__DIR__, 2);
 
-\define('JPATH_ROOT', __DIR__ . '/Fixtures/joomla');
+\define('JPATH_ROOT', __DIR__ . '/Fixtures/site');
 \define('JPATH_BASE', JPATH_ROOT . '/administrator');
 \define('JPATH_SITE', JPATH_ROOT);
 // The component's own folder: rules that resolve their data files through JPATH_ADMINISTRATOR
