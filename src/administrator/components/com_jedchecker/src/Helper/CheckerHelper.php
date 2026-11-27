@@ -31,6 +31,32 @@ abstract class CheckerHelper
     public const CLEAN_STRINGS  = 4;
 
     /**
+     * Appended to the web server configuration files (.htaccess, web.config, .user.ini) of a checked
+     * package, so that they are not active while the package sits in the work folder.
+     *
+     * @since  __DEPLOY_VERSION__
+     */
+    public const DISABLED_SUFFIX = '.jedchecker-disabled';
+
+    /**
+     * originalPath
+     *
+     * The name a file had in the package, for a file protectDirectory() disabled by renaming it.
+     *
+     * @param   string  $path
+     *
+     * @return string
+     *
+     * @since  __DEPLOY_VERSION__
+     */
+    public static function originalPath(string $path): string
+    {
+        return str_ends_with($path, self::DISABLED_SUFFIX)
+            ? substr($path, 0, -\strlen(self::DISABLED_SUFFIX))
+            : $path;
+    }
+
+    /**
      * cleanPhpCode
      *
      * Removes unnecessary PHP code from a string, based on specified options.
@@ -749,8 +775,9 @@ abstract class CheckerHelper
      * Prevent execution of any extracted/uploaded file if this directory (or a subdirectory of it)
      * is ever reachable over the web, e.g. because Joomla's tmp_path was left at its default,
      * inside the site's webroot. The package contents are fully attacker-controlled, so any
-     * .htaccess/web.config bundled inside the archive is removed first to stop it overriding
-     * the rules written here.
+     * .htaccess/web.config/.user.ini bundled inside the archive is disabled first to stop it
+     * overriding the rules written here: it is renamed (see DISABLED_SUFFIX), so the web server
+     * ignores it, but the rules can still check its content (see originalPath()).
      *
      * @param   string  $path  Directory to protect
      *
@@ -764,8 +791,25 @@ abstract class CheckerHelper
             return;
         }
 
+        $root = rtrim(str_replace('\\', '/', $path), '/');
+
         foreach (Folder::files($path, '^(\.htaccess|web\.config|\.user\.ini)$', true, true, [], []) as $existing) {
-            File::delete($existing);
+            // The ones in $path itself are this method's own, written again below.
+            if (rtrim(str_replace('\\', '/', \dirname($existing)), '/') === $root) {
+                File::delete($existing);
+
+                continue;
+            }
+
+            $disabled = $existing . self::DISABLED_SUFFIX;
+
+            if (is_file($disabled)) {
+                File::delete($disabled);
+            }
+
+            if (! @rename($existing, $disabled)) {
+                File::delete($existing);
+            }
         }
 
         File::write(

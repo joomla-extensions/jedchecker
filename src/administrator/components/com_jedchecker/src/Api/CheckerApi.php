@@ -104,7 +104,7 @@ class CheckerApi
 
             self::extractNested($destination);
 
-            // Again after unpacking: removes any .htaccess / web.config the package brought along.
+            // Again after unpacking: disables any .htaccess / web.config the package brought along.
             CheckerHelper::protectDirectory($baseTmpPath);
 
             $folders = self::getFolders($unzippedPath);
