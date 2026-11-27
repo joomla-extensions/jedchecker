@@ -92,16 +92,18 @@ class FrameworkRule extends AbstractRule
 
         $this->regexLeftoverFolders = '';
 
+        // "*" stands for any characters within one path segment: excludeResource() matches the
+        // pattern against a path, where ".*" would run across directory separators.
         if (! empty($leftoverFoldersWhitelist)) {
             $this->regexLeftoverFolders .=
                     '(?!(?:'
-                    . str_replace([',', '\*'], ['|', '.*'], preg_quote($leftoverFoldersWhitelist, '/'))
+                    . str_replace([',', '\*'], ['|', '[^\/]*'], preg_quote($leftoverFoldersWhitelist, '/'))
                      . '))';
         }
 
         $this->regexLeftoverFolders .= '(?:' . str_replace(
             [',', '\*'],
-            ['|', '.*'],
+            ['|', '[^\/]*'],
             preg_quote($leftoverFolders, '/')
         ) . ')';
 
@@ -148,6 +150,15 @@ class FrameworkRule extends AbstractRule
      */
     private function excludeResource(string $file): bool
     {
+        // Only the path inside the checked folder counts: a leftover-looking folder in the server's
+        // own path (e.g. a hidden ".cache" folder above Joomla's tmp_path) must not exclude every file.
+        $file    = str_replace('\\', '/', $file);
+        $basedir = rtrim(str_replace('\\', '/', $this->basedir), '/');
+
+        if ($basedir !== '' && str_starts_with($file, $basedir . '/')) {
+            $file = substr($file, \strlen($basedir));
+        }
+
         return (bool)preg_match('/\/' . $this->regexLeftoverFolders . '\//', $file);
     }
 
