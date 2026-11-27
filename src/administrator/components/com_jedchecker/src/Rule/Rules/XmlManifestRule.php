@@ -282,7 +282,7 @@ class XmlManifestRule extends AbstractRule
                                         'client'
                                     )
                                 );
-                            } elseif ($client !== 'site' && $client !== 'administrator'  && $client !== 'api') {
+                            } elseif ($client !== 'site' && $client !== 'administrator' && $client !== 'api') {
                                 $this->report->addError(
                                     $file,
                                     Text::sprintf(
