@@ -686,7 +686,8 @@ abstract class CheckerHelper
     /**
      * splitLines
      *
-     * Splits a string into an array of lines, handling different line endings.
+     * Splits a string into an array of lines, handling different line endings. A line break at the
+     * very end does not start another (empty) line, so the result has as many entries as file().
      *
      * @param   string  $content
      *
@@ -696,7 +697,12 @@ abstract class CheckerHelper
      */
     public static function splitLines(string $content): array
     {
-        return preg_split("/(?:\r\n|\n|\r)(?!$)/", $content);
+        // Not (?!$) after the line break: without the D modifier "$" also matches before a final
+        // "\n", so the last line break(s) were not split ("a\n\n" gave one line, "a\r\nb\r\n" ended
+        // with "b\r\n").
+        $content = preg_replace("/(?:\r\n|\n|\r)\\z/", '', $content);
+
+        return preg_split("/\r\n|\n|\r/", $content);
     }
 
     /**

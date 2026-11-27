@@ -99,13 +99,15 @@ class PhpRule extends AbstractRule
      */
     protected function find(string $file): bool
     {
-        $origContent = (array)file($file);
+        $content = (string)file_get_contents($file);
 
-        if (\count($origContent) === 0) {
+        if ($content === '') {
             return false;
         }
 
-        $content = file_get_contents($file);
+        // Split the same way as the cleaned content below (file() only knows "\n"), so that the
+        // line numbers of both match.
+        $origContent = CheckerHelper::splitLines($content);
 
         $cleanContent = CheckerHelper::cleanPhpCode(
             $content,
