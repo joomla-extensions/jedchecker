@@ -342,16 +342,16 @@ class FrameworkRule extends AbstractRule
 
                     switch ($testObject->kind) {
                         case 'error':
-                            $this->report->addError($file, $error_message, $line_number);
+                            $this->report->addError($file, $error_message, $line_number + 1);
                             break;
                         case 'warning':
-                            $this->report->addWarning($file, $error_message, $line_number);
+                            $this->report->addWarning($file, $error_message, $line_number + 1);
                             break;
                         case 'compatibility':
-                            $this->report->addCompat($file, $error_message, $line_number);
+                            $this->report->addCompat($file, $error_message, $line_number + 1);
                             break;
                         default:
-                            $this->report->addNotice($file, $error_message, $line_number);
+                            $this->report->addNotice($file, $error_message, $line_number + 1);
                             break;
                     }
 
