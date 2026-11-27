@@ -97,18 +97,30 @@ abstract class CheckerHelper
                     $cleanContent .= $match[0];
                     $pos += \strlen($match[0]);
 
-                    $foundPos = strpos($content, $identifier, $pos);
+                    // The closing marker is the bare label (no quotes, also for <<<'EOT' and <<<"EOT")
+                    // at the start of a line, optionally indented (PHP 7.3+), and not followed by
+                    // another identifier character.
+                    $label = trim($identifier, '\'"');
 
-                    if ($foundPos === false) {
+                    if (
+                        ! preg_match(
+                            '/^[ \t]*' . preg_quote($label, '/') . '\b/m',
+                            $content,
+                            $match,
+                            PREG_OFFSET_CAPTURE,
+                            $pos
+                        )
+                    ) {
                         return $cleanContent . ($isCleanStrings ? '' : substr($content, $pos));
                     }
 
+                    $foundPos     = (int)$match[0][1] + \strlen($match[0][0]) - \strlen($label);
                     $code         = substr($content, $pos, $foundPos - $pos);
                     $cleanContent .= ($isCleanStrings ? self::removeContent(
                         $code,
                         $identifier[0] !== "'"
-                    ) : $code) . $identifier;
-                    $pos += \strlen($code) + \strlen($identifier);
+                    ) : $code) . $label;
+                    $pos += \strlen($code) + \strlen($label);
                     break;
 
                 case '/*':
