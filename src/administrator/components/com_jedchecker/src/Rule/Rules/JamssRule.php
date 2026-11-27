@@ -92,7 +92,18 @@ class JamssRule extends AbstractRule
     {
         $this->report->setDefaultSubtype($this->id);
 
-        $files = CheckerHelper::filterExcludedPaths(Folder::files($this->basedir, '', true, true));
+        // Joomla's default exclude filter skips all dot-files; keep .htaccess files, which the
+        // checked package's own ones are disabled as (see CheckerHelper::protectDirectory()).
+        $files = CheckerHelper::filterExcludedPaths(
+            Folder::files(
+                $this->basedir,
+                '',
+                true,
+                true,
+                ['.svn', 'CVS', '.DS_Store', '__MACOSX'],
+                ['^\.(?!htaccess(?:' . preg_quote(CheckerHelper::DISABLED_SUFFIX, '/') . ')?$)', '.*~']
+            )
+        );
 
         $this->initJamss();
 
@@ -353,7 +364,11 @@ class JamssRule extends AbstractRule
         $total_results  = 0;
         $jamssFileNames = $this->jamssFileNames;
 
-        if (\in_array(pathinfo($path, PATHINFO_EXTENSION), $ext) && filesize($path)) {
+        // A disabled .htaccess is read from its renamed file, but checked and reported by its real name.
+        $file = $path;
+        $path = CheckerHelper::originalPath($path);
+
+        if (\in_array(pathinfo($path, PATHINFO_EXTENSION), $ext) && filesize($file)) {
             if ($malic_file_descr = array_search(pathinfo($path, PATHINFO_BASENAME), $jamssFileNames)) {
                 $this->jamssWarning(
                     $path,
@@ -364,7 +379,7 @@ class JamssRule extends AbstractRule
                 );
             }
 
-            $content = file_get_contents($path);
+            $content = file_get_contents($file);
 
             if (! $content) {
                 $this->report->addError($path, Text::_('COM_JEDCHECKER_ERROR_JAMSS_CANNOT_OPEN'), 0);

@@ -217,7 +217,7 @@ class UploadsController extends BaseController
 
         $this->unzipAll($destination);
 
-        // Again after unpacking: removes any .htaccess / web.config the package brought along.
+        // Again after unpacking: disables any .htaccess / web.config the package brought along.
         CheckerHelper::protectDirectory($model->getBasePath());
         $this->app->enqueueMessage(Text::_('COM_JEDCHECKER_UNZIP_SUCCESS'));
 

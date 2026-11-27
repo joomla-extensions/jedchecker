@@ -98,7 +98,11 @@ class SecurityRule extends AbstractRule
 
         $this->buildObfuscatedRegex();
 
-        $files = CheckerHelper::filterExcludedPaths(Folder::files($this->basedir, '.', true, true));
+        // Include dot-files (Joomla's default exclude filter skips them): a hidden executable or
+        // shell script is just as much of a risk. Version control folders are still skipped.
+        $files = CheckerHelper::filterExcludedPaths(
+            Folder::files($this->basedir, '.', true, true, ['.svn', '.git', 'CVS', '.DS_Store', '__MACOSX'], ['.*~'])
+        );
 
         foreach ($files as $file) {
             $this->checkBadFilename($file);
